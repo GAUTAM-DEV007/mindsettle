@@ -62,13 +62,20 @@ const TESTIMONIALS = [
 export default function HomePage() {
   return (
     <main>
-      <section className="bg-gradient-to-r from-emerald-50 via-white to-emerald-50">
-        <div className="mx-auto flex max-w-6xl flex-col items-center px-6 py-20 text-center sm:py-28">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+      <section
+        className="relative min-h-[620px] bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/Background.jpg')",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/35" />
+
+        <div className="relative z-10 mx-auto flex min-h-[620px] max-w-6xl flex-col items-center justify-center px-6 text-center text-white">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
             Calm the Space Around You
           </h1>
 
-          <p className="mt-4 max-w-2xl text-base text-slate-600">
+          <p className="mt-5 max-w-2xl text-base leading-7 text-white/90 sm:text-lg">
             Mindsettle delivers soothing calming content to hospitals and
             clinical settings across Australia.
           </p>
@@ -76,14 +83,14 @@ export default function HomePage() {
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <a
               href="/signup"
-              className="rounded-md bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+              className="rounded-md bg-emerald-600 px-7 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
             >
               Get Started
             </a>
 
             <a
               href="/about"
-              className="rounded-md border border-emerald-600 px-6 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+              className="rounded-md border border-white px-7 py-3 text-sm font-semibold text-white transition hover:bg-white hover:text-slate-900"
             >
               Learn More
             </a>

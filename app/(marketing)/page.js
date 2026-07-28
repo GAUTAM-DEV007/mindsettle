@@ -61,21 +61,21 @@ const TESTIMONIALS = [
 
 export default function HomePage() {
   return (
-    <main>
+    <main className="pt-24">
       <section
         className="relative min-h-[620px] bg-cover bg-center"
         style={{
           backgroundImage: "url('/Background.jpg')",
         }}
       >
-        <div className="absolute inset-0 bg-black/35" />
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/35 via-emerald-700/15 to-slate-900/20" />
 
         <div className="relative z-10 mx-auto flex min-h-[620px] max-w-6xl flex-col items-center justify-center px-6 text-center text-white">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+          <h1 className="text-5xl font-bold tracking-tight text-white drop-shadow-lg sm:text-6xl md:text-7xl">
             Calm the Space Around You
           </h1>
 
-          <p className="mt-5 max-w-2xl text-base leading-7 text-white/90 sm:text-lg">
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-sky-50">
             Mindsettle delivers soothing calming content to hospitals and
             clinical settings across Australia.
           </p>
@@ -83,14 +83,14 @@ export default function HomePage() {
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <a
               href="/signup"
-              className="rounded-md bg-emerald-600 px-7 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+              className="inline-flex w-52 justify-center rounded-lg bg-emerald-600 px-8 py-4 font-semibold text-white shadow-lg transition hover:bg-emerald-700"
             >
               Get Started
             </a>
 
             <a
               href="/about"
-              className="rounded-md border border-white px-7 py-3 text-sm font-semibold text-white transition hover:bg-white hover:text-slate-900"
+              className="inline-flex w-52 justify-center rounded-lg border-2 border-white bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur-sm transition hover:bg-white hover:text-sky-900"
             >
               Learn More
             </a>
@@ -114,9 +114,9 @@ export default function HomePage() {
             {FEATURES.map((feature) => (
               <article
                 key={feature.title}
-                className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-lg text-emerald-700">
+                className="rounded-xl border border-sky-100 bg-white p-6 shadow-md transition hover:shadow-xl">
+                  
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-100 text-lg text-sky-700">
                   {feature.icon}
                 </div>
 

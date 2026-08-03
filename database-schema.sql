@@ -39,6 +39,21 @@ create table if not exists profiles (
   updated_at timestamptz not null default now()
 );
 
+do $$ begin
+  create type app_role as enum ('user', 'organisation', 'admin');
+exception
+  when duplicate_object then null;
+end $$;
+
+-- One row per auth user, created automatically by the
+-- handle_new_user_role trigger below. Drives admin checks elsewhere
+-- (e.g. media-schema.sql).
+create table if not exists user_roles (
+  user_id uuid primary key references auth.users (id) on delete cascade,
+  role app_role not null default 'user',
+  created_at timestamptz not null default now()
+);
+
 create table if not exists favourites (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references profiles (id) on delete cascade,
@@ -110,6 +125,27 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function handle_new_user();
 
+-- Auto-create a user_roles row (default 'user') whenever a new user
+-- signs up via Supabase Auth.
+create or replace function handle_new_user_role()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.user_roles (user_id, role)
+  values (new.id, 'user')
+  on conflict (user_id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_role_created on auth.users;
+create trigger on_auth_user_role_created
+  after insert on auth.users
+  for each row execute function handle_new_user_role();
+
 -- Keep updated_at current on profiles and subscriptions.
 create or replace function set_updated_at()
 returns trigger
@@ -138,6 +174,7 @@ create trigger set_subscriptions_updated_at
 alter table categories enable row level security;
 alter table videos enable row level security;
 alter table profiles enable row level security;
+alter table user_roles enable row level security;
 alter table favourites enable row level security;
 alter table watch_history enable row level security;
 alter table subscriptions enable row level security;
@@ -156,6 +193,16 @@ create policy "Videos are viewable by authenticated users"
   to authenticated
   using (true);
 
+-- NOTE: added directly in the Supabase dashboard (not part of the
+-- original design) and lets ANY authenticated user insert videos, not
+-- just admins. Kept here to match production; consider replacing with
+-- an admin-only (user_roles.role = 'admin') check or removing it once
+-- video writes go through the service role key as intended above.
+create policy "Temporary authenticated video inserts"
+  on videos for insert
+  to authenticated
+  with check (true);
+
 -- profiles: users can only see and manage their own profile.
 create policy "Users can view their own profile"
   on profiles for select
@@ -169,6 +216,13 @@ create policy "Users can update their own profile"
   on profiles for update
   using (auth.uid() = id)
   with check (auth.uid() = id);
+
+-- user_roles: users can read only their own role. All writes happen via
+-- the handle_new_user_role trigger or the service role key, so no
+-- insert/update/delete policies are defined here.
+create policy "Users can view their own role"
+  on user_roles for select
+  using (auth.uid() = user_id);
 
 -- favourites: users manage only their own favourites.
 create policy "Users can view their own favourites"

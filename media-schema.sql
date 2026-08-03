@@ -1,17 +1,10 @@
 -- MindSettle media schema
--- Adds a `media` table plus a `user_media` sharing relationship, and
--- extends `profiles` with an admin flag needed for the media RLS policies.
+-- Adds a `media` table plus a `user_media` sharing relationship.
+-- Admin checks reuse the existing `user_roles` table (role = 'admin').
 -- Run in the Supabase SQL editor (or via the CLI: supabase db execute -f media-schema.sql)
 -- after database-schema.sql has already been applied.
 
 begin;
-
--- ---------------------------------------------------------------------------
--- Schema updates
--- ---------------------------------------------------------------------------
-
--- Needed so RLS policies below can distinguish admins from regular users.
-alter table profiles add column if not exists is_admin boolean not null default false;
 
 -- ---------------------------------------------------------------------------
 -- Tables
@@ -61,8 +54,8 @@ create policy "Users can view their own media, admins view all"
   using (
     auth.uid() = uploaded_by
     or exists (
-      select 1 from profiles
-      where profiles.id = auth.uid() and profiles.is_admin
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
     )
   );
 
@@ -87,8 +80,8 @@ create policy "Users can view media shared with them, admins view all"
   using (
     auth.uid() = user_id
     or exists (
-      select 1 from profiles
-      where profiles.id = auth.uid() and profiles.is_admin
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
     )
   );
 

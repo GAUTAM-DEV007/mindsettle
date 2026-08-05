@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
 const PROTECTED_PATHS = ["/dashboard", "/library", "/programs", "/account"];
+const ADMIN_PATHS = ["/admin"];
 
 export default async function proxy(request) {
   let supabaseResponse = NextResponse.next({ request });
@@ -33,14 +34,36 @@ export default async function proxy(request) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const { pathname } = request.nextUrl;
+
   const isProtectedRoute = PROTECTED_PATHS.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
+    pathname.startsWith(path)
   );
 
   if (isProtectedRoute && !user) {
     const redirectUrl = new URL("/login", request.url);
-    redirectUrl.searchParams.set("redirectTo", request.nextUrl.pathname);
+    redirectUrl.searchParams.set("redirectTo", pathname);
     return NextResponse.redirect(redirectUrl);
+  }
+
+  const isAdminRoute = ADMIN_PATHS.some((path) => pathname.startsWith(path));
+
+  if (isAdminRoute) {
+    let isAdmin = false;
+
+    if (user) {
+      const { data: roleRecord } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .single();
+
+      isAdmin = roleRecord?.role === "admin";
+    }
+
+    if (!isAdmin) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 
   return supabaseResponse;

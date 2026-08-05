@@ -193,15 +193,15 @@ create policy "Videos are viewable by authenticated users"
   to authenticated
   using (true);
 
--- NOTE: added directly in the Supabase dashboard (not part of the
--- original design) and lets ANY authenticated user insert videos, not
--- just admins. Kept here to match production; consider replacing with
--- an admin-only (user_roles.role = 'admin') check or removing it once
--- video writes go through the service role key as intended above.
-create policy "Temporary authenticated video inserts"
+create policy "Admins can insert videos"
   on videos for insert
   to authenticated
-  with check (true);
+  with check (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  );
 
 -- profiles: users can only see and manage their own profile.
 create policy "Users can view their own profile"

@@ -3,8 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase/client";
 export default function LoginPage() {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -20,10 +23,31 @@ export default function LoginPage() {
     }));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Login details:", formData);
-  };
+  const handleSubmit = async (event) => {
+  event.preventDefault();
+  console.log("Submitting login form..."); // This confirms the new code runs
+  
+  try {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: formData.email.trim(),
+      password: formData.password
+    });
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    // Redirect to the post-login page on success
+    router.replace("/post-login");
+    router.refresh();
+
+  } catch (err) {
+    console.error("Unexpected error during login:", err);
+  }
+};
+
+
 
   return (
     <main className="grid min-h-screen bg-slate-50 lg:grid-cols-[42%_58%]">

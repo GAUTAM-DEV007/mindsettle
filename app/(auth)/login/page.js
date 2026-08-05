@@ -4,9 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 export default function LoginPage() {
   const router = useRouter();
+  const supabase = createClient();
 
   const [formData, setFormData] = useState({
     email: "",

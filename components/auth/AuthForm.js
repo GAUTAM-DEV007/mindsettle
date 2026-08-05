@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function AuthForm({ mode }) {
-  const isSignup = mode === "signup";
+  // mode: "login" | "signup" | "organisation-signup"
+  const isSignup = mode === "signup" || mode === "organisation-signup";
+  const requestedRole = mode === "organisation-signup" ? "organisation" : null;
   const router = useRouter();
   const supabase = createClient();
 
@@ -20,7 +22,16 @@ export default function AuthForm({ mode }) {
     setIsSubmitting(true);
 
     const { error: authError } = isSignup
-      ? await supabase.auth.signUp({ email, password })
+      ? await supabase.auth.signUp({
+          email,
+          password,
+          // Read by the handle_new_user trigger (see supabase/migrations)
+          // to decide which row to insert into user_roles. Login doesn't
+          // need this -- role is looked up fresh on every login instead.
+          options: requestedRole
+            ? { data: { requested_role: requestedRole } }
+            : undefined,
+        })
       : await supabase.auth.signInWithPassword({ email, password });
 
     setIsSubmitting(false);
@@ -30,7 +41,9 @@ export default function AuthForm({ mode }) {
       return;
     }
 
-    router.push("/dashboard");
+    // Let /post-login look up the role and send the user to the right
+    // dashboard, instead of assuming /dashboard here.
+    router.push("/post-login");
     router.refresh();
   }
 

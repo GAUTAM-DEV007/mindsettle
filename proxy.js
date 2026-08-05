@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 const PROTECTED_PATHS = ["/dashboard", "/library", "/programs", "/account"];
 const ADMIN_PATHS = ["/admin"];
+const ORGANISATION_PATHS = ["/organisation-dashboard"];
 
 export default async function proxy(request) {
   let supabaseResponse = NextResponse.next({ request });
@@ -47,9 +48,12 @@ export default async function proxy(request) {
   }
 
   const isAdminRoute = ADMIN_PATHS.some((path) => pathname.startsWith(path));
+  const isOrganisationRoute = ORGANISATION_PATHS.some((path) =>
+    pathname.startsWith(path)
+  );
 
-  if (isAdminRoute) {
-    let isAdmin = false;
+  if (isAdminRoute || isOrganisationRoute) {
+    let role = null;
 
     if (user) {
       const { data: roleRecord } = await supabase
@@ -58,10 +62,14 @@ export default async function proxy(request) {
         .eq("user_id", user.id)
         .single();
 
-      isAdmin = roleRecord?.role === "admin";
+      role = roleRecord?.role ?? null;
     }
 
-    if (!isAdmin) {
+    if (isAdminRoute && role !== "admin") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    if (isOrganisationRoute && role !== "organisation") {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }

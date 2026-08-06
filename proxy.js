@@ -1,7 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-const PROTECTED_PATHS = ["/dashboard", "/library", "/programs", "/account"];
+const PROTECTED_PATHS = [
+  "/dashboard",
+  "/library",
+  "/programs",
+  "/account",
+  "/favourites",
+];
 const ADMIN_PATHS = ["/admin"];
 const ORGANISATION_PATHS = ["/organisation-dashboard"];
 

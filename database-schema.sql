@@ -179,11 +179,47 @@ alter table favourites enable row level security;
 alter table watch_history enable row level security;
 alter table subscriptions enable row level security;
 
--- categories: public read-only catalog data. Writes are done by admins
--- using the service role key, which bypasses RLS.
+-- categories: read-only for everyone; writes are gated to admins so the
+-- /admin categories manager can insert/update/delete directly under RLS.
 create policy "Categories are viewable by everyone"
   on categories for select
   using (true);
+
+create policy "Admins can insert categories"
+  on categories for insert
+  to authenticated
+  with check (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  );
+
+create policy "Admins can update categories"
+  on categories for update
+  to authenticated
+  using (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  )
+  with check (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  );
+
+create policy "Admins can delete categories"
+  on categories for delete
+  to authenticated
+  using (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  );
 
 -- videos: catalog metadata is readable by any signed-in user; the app's
 -- proxy/layout already gates the /library routes behind auth. Writes are

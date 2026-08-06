@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -14,6 +15,8 @@ export default function LoginPage() {
     password: "",
     remember: false,
   });
+  const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -25,30 +28,27 @@ export default function LoginPage() {
   };
 
   const handleSubmit = async (event) => {
-  event.preventDefault();
-  console.log("Submitting login form..."); // This confirms the new code runs
-  
-  try {
-    const { error } = await supabase.auth.signInWithPassword({
+    event.preventDefault();
+    setError(null);
+    setIsSubmitting(true);
+
+    const { error: authError } = await supabase.auth.signInWithPassword({
       email: formData.email.trim(),
-      password: formData.password
+      password: formData.password,
     });
 
-    if (error) {
-      alert(error.message);
+    setIsSubmitting(false);
+
+    if (authError) {
+      setError(authError.message);
       return;
     }
 
-    // Redirect to the post-login page on success
-    router.replace("/post-login");
+    // /post-login looks up the user's role and sends them to the right
+    // dashboard (user/organisation/admin) instead of assuming one here.
+    router.push("/post-login");
     router.refresh();
-
-  } catch (err) {
-    console.error("Unexpected error during login:", err);
-  }
-};
-
-
+  };
 
   return (
     <main className="grid min-h-screen bg-slate-50 lg:grid-cols-[42%_58%]">
@@ -169,11 +169,18 @@ export default function LoginPage() {
                 </Link>
               </div>
 
+              {error && (
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+                  {error}
+                </p>
+              )}
+
               <button
                 type="submit"
-                className="w-full rounded-xl bg-gradient-to-r from-sky-600 to-emerald-600 px-5 py-3.5 font-semibold text-white shadow-lg shadow-emerald-100 transition hover:-translate-y-0.5 hover:from-sky-700 hover:to-emerald-700"
+                disabled={isSubmitting}
+                className="w-full rounded-xl bg-gradient-to-r from-sky-600 to-emerald-600 px-5 py-3.5 font-semibold text-white shadow-lg shadow-emerald-100 transition hover:-translate-y-0.5 hover:from-sky-700 hover:to-emerald-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
-                Login
+                {isSubmitting ? "Signing in..." : "Login"}
               </button>
               <p className="mt-4 text-center text-sm text-slate-600">
   By creating an account, you agree to our{" "}

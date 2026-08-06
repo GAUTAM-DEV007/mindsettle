@@ -8,9 +8,9 @@ begin;
 -- Returns platform-wide analytics for the admin dashboard. Runs as
 -- security definer so it can aggregate across all users' rows
 -- (bypassing the per-user RLS policies on profiles/subscriptions/
--- watch_history), but only after confirming the calling user actually
--- holds the 'admin' role in user_roles.
-create or replace function admin_dashboard_analytics(most_watched_limit integer default 10)
+-- watch_history/favourites), but only after confirming the calling
+-- user actually holds the 'admin' role in user_roles.
+create or replace function admin_dashboard_analytics(top_n_limit integer default 10)
 returns jsonb
 language plpgsql
 security definer
@@ -45,8 +45,37 @@ begin
         join videos on videos.id = watch_history.video_id
         group by videos.id, videos.title
         order by count(watch_history.id) desc, videos.title asc
-        limit greatest(most_watched_limit, 0)
+        limit greatest(top_n_limit, 0)
       ) ranked
+    ),
+    'most_favourited_videos', (
+      select coalesce(jsonb_agg(ranked), '[]'::jsonb)
+      from (
+        select
+          videos.id as video_id,
+          videos.title,
+          count(favourites.id) as favourite_count
+        from favourites
+        join videos on videos.id = favourites.video_id
+        group by videos.id, videos.title
+        order by count(favourites.id) desc, videos.title asc
+        limit greatest(top_n_limit, 0)
+      ) ranked
+    ),
+    'user_growth', (
+      select coalesce(
+        jsonb_agg(
+          jsonb_build_object('date', d::date, 'new_users', coalesce(counts.new_users, 0))
+          order by d
+        ),
+        '[]'::jsonb
+      )
+      from generate_series(current_date - interval '29 days', current_date, interval '1 day') as d
+      left join (
+        select created_at::date as signup_date, count(*) as new_users
+        from profiles
+        group by created_at::date
+      ) counts on counts.signup_date = d::date
     )
   )
   into result;

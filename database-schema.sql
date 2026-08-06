@@ -125,17 +125,28 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function handle_new_user();
 
--- Auto-create a user_roles row (default 'user') whenever a new user
--- signs up via Supabase Auth.
+-- Auto-create a user_roles row whenever a new user signs up via
+-- Supabase Auth. AuthForm.js passes options.data.requested_role on
+-- signUp() for the organisation registration flow; plain signups omit
+-- it and default to 'user'. 'admin' is intentionally never read from
+-- user metadata, so nobody can self-assign admin through the signup
+-- form -- promote someone by running
+--   update user_roles set role = 'admin' where user_id = '<uuid>';
+-- yourself.
 create or replace function handle_new_user_role()
 returns trigger
 language plpgsql
 security definer
 set search_path = public
 as $$
+declare
+  requested text := new.raw_user_meta_data ->> 'requested_role';
 begin
   insert into public.user_roles (user_id, role)
-  values (new.id, 'user')
+  values (
+    new.id,
+    case when requested = 'organisation' then 'organisation'::app_role else 'user'::app_role end
+  )
   on conflict (user_id) do nothing;
   return new;
 end;

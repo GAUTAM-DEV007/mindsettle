@@ -125,17 +125,28 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function handle_new_user();
 
--- Auto-create a user_roles row (default 'user') whenever a new user
--- signs up via Supabase Auth.
+-- Auto-create a user_roles row whenever a new user signs up via
+-- Supabase Auth. AuthForm.js passes options.data.requested_role on
+-- signUp() for the organisation registration flow; plain signups omit
+-- it and default to 'user'. 'admin' is intentionally never read from
+-- user metadata, so nobody can self-assign admin through the signup
+-- form -- promote someone by running
+--   update user_roles set role = 'admin' where user_id = '<uuid>';
+-- yourself.
 create or replace function handle_new_user_role()
 returns trigger
 language plpgsql
 security definer
 set search_path = public
 as $$
+declare
+  requested text := new.raw_user_meta_data ->> 'requested_role';
 begin
   insert into public.user_roles (user_id, role)
-  values (new.id, 'user')
+  values (
+    new.id,
+    case when requested = 'organisation' then 'organisation'::app_role else 'user'::app_role end
+  )
   on conflict (user_id) do nothing;
   return new;
 end;
@@ -179,11 +190,47 @@ alter table favourites enable row level security;
 alter table watch_history enable row level security;
 alter table subscriptions enable row level security;
 
--- categories: public read-only catalog data. Writes are done by admins
--- using the service role key, which bypasses RLS.
+-- categories: read-only for everyone; writes are gated to admins so the
+-- /admin categories manager can insert/update/delete directly under RLS.
 create policy "Categories are viewable by everyone"
   on categories for select
   using (true);
+
+create policy "Admins can insert categories"
+  on categories for insert
+  to authenticated
+  with check (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  );
+
+create policy "Admins can update categories"
+  on categories for update
+  to authenticated
+  using (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  )
+  with check (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  );
+
+create policy "Admins can delete categories"
+  on categories for delete
+  to authenticated
+  using (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  );
 
 -- videos: catalog metadata is readable by any signed-in user; the app's
 -- proxy/layout already gates the /library routes behind auth. Writes are
@@ -193,15 +240,15 @@ create policy "Videos are viewable by authenticated users"
   to authenticated
   using (true);
 
--- NOTE: added directly in the Supabase dashboard (not part of the
--- original design) and lets ANY authenticated user insert videos, not
--- just admins. Kept here to match production; consider replacing with
--- an admin-only (user_roles.role = 'admin') check or removing it once
--- video writes go through the service role key as intended above.
-create policy "Temporary authenticated video inserts"
+create policy "Admins can insert videos"
   on videos for insert
   to authenticated
-  with check (true);
+  with check (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  );
 
 -- profiles: users can only see and manage their own profile.
 create policy "Users can view their own profile"

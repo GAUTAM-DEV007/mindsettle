@@ -1,18 +1,20 @@
 import { notFound } from "next/navigation";
 import { getVideoById } from "@/lib/data/content";
 import { createClient } from "@/lib/supabase/server";
-import { addFavourite, removeFavourite } from "@/lib/actions/favourites";
+import {
+  addFavourite,
+  removeFavourite,
+} from "@/lib/actions/favourites";
 import VideoPlayer from "@/components/video/VideoPlayer";
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export default async function VideoPage({ params }) {
   const { videoId } = await params;
+
   const supabase = await createClient();
 
-  // Real, Supabase-backed videos have uuid ids. Program pages still
-  // link to the static catalog in lib/data/content.js (no `programs`
-  // table exists yet), so fall back to that for non-uuid ids.
   const isRealVideo = UUID_RE.test(videoId);
 
   let video = null;
@@ -23,22 +25,76 @@ export default async function VideoPage({ params }) {
   } = await supabase.auth.getUser();
 
   if (isRealVideo) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("videos")
       .select(
-        "id, title, instructor, duration_minutes, thumbnail_url, video_url, categories(name)"
+        `
+        id,
+        title,
+        description,
+        instructor,
+        duration_minutes,
+        thumbnail_url,
+        video_url,
+        categories(name)
+        `
       )
       .eq("id", videoId)
       .single();
 
+    if (error) {
+      console.error("Failed to load video:", error);
+    }
+
     if (data) {
+      let signedVideoUrl = null;
+      let signedThumbnailUrl = null;
+
+      if (data.video_url) {
+        const {
+          data: signedVideo,
+          error: videoUrlError,
+        } = await supabase.storage
+          .from("videos")
+          .createSignedUrl(data.video_url, 3600);
+
+        if (videoUrlError) {
+          console.error(
+            "Could not create signed video URL:",
+            videoUrlError
+          );
+        } else {
+          signedVideoUrl = signedVideo?.signedUrl ?? null;
+        }
+      }
+
+      if (data.thumbnail_url) {
+        const {
+          data: signedThumbnail,
+          error: thumbnailUrlError,
+        } = await supabase.storage
+          .from("videos")
+          .createSignedUrl(data.thumbnail_url, 3600);
+
+        if (thumbnailUrlError) {
+          console.error(
+            "Could not create signed thumbnail URL:",
+            thumbnailUrlError
+          );
+        } else {
+          signedThumbnailUrl =
+            signedThumbnail?.signedUrl ?? null;
+        }
+      }
+
       video = {
         id: data.id,
         title: data.title,
+        description: data.description,
         instructor: data.instructor,
         durationMinutes: data.duration_minutes,
-        thumbnailUrl: data.thumbnail_url,
-        src: data.video_url,
+        thumbnailUrl: signedThumbnailUrl,
+        src: signedVideoUrl,
         category: data.categories?.name ?? null,
       };
     }
@@ -64,27 +120,76 @@ export default async function VideoPage({ params }) {
   const redirectPath = `/library/${videoId}`;
 
   return (
-    <div className="flex max-w-3xl flex-col gap-4">
-      <VideoPlayer src={video.src} poster={video.thumbnailUrl} title={video.title} />
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">{video.title}</h1>
-          <p className="mt-1 text-neutral-600">
-            {video.instructor} &middot; {video.durationMinutes} min
-            {video.category ? <> &middot; {video.category}</> : null}
+    <div className="flex max-w-4xl flex-col gap-6">
+      {video.src ? (
+        <VideoPlayer
+          src={video.src}
+          poster={video.thumbnailUrl}
+          title={video.title}
+        />
+      ) : (
+        <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-black text-neutral-400">
+          This video does not currently have a playable media file.
+        </div>
+      )}
+
+      <div className="flex items-start justify-between gap-6">
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold">
+            {video.title}
+          </h1>
+
+          <p className="mt-2 text-neutral-500">
+            {video.instructor}
+            {" • "}
+            {video.durationMinutes} min
+            {video.category && (
+              <>
+                {" • "}
+                {video.category}
+              </>
+            )}
           </p>
+
+          {video.description && (
+            <div className="mt-6 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-emerald-400">
+                Description
+              </h2>
+
+              <p className="whitespace-pre-wrap leading-7 text-neutral-300">
+                {video.description}
+              </p>
+            </div>
+          )}
         </div>
 
         {isRealVideo && user && (
-          <form action={isFavourited ? removeFavourite : addFavourite}>
-            <input type="hidden" name="videoId" value={video.id} />
-            <input type="hidden" name="redirectPath" value={redirectPath} />
+          <form
+            action={
+              isFavourited
+                ? removeFavourite
+                : addFavourite
+            }
+          >
+            <input
+              type="hidden"
+              name="videoId"
+              value={video.id}
+            />
+
+            <input
+              type="hidden"
+              name="redirectPath"
+              value={redirectPath}
+            />
+
             <button
               type="submit"
-              className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+              className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
                 isFavourited
-                  ? "border-emerald-600 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                  : "border-neutral-300 text-neutral-700 hover:bg-neutral-100"
+                  ? "border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-500"
+                  : "border-neutral-600 text-neutral-300 hover:border-emerald-500 hover:text-white"
               }`}
             >
               {isFavourited ? "♥ Saved" : "♡ Save"}

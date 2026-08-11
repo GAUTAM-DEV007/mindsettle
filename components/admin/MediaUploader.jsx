@@ -1233,13 +1233,11 @@ export default function MediaUploader({
 
   const statusClasses = {
     success:
-      "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
-
+      "border-emerald-200 bg-emerald-50 text-emerald-700",
     error:
-      "border-red-500/30 bg-red-500/10 text-red-300",
-
+      "border-red-200 bg-red-50 text-red-700",
     info:
-      "border-neutral-700 bg-neutral-900 text-neutral-300",
+      "border-sky-200 bg-sky-50 text-sky-700",
   };
 
   const selectedMediaType =
@@ -1255,47 +1253,42 @@ export default function MediaUploader({
     isVideo || isAudio;
 
   return (
-    <main className="min-h-screen bg-neutral-950 text-neutral-100">
-      <div className="mx-auto max-w-6xl px-6 py-12 lg:px-8">
+    <div className="bg-white text-slate-950">
+      <div className="px-5 py-6 sm:px-7 sm:py-8">
 
-        <div className="mb-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-400">
-            MindSettle Administration
+        <div className="mb-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">
+            MindSettle Media
           </p>
 
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">
-            Media Management
-          </h1>
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">
+            Upload new media
+          </h2>
 
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-400">
-            Upload videos, audio files and
-            images for the MindSettle platform.
-            Media is stored securely together
-            with its information.
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            Upload videos, audio files and images for the MindSettle platform.
+            Media is stored securely together with its information.
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1.5fr_0.7fr]">
+        <div className="grid gap-8 xl:grid-cols-[1.55fr_0.65fr]">
 
-          <section className="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-6 sm:p-8">
+          <section className="rounded-xl border border-sky-100 bg-white p-5 shadow-sm sm:p-7">
 
             <div>
-              <h2 className="text-xl font-semibold text-white">
-                Upload new media
-              </h2>
+              <h3 className="text-lg font-bold text-slate-950">
+                Select media
+              </h3>
 
-              <p className="mt-2 text-sm leading-6 text-neutral-400">
-                Select a supported file and
-                provide its information before
-                uploading.
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                Choose a supported file, then add its information before uploading.
               </p>
             </div>
 
             <form
               onSubmit={handleUpload}
-              className="mt-8"
+              className="mt-6"
             >
-
               <div
                 onDragEnter={handleDragEnter}
                 onDragOver={handleDragOver}
@@ -1313,10 +1306,10 @@ export default function MediaUploader({
                     openFilePicker();
                   }
                 }}
-                className={`cursor-pointer rounded-2xl border-2 border-dashed px-6 py-12 text-center transition ${
+                className={`cursor-pointer rounded-xl border-2 border-dashed px-6 py-12 text-center transition ${
                   dragActive
-                    ? "border-emerald-400 bg-emerald-500/10"
-                    : "border-neutral-700 bg-neutral-950/60 hover:border-emerald-500 hover:bg-neutral-900"
+                    ? "border-emerald-500 bg-emerald-50"
+                    : "border-sky-200 bg-sky-50/50 hover:border-emerald-400 hover:bg-emerald-50/60"
                 } ${
                   uploading
                     ? "cursor-not-allowed opacity-60"
@@ -1332,32 +1325,31 @@ export default function MediaUploader({
                   className="hidden"
                 />
 
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-neutral-700 bg-neutral-900 text-2xl text-emerald-400">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-sky-100 text-2xl font-semibold text-sky-700">
                   ↑
                 </div>
 
-                <p className="mt-5 text-base font-medium text-white">
+                <p className="mt-5 text-base font-semibold text-slate-950">
                   Drop media here
                 </p>
 
-                <p className="mt-2 text-sm text-neutral-400">
+                <p className="mt-2 text-sm text-slate-600">
                   or{" "}
-                  <span className="font-medium text-emerald-400">
+                  <span className="font-semibold text-emerald-700">
                     browse your files
                   </span>
                 </p>
 
-                <p className="mt-4 text-xs text-neutral-500">
-                  MP4 • MOV • WEBM • MP3 •
-                  M4A • WAV • JPG • PNG • WEBP
+                <p className="mt-4 text-xs text-slate-500">
+                  MP4 • MOV • WEBM • MP3 • M4A • WAV • JPG • PNG • WEBP
                 </p>
               </div>
 
               {file && (
-                <div className="mt-6 rounded-xl border border-neutral-800 bg-neutral-950/70 p-5">
+                <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-5">
                   <div className="flex items-start gap-4">
 
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-xl text-emerald-400">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xl text-emerald-700">
                       {getMediaIcon(file)}
                     </div>
 
@@ -1365,11 +1357,11 @@ export default function MediaUploader({
                       <div className="flex flex-wrap items-start justify-between gap-2">
 
                         <div>
-                          <p className="truncate font-medium text-white">
+                          <p className="truncate font-semibold text-slate-950">
                             {file.name}
                           </p>
 
-                          <p className="mt-1 text-xs text-neutral-500">
+                          <p className="mt-1 text-xs text-slate-500">
                             {getMediaLabel(file)}
                             {" • "}
                             {formatFileSize(file.size)}
@@ -1384,7 +1376,7 @@ export default function MediaUploader({
                               resetFileInput();
                               clearMessage();
                             }}
-                            className="text-xs font-medium text-neutral-400 transition hover:text-white"
+                            className="text-xs font-semibold text-slate-500 transition hover:text-red-600"
                           >
                             Remove
                           </button>
@@ -1397,11 +1389,11 @@ export default function MediaUploader({
 
               {canUseThumbnail && (
                 <div className="mt-8">
-                  <h3 className="text-sm font-semibold uppercase tracking-wide text-neutral-300">
+                  <h3 className="text-sm font-bold uppercase tracking-wide text-slate-700">
                     Thumbnail / Cover Image
                   </h3>
 
-                  <p className="mt-2 text-sm leading-6 text-neutral-500">
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
                     {isVideo
                       ? "Choose how the video thumbnail should be created."
                       : "Audio has no video frame, so you can optionally add a cover image."}
@@ -1419,11 +1411,11 @@ export default function MediaUploader({
                         }
                         className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
                           thumbnailMode === "auto"
-                            ? "border-emerald-500 bg-emerald-500/10 text-emerald-300"
-                            : "border-neutral-700 bg-neutral-950 text-neutral-400 hover:border-neutral-600 hover:text-white"
+                            ? "border-emerald-500 bg-emerald-50 text-emerald-800 shadow-sm"
+                            : "border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:bg-sky-50"
                         }`}
                       >
-                        <span className="block font-medium">
+                        <span className="block font-semibold">
                           Automatic
                         </span>
                         <span className="mt-1 block text-xs opacity-75">
@@ -1437,11 +1429,11 @@ export default function MediaUploader({
                         disabled={uploading}
                         className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
                           thumbnailMode === "frame"
-                            ? "border-emerald-500 bg-emerald-500/10 text-emerald-300"
-                            : "border-neutral-700 bg-neutral-950 text-neutral-400 hover:border-neutral-600 hover:text-white"
+                            ? "border-emerald-500 bg-emerald-50 text-emerald-800 shadow-sm"
+                            : "border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:bg-sky-50"
                         }`}
                       >
-                        <span className="block font-medium">
+                        <span className="block font-semibold">
                           Choose from video
                         </span>
                         <span className="mt-1 block text-xs opacity-75">
@@ -1455,11 +1447,11 @@ export default function MediaUploader({
                         disabled={uploading}
                         className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
                           thumbnailMode === "manual"
-                            ? "border-emerald-500 bg-emerald-500/10 text-emerald-300"
-                            : "border-neutral-700 bg-neutral-950 text-neutral-400 hover:border-neutral-600 hover:text-white"
+                            ? "border-emerald-500 bg-emerald-50 text-emerald-800 shadow-sm"
+                            : "border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:bg-sky-50"
                         }`}
                       >
-                        <span className="block font-medium">
+                        <span className="block font-semibold">
                           Custom image
                         </span>
                         <span className="mt-1 block text-xs opacity-75">
@@ -1472,7 +1464,7 @@ export default function MediaUploader({
                   {thumbnailMode === "frame" &&
                     isVideo &&
                     videoPreviewUrl && (
-                      <div className="mt-5 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5">
+                      <div className="mt-5 rounded-xl border border-sky-100 bg-slate-50 p-5">
 
                         <video
                           ref={videoPreviewRef}
@@ -1498,11 +1490,11 @@ export default function MediaUploader({
 
                         <div className="mt-5">
                           <div className="flex items-center justify-between gap-4">
-                            <p className="text-sm font-medium text-white">
+                            <p className="text-sm font-semibold text-slate-950">
                               Select frame
                             </p>
 
-                            <p className="text-sm text-emerald-400">
+                            <p className="text-sm font-semibold text-emerald-700">
                               {formatTime(
                                 selectedFrameTime
                               )}
@@ -1527,7 +1519,7 @@ export default function MediaUploader({
                             onChange={
                               handleFrameSliderChange
                             }
-                            className="mt-4 w-full accent-emerald-500"
+                            className="mt-4 w-full accent-emerald-600"
                           />
 
                           <button
@@ -1538,7 +1530,7 @@ export default function MediaUploader({
                             disabled={
                               generatingThumbnail
                             }
-                            className="mt-4 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-emerald-400 disabled:opacity-60"
+                            className="mt-4 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
                           >
                             {generatingThumbnail
                               ? "Creating thumbnail..."
@@ -1550,16 +1542,16 @@ export default function MediaUploader({
 
                   {generatingThumbnail &&
                     thumbnailMode !== "frame" && (
-                      <div className="mt-4 rounded-xl border border-neutral-800 bg-neutral-950/60 p-4 text-sm text-neutral-400">
+                      <div className="mt-4 rounded-xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-700">
                         Generating thumbnail...
                       </div>
                     )}
 
                   {thumbnailFile && (
-                    <div className="mt-4 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950/70">
+                    <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                       <div className="grid gap-0 sm:grid-cols-[200px_1fr]">
 
-                        <div className="aspect-video bg-black sm:aspect-auto">
+                        <div className="aspect-video bg-slate-100 sm:aspect-auto">
                           {thumbnailPreview && (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -1573,11 +1565,11 @@ export default function MediaUploader({
                         <div className="flex items-center justify-between gap-4 p-5">
                           <div className="min-w-0">
 
-                            <p className="truncate text-sm font-medium text-white">
+                            <p className="truncate text-sm font-semibold text-slate-950">
                               {thumbnailFile.name}
                             </p>
 
-                            <p className="mt-1 text-xs text-neutral-500">
+                            <p className="mt-1 text-xs text-slate-500">
                               {isVideo &&
                               thumbnailMode === "auto"
                                 ? "Automatically generated frame"
@@ -1622,9 +1614,9 @@ export default function MediaUploader({
                           thumbnailInputRef.current?.click()
                         }
                         disabled={uploading}
-                        className="mt-4 w-full rounded-2xl border border-dashed border-neutral-700 bg-neutral-950/60 px-6 py-6 text-left transition hover:border-emerald-500 hover:bg-neutral-900 disabled:opacity-60"
+                        className="mt-4 w-full rounded-xl border border-dashed border-sky-200 bg-sky-50/50 px-6 py-6 text-left transition hover:border-emerald-400 hover:bg-emerald-50 disabled:opacity-60"
                       >
-                        <p className="font-medium text-white">
+                        <p className="font-semibold text-slate-950">
                           {thumbnailFile
                             ? "Replace image"
                             : isAudio
@@ -1632,7 +1624,7 @@ export default function MediaUploader({
                               : "Choose custom thumbnail"}
                         </p>
 
-                        <p className="mt-2 text-sm text-neutral-500">
+                        <p className="mt-2 text-sm text-slate-500">
                           JPG, PNG or WEBP • Maximum 10 MB
                         </p>
                       </button>
@@ -1642,7 +1634,7 @@ export default function MediaUploader({
               )}
 
               <div className="mt-8">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-neutral-300">
+                <h3 className="text-sm font-bold uppercase tracking-wide text-slate-700">
                   Media information
                 </h3>
 
@@ -1651,7 +1643,7 @@ export default function MediaUploader({
                   <div>
                     <label
                       htmlFor="title"
-                      className="mb-2 block text-sm font-medium text-neutral-300"
+                      className="mb-2 block text-sm font-semibold text-slate-700"
                     >
                       Title
                     </label>
@@ -1665,14 +1657,14 @@ export default function MediaUploader({
                       }
                       disabled={uploading}
                       placeholder="Media title"
-                      className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-neutral-600 focus:border-emerald-500"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
                     />
                   </div>
 
                   <div>
                     <label
                       htmlFor="instructor"
-                      className="mb-2 block text-sm font-medium text-neutral-300"
+                      className="mb-2 block text-sm font-semibold text-slate-700"
                     >
                       Instructor
                     </label>
@@ -1688,7 +1680,7 @@ export default function MediaUploader({
                       }
                       disabled={uploading}
                       placeholder="MindSettle"
-                      className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-neutral-600 focus:border-emerald-500"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
                     />
                   </div>
                 </div>
@@ -1696,7 +1688,7 @@ export default function MediaUploader({
                 <div className="mt-5">
                   <label
                     htmlFor="description"
-                    className="mb-2 block text-sm font-medium text-neutral-300"
+                    className="mb-2 block text-sm font-semibold text-slate-700"
                   >
                     Description
                   </label>
@@ -1712,21 +1704,21 @@ export default function MediaUploader({
                     }
                     disabled={uploading}
                     placeholder="Add a short description of this media..."
-                    className="w-full resize-y rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-neutral-600 focus:border-emerald-500"
+                    className="w-full resize-y rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
                   />
                 </div>
               </div>
 
               {uploading && (
-                <div className="mt-8 rounded-xl border border-neutral-800 bg-neutral-950/60 p-5">
+                <div className="mt-8 rounded-xl border border-sky-200 bg-sky-50 p-5">
 
                   <div className="flex items-center justify-between gap-4">
                     <div>
-                      <p className="text-sm font-medium text-white">
+                      <p className="text-sm font-semibold text-slate-950">
                         Uploading media
                       </p>
 
-                      <p className="mt-1 text-xs text-neutral-500">
+                      <p className="mt-1 text-xs text-slate-500">
                         {formatFileSize(
                           uploadedBytes
                         )}
@@ -1737,14 +1729,14 @@ export default function MediaUploader({
                       </p>
                     </div>
 
-                    <span className="text-sm font-semibold text-emerald-400">
+                    <span className="text-sm font-bold text-emerald-700">
                       {progress}%
                     </span>
                   </div>
 
-                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-neutral-800">
+                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-sky-100">
                     <div
-                      className="h-full rounded-full bg-emerald-500 transition-all duration-300"
+                      className="h-full rounded-full bg-emerald-600 transition-all duration-300"
                       style={{
                         width: `${progress}%`,
                       }}
@@ -1762,7 +1754,7 @@ export default function MediaUploader({
                     !file ||
                     generatingThumbnail
                   }
-                  className="rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-neutral-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-neutral-800 disabled:text-neutral-500"
+                  className="rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
                 >
                   {generatingThumbnail
                     ? "Preparing Thumbnail..."
@@ -1777,7 +1769,7 @@ export default function MediaUploader({
                     onClick={
                       handleCancelUpload
                     }
-                    className="rounded-full border border-red-500/40 px-6 py-3 text-sm font-medium text-red-300 transition hover:bg-red-500/10"
+                    className="rounded-lg border border-red-200 bg-white px-6 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50"
                   >
                     Cancel Upload
                   </button>
@@ -1787,7 +1779,7 @@ export default function MediaUploader({
               {message && (
                 <div
                   role="status"
-                  className={`mt-6 rounded-xl border px-4 py-3 text-sm ${
+                  className={`mt-6 rounded-lg border px-4 py-3 text-sm ${
                     statusClasses[
                       messageType
                     ] ||
@@ -1802,61 +1794,55 @@ export default function MediaUploader({
 
           <aside className="space-y-6">
 
-            <section className="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-6">
+            <section className="rounded-xl border border-sky-100 bg-sky-50/70 p-6 shadow-sm">
 
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-400">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-700">
                 Upload information
               </p>
 
               <div className="mt-5 space-y-5">
 
                 <div>
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-sm font-semibold text-slate-950">
                     Application target
                   </p>
 
-                  <p className="mt-1 text-sm leading-6 text-neutral-400">
-                    Designed to support files
-                    up to 5 GB. Actual limits
-                    depend on the storage
-                    provider and plan.
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    Designed to support files up to 5 GB. Actual limits depend
+                    on the storage provider and plan.
                   </p>
                 </div>
 
-                <div className="border-t border-neutral-800 pt-5">
-                  <p className="text-sm font-medium text-white">
+                <div className="border-t border-sky-100 pt-5">
+                  <p className="text-sm font-semibold text-slate-950">
                     Thumbnail options
                   </p>
 
-                  <p className="mt-1 text-sm leading-6 text-neutral-400">
-                    Videos can use an automatic
-                    frame, an exact frame chosen
-                    by the admin, or a custom
-                    uploaded image.
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    Videos can use an automatic frame, an exact frame chosen by
+                    the admin, or a custom uploaded image.
                   </p>
                 </div>
 
-                <div className="border-t border-neutral-800 pt-5">
-                  <p className="text-sm font-medium text-white">
+                <div className="border-t border-sky-100 pt-5">
+                  <p className="text-sm font-semibold text-slate-950">
                     Audio covers
                   </p>
 
-                  <p className="mt-1 text-sm leading-6 text-neutral-400">
-                    Standalone audio can use an
-                    optional JPG, PNG or WEBP
-                    cover image.
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    Standalone audio can use an optional JPG, PNG or WEBP cover
+                    image.
                   </p>
                 </div>
 
-                <div className="border-t border-neutral-800 pt-5">
-                  <p className="text-sm font-medium text-white">
+                <div className="border-t border-sky-100 pt-5">
+                  <p className="text-sm font-semibold text-slate-950">
                     Access
                   </p>
 
-                  <p className="mt-1 text-sm leading-6 text-neutral-400">
-                    Media management is
-                    intended for authorised
-                    MindSettle administrators.
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    Media management is intended for authorised MindSettle
+                    administrators.
                   </p>
                 </div>
 
@@ -1865,6 +1851,6 @@ export default function MediaUploader({
           </aside>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

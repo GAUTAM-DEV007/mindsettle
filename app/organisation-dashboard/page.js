@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import AddMemberForm from "./AddMemberForm";
+import { removeMember } from "./actions";
 
 // proxy.js already redirects non-organisation users away from
 // /organisation-dashboard, but Next.js recommends re-checking auth inside
@@ -30,10 +32,14 @@ export default async function OrganisationDashboardPage() {
     redirect("/");
   }
 
-  // TODO: replace with real queries once organisation membership /
-  // seat-management tables exist (e.g. organisation_members, invites).
-  const memberCount = 0;
-  const pendingInvites = 0;
+  const { data: allMembers } = await supabase
+    .from("organisation_members")
+    .select("id, email, status, invited_at")
+    .eq("organisation_id", user.id)
+    .order("invited_at", { ascending: false });
+
+  const members = (allMembers ?? []).filter((m) => m.status === "active");
+  const pending = (allMembers ?? []).filter((m) => m.status === "pending");
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
@@ -50,17 +56,59 @@ export default async function OrganisationDashboardPage() {
       </div>
 
       <section className="grid gap-4 sm:grid-cols-2">
-        <StatCard label="Members" value={memberCount} />
-        <StatCard label="Pending invites" value={pendingInvites} />
+        <StatCard label="Members" value={members.length} />
+        <StatCard label="Pending invites" value={pending.length} />
       </section>
 
       <section className="mt-10 rounded-xl border border-neutral-200 p-6">
-        <h2 className="text-lg font-medium">Members</h2>
-        <p className="mt-2 text-sm text-neutral-600">
-          Member management isn&apos;t built yet. This is where the
-          organisation will invite users and manage seats.
+        <h2 className="text-lg font-medium">Add a member</h2>
+        <p className="mt-1 text-sm text-neutral-600">
+          Invite a teammate by email. They&apos;ll be added automatically the
+          next time they sign up or log in with that address.
         </p>
+        <div className="mt-4">
+          <AddMemberForm />
+        </div>
       </section>
+
+      <section className="mt-8 grid gap-6 lg:grid-cols-2">
+        <MemberList title="Members" people={members} emptyText="No members yet." />
+        <MemberList
+          title="Pending invites"
+          people={pending}
+          emptyText="No pending invites."
+        />
+      </section>
+    </div>
+  );
+}
+
+function MemberList({ title, people, emptyText }) {
+  return (
+    <div className="rounded-xl border border-neutral-200 p-6">
+      <h2 className="text-lg font-medium">{title}</h2>
+      {people.length === 0 ? (
+        <p className="mt-4 text-sm text-neutral-600">{emptyText}</p>
+      ) : (
+        <ul className="mt-4 flex flex-col gap-3 text-sm">
+          {people.map((person) => (
+            <li
+              key={person.id}
+              className="flex items-center justify-between gap-4 border-b border-neutral-100 pb-3 last:border-0 last:pb-0"
+            >
+              <span className="text-neutral-700">{person.email}</span>
+              <form action={removeMember.bind(null, person.id)}>
+                <button
+                  type="submit"
+                  className="text-xs font-medium text-red-600 hover:underline"
+                >
+                  Remove
+                </button>
+              </form>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

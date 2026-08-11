@@ -5,7 +5,10 @@ import { createClient } from "@/lib/supabase/server";
 // proxy.js already redirects non-organisation users away from
 // /organisation-dashboard, but Next.js recommends re-checking auth inside
 // the route itself rather than relying on proxy alone (a matcher change
-// could silently drop coverage).
+// could silently drop coverage). Also never statically render/cache this
+// route -- it's auth-gated and its data is per-session.
+export const dynamic = "force-dynamic";
+
 export default async function OrganisationDashboardPage() {
   const supabase = await createClient();
 

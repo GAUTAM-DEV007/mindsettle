@@ -11,6 +11,15 @@ const PROTECTED_PATHS = [
 const ADMIN_PATHS = ["/admin"];
 const ORGANISATION_PATHS = ["/organisation-dashboard"];
 
+// Every response proxy.js returns touches the session (it reads/refreshes
+// the auth cookie on every request), so none of them may be cached by
+// Vercel's edge/CDN layer -- see the Cache-Control note in
+// @supabase/ssr's own CookieMethodsServer.setAll docs.
+function withNoStore(response) {
+  response.headers.set("Cache-Control", "private, no-store");
+  return response;
+}
+
 export default async function proxy(request) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -32,6 +41,14 @@ export default async function proxy(request) {
           );
         },
       },
+      // @supabase/ssr's own docs warn that behind a CDN/reverse proxy
+      // (Vercel Edge included) the auth API call this makes can get cached,
+      // silently serving one visitor's "no session" (or another user's
+      // session) result to everyone else. `no-store` keeps every auth
+      // check live.
+      global: {
+        fetch: (url, options = {}) => fetch(url, { ...options, cache: "no-store" }),
+      },
     }
   );
 
@@ -50,7 +67,7 @@ export default async function proxy(request) {
   if (isProtectedRoute && !user) {
     const redirectUrl = new URL("/login", request.url);
     redirectUrl.searchParams.set("redirectTo", pathname);
-    return NextResponse.redirect(redirectUrl);
+    return withNoStore(NextResponse.redirect(redirectUrl));
   }
 
   const isAdminRoute = ADMIN_PATHS.some((path) => pathname.startsWith(path));
@@ -72,15 +89,15 @@ export default async function proxy(request) {
     }
 
     if (isAdminRoute && role !== "admin") {
-      return NextResponse.redirect(new URL("/", request.url));
+      return withNoStore(NextResponse.redirect(new URL("/", request.url)));
     }
 
     if (isOrganisationRoute && role !== "organisation") {
-      return NextResponse.redirect(new URL("/", request.url));
+      return withNoStore(NextResponse.redirect(new URL("/", request.url)));
     }
   }
 
-  return supabaseResponse;
+  return withNoStore(supabaseResponse);
 }
 
 export const config = {

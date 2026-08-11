@@ -6,6 +6,10 @@ import { addCategory, updateCategory, deleteCategory } from "./actions";
 // proxy.js already redirects non-admins away from /admin, but Next.js
 // recommends re-checking auth inside the route itself rather than
 // relying on proxy alone (a matcher change could silently drop coverage).
+// Also never statically render/cache this route -- it's auth-gated and
+// its data is per-admin-session.
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage({ searchParams }) {
   const { categoryError } = await searchParams;
 

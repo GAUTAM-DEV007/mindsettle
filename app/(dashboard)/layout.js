@@ -2,6 +2,10 @@ import { redirect } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
 import { createClient } from "@/lib/supabase/server";
 
+// Every route under this layout is per-user (auth-gated); never
+// statically render/cache it.
+export const dynamic = "force-dynamic";
+
 export default async function DashboardLayout({ children }) {
   const supabase = await createClient();
   const {

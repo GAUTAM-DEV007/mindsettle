@@ -2,14 +2,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AdminDashboardClient from "@/components/admin/AdminDashboardClient";
 
-// The admin page remains a Server Component.
-//
-// Its responsibility is:
-// 1. Check authentication.
-// 2. Check the admin role.
-// 3. Load analytics.
-// 4. Load categories.
-// 5. Pass the data to the interactive admin dashboard.
+// This route is auth-gated and its data depends on the current admin session.
+// Never statically render/cache it.
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage({
   searchParams,
 }) {

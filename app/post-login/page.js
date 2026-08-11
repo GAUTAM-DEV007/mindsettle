@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getDashboardForRole } from "@/lib/auth/roles";
 
+// Never statically render/cache this route -- it exists solely to read
+// the just-created session and redirect, so the result must always be
+// computed fresh per request.
+export const dynamic = "force-dynamic";
+
 export default async function PostLoginPage() {
     // Create the server-side Supabase client.
     const supabase = await createClient();

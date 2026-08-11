@@ -2,6 +2,7 @@ import {
   createMediaRecord,
   deleteMedia,
 } from "@/lib/media/media-service";
+
 import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request) {
@@ -30,6 +31,7 @@ export async function POST(request) {
       description,
       instructor,
       storagePath,
+      thumbnailPath,
       contentType,
     } = body;
 
@@ -49,6 +51,8 @@ export async function POST(request) {
         description,
         instructor,
         storagePath,
+        thumbnailPath:
+          thumbnailPath || null,
         contentType,
       });
 
@@ -57,19 +61,49 @@ export async function POST(request) {
         data: media,
       });
     } catch (dbError) {
-      await deleteMedia({
-        path: storagePath,
-      });
+      // Remove the uploaded media file if
+      // the database record cannot be created.
+      try {
+        await deleteMedia({
+          path: storagePath,
+        });
+      } catch (mediaDeleteError) {
+        console.error(
+          "Could not roll back uploaded media:",
+          mediaDeleteError
+        );
+      }
+
+      // If a thumbnail was also uploaded,
+      // remove it during rollback.
+      if (thumbnailPath) {
+        try {
+          await deleteMedia({
+            path: thumbnailPath,
+          });
+        } catch (thumbnailDeleteError) {
+          console.error(
+            "Could not roll back thumbnail:",
+            thumbnailDeleteError
+          );
+        }
+      }
 
       throw dbError;
     }
   } catch (error) {
-    console.error("POST /api/media/complete error:", error);
+    console.error(
+      "POST /api/media/complete error:",
+      error
+    );
 
     return Response.json(
       {
         success: false,
-        error: error.message || "Failed to save media.",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to save media.",
       },
       { status: 500 }
     );

@@ -21,6 +21,14 @@ function withNoStore(response) {
   return response;
 }
 
+// Plain pathname.startsWith(path) would also match unrelated sibling
+// routes that happen to share a prefix (e.g. "/admin".startsWith would
+// wrongly gate "/admin-login" or a future "/administration" page behind
+// the admin role check). Require an exact match or a "/" boundary.
+function matchesPath(pathname, path) {
+  return pathname === path || pathname.startsWith(`${path}/`);
+}
+
 export default async function proxy(request) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -62,7 +70,7 @@ export default async function proxy(request) {
   const { pathname } = request.nextUrl;
 
   const isProtectedRoute = PROTECTED_PATHS.some((path) =>
-    pathname.startsWith(path)
+    matchesPath(pathname, path)
   );
 
   if (isProtectedRoute && !user) {
@@ -71,9 +79,9 @@ export default async function proxy(request) {
     return withNoStore(NextResponse.redirect(redirectUrl));
   }
 
-  const isAdminRoute = ADMIN_PATHS.some((path) => pathname.startsWith(path));
+  const isAdminRoute = ADMIN_PATHS.some((path) => matchesPath(pathname, path));
   const isOrganisationRoute = ORGANISATION_PATHS.some((path) =>
-    pathname.startsWith(path)
+    matchesPath(pathname, path)
   );
 
   if (isAdminRoute || isOrganisationRoute) {

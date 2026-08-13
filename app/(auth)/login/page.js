@@ -223,15 +223,6 @@ export default function LoginPage() {
                 </Link>
               </p>
             </div>
-
-            <div className="mt-8 border-t border-slate-200 pt-6 text-center">
-              <Link
-                href="/admin-login"
-                className="text-sm font-medium text-slate-500 transition hover:text-slate-950"
-              >
-                Admin Login
-              </Link>
-            </div>
           </div>
         </div>
       </section>

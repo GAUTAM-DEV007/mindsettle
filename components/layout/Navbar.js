@@ -15,21 +15,21 @@ export default function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-sky-200 bg-sky-50/95 backdrop-blur-md shadow-sm">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/logo.png"
-            alt="Mindsettle logo"
-            width={48}
-            height={48}
-            priority
-            className="rounded-full object-cover"
-          />
+        
+        {/* Logo */}
+       
+  <Link href="/" className="flex h-20 items-center">
+  <Image
+    src="/logo.png"
+    alt="Mindsettle logo"
+    width={110}
+    height={110}
+    priority
+    className="h-20 w-20 object-cover rounded-full"
+  />
+</Link>
 
-          <span className="text-lg font-semibold tracking-tight text-slate-950">
-            mindsettle
-          </span>
-        </Link>
-
+        {/* Navigation */}
         <div className="hidden items-center gap-7 md:flex">
           {LINKS.map((link) => (
             <Link
@@ -42,9 +42,11 @@ export default function Navbar() {
           ))}
         </div>
 
+        {/* Login */}
         <Button href="/login" variant="primary">
           Login
         </Button>
+
       </nav>
     </header>
   );

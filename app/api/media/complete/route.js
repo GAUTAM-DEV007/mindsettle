@@ -7,24 +7,28 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request) {
   try {
-    const supabase = await createClient();
+    const supabase =
+      await createClient();
 
     const {
       data: { user },
       error,
-    } = await supabase.auth.getUser();
+    } =
+      await supabase.auth.getUser();
 
     if (error || !user) {
       return Response.json(
         {
           success: false,
-          error: "You must be logged in.",
+          error:
+            "You must be logged in.",
         },
         { status: 401 }
       );
     }
 
-    const body = await request.json();
+    const body =
+      await request.json();
 
     const {
       title,
@@ -33,55 +37,110 @@ export async function POST(request) {
       storagePath,
       thumbnailPath,
       contentType,
+
+      categoryId,
+      moodIds = [],
+
+      isFeatured = false,
+      showOnHomepage = false,
+      isPublished = true,
+      isPremium = true,
     } = body;
 
     if (!storagePath) {
       return Response.json(
         {
           success: false,
-          error: "Storage path is required.",
+          error:
+            "Storage path is required.",
         },
         { status: 400 }
       );
     }
 
     try {
-      const media = await createMediaRecord({
-        title,
-        description,
-        instructor,
-        storagePath,
-        thumbnailPath:
-          thumbnailPath || null,
-        contentType,
-      });
+      const media =
+        await createMediaRecord({
+          title,
+          description,
+          instructor,
+
+          storagePath,
+
+          thumbnailPath:
+            thumbnailPath ||
+            null,
+
+          contentType,
+
+          categoryId:
+            categoryId ||
+            null,
+
+          moodIds:
+            Array.isArray(
+              moodIds
+            )
+              ? moodIds
+              : [],
+
+          isFeatured:
+            Boolean(
+              isFeatured
+            ),
+
+          showOnHomepage:
+            Boolean(
+              showOnHomepage
+            ),
+
+          isPublished:
+            Boolean(
+              isPublished
+            ),
+
+          isPremium:
+            Boolean(
+              isPremium
+            ),
+        });
 
       return Response.json({
         success: true,
         data: media,
       });
     } catch (dbError) {
-      // Remove the uploaded media file if
-      // the database record cannot be created.
+      /*
+       * Remove the uploaded media file
+       * if the database record cannot
+       * be created.
+       */
       try {
         await deleteMedia({
           path: storagePath,
         });
-      } catch (mediaDeleteError) {
+      } catch (
+        mediaDeleteError
+      ) {
         console.error(
           "Could not roll back uploaded media:",
           mediaDeleteError
         );
       }
 
-      // If a thumbnail was also uploaded,
-      // remove it during rollback.
+      /*
+       * If a thumbnail was uploaded,
+       * remove it too.
+       */
       if (thumbnailPath) {
         try {
           await deleteMedia({
-            path: thumbnailPath,
+            path:
+              thumbnailPath,
           });
-        } catch (thumbnailDeleteError) {
+        } catch (
+          thumbnailDeleteError
+        ) {
           console.error(
             "Could not roll back thumbnail:",
             thumbnailDeleteError
@@ -100,6 +159,7 @@ export async function POST(request) {
     return Response.json(
       {
         success: false,
+
         error:
           error instanceof Error
             ? error.message

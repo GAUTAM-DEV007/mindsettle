@@ -6,9 +6,6 @@ import Link from "next/link";
 import MediaUploader from "@/components/admin/MediaUploader";
 
 import {
-  addCategory,
-  updateCategory,
-  deleteCategory,
   updateMedia,
   deleteMediaRecord,
   addProgram,
@@ -20,15 +17,30 @@ import {
   moveProgramVideoDown,
 } from "@/app/admin/actions";
 
+import { updateMediaPrograms } from "@/app/admin/program-media-actions";
+
+import {
+  addMood,
+  updateMood,
+  deleteMood,
+} from "@/app/admin/mood-actions";
+
+import {
+  addSocialLink,
+  updateSocialLink,
+  deleteSocialLink,
+} from "@/app/admin/social-actions";
+
 export default function AdminDashboardClient({
   stats,
   categories = [],
   moods = [],
   media = [],
   programs = [],
-  categoryError = null,
+  socialLinks = [],
   mediaError = null,
   programError = null,
+  socialError = null,
 }) {
   const [activeSection, setActiveSection] =
     useState(
@@ -36,8 +48,8 @@ export default function AdminDashboardClient({
         ? "media"
         : programError
           ? "programs"
-          : categoryError
-            ? "categories"
+          : socialError
+            ? "socials"
             : "overview"
     );
 
@@ -81,9 +93,14 @@ export default function AdminDashboardClient({
       icon: "▤",
     },
     {
-      id: "categories",
-      label: "Categories",
-      icon: "▦",
+      id: "moods",
+      label: "Mood Management",
+      icon: "☻",
+    },
+    {
+      id: "socials",
+      label: "Social Media",
+      icon: "↗",
     },
   ];
 
@@ -183,18 +200,12 @@ export default function AdminDashboardClient({
               <img
                 src="/logo.png"
                 alt="MindSettle"
-                className="h-10 w-10 object-contain"
+                className="h-12 w-12 object-contain"
               />
 
-              <div>
-                <p className="text-lg font-bold tracking-tight text-slate-950">
-                  MindSettle
-                </p>
-
-                <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-600">
-                  Administration
-                </p>
-              </div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-600">
+                Administration
+              </p>
             </Link>
 
             <button
@@ -299,6 +310,551 @@ export default function AdminDashboardClient({
           </div>
 
           <div className="mx-auto max-w-7xl px-6 py-8 lg:px-10 lg:py-10">
+            {/* ======================================================
+                MOOD MANAGEMENT
+            ====================================================== */}
+
+            {activeSection ===
+              "moods" && (
+              <section>
+                <SectionHeader
+                  eyebrow="Wellbeing organisation"
+                  title="Mood Management"
+                  description="Create, edit and remove the moods used across MindSettle. Media can then be assigned to these moods from Media Management."
+                />
+
+                <article className="rounded-xl border border-sky-100 bg-white p-6 shadow-md">
+                  {/* ADD MOOD */}
+
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-950">
+                      Add Mood
+                    </h3>
+
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      New moods automatically become available to the MindSettle mood experience and to Admin media assignment.
+                    </p>
+                  </div>
+
+                  <form
+                    action={addMood}
+                    className="mt-6 grid gap-4 border-b border-slate-100 pb-8 lg:grid-cols-2"
+                  >
+                    <FormField
+                      label="Mood name"
+                      htmlFor="new-mood-name"
+                    >
+                      <input
+                        id="new-mood-name"
+                        name="name"
+                        required
+                        placeholder="e.g. Calm"
+                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                      />
+                    </FormField>
+
+                    <FormField
+                      label="Slug"
+                      htmlFor="new-mood-slug"
+                    >
+                      <input
+                        id="new-mood-slug"
+                        name="slug"
+                        required
+                        placeholder="e.g. calm"
+                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                      />
+                    </FormField>
+
+                    <FormField
+                      label="Emoji"
+                      htmlFor="new-mood-emoji"
+                    >
+                      <input
+                        id="new-mood-emoji"
+                        name="emoji"
+                        placeholder="e.g. 🌿"
+                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                      />
+                    </FormField>
+
+                    <div className="lg:col-span-2">
+                      <FormField
+                        label="Description"
+                        htmlFor="new-mood-description"
+                      >
+                        <textarea
+                          id="new-mood-description"
+                          name="description"
+                          rows={3}
+                          placeholder="Describe when this mood should help the user."
+                          className="w-full resize-y rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                        />
+                      </FormField>
+                    </div>
+
+                    <div className="lg:col-span-2">
+                      <button
+                        type="submit"
+                        className="rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                      >
+                        Add Mood
+                      </button>
+                    </div>
+                  </form>
+
+                  {/* EXISTING MOODS */}
+
+                  <div className="mt-8">
+                    <h3 className="text-lg font-bold text-slate-950">
+                      Existing Moods
+                    </h3>
+
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      Edit the wording, emoji or description. Deleting a mood removes only its mood relationships; it does not delete any media.
+                    </p>
+
+                    {moods.length === 0 ? (
+                      <div className="mt-5 rounded-xl border border-dashed border-sky-200 bg-sky-50/50 px-6 py-12 text-center">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-xl">
+                          ☻
+                        </div>
+
+                        <p className="mt-4 text-sm font-semibold text-slate-700">
+                          No moods yet
+                        </p>
+
+                        <p className="mt-1 text-xs text-slate-500">
+                          Create the first mood using the form above.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="mt-5 space-y-4">
+                        {moods.map((mood) => (
+                          <details
+                            key={mood.id}
+                            className="group overflow-hidden rounded-xl border border-slate-200 bg-slate-50"
+                          >
+                            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 transition hover:bg-emerald-50">
+                              <div className="flex min-w-0 items-center gap-3">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-xl shadow-sm">
+                                  {mood.emoji || "◌"}
+                                </div>
+
+                                <div className="min-w-0">
+                                  <p className="truncate text-sm font-bold text-slate-900">
+                                    {mood.name}
+                                  </p>
+
+                                  <p className="mt-0.5 truncate text-xs text-slate-500">
+                                    /{mood.slug}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-3">
+                                <span className="hidden text-xs font-semibold text-slate-500 sm:inline">
+                                  Edit mood
+                                </span>
+
+                                <svg
+                                  viewBox="0 0 20 20"
+                                  className="h-5 w-5 shrink-0 text-slate-500 transition-transform duration-200 group-open:rotate-180"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                >
+                                  <path d="M5.5 7.5 10 12l4.5-4.5" />
+                                </svg>
+                              </div>
+                            </summary>
+
+                            <form
+                              action={updateMood}
+                              className="border-t border-slate-200 bg-white p-5"
+                            >
+                              <input
+                                type="hidden"
+                                name="id"
+                                value={mood.id}
+                              />
+
+                              <div className="grid gap-4 lg:grid-cols-[1fr_1fr_140px]">
+                                <FormField
+                                  label="Name"
+                                  htmlFor={`mood-name-${mood.id}`}
+                                >
+                                  <input
+                                    id={`mood-name-${mood.id}`}
+                                    name="name"
+                                    required
+                                    defaultValue={mood.name}
+                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                  />
+                                </FormField>
+
+                                <FormField
+                                  label="Slug"
+                                  htmlFor={`mood-slug-${mood.id}`}
+                                >
+                                  <input
+                                    id={`mood-slug-${mood.id}`}
+                                    name="slug"
+                                    required
+                                    defaultValue={mood.slug}
+                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                  />
+                                </FormField>
+
+                                <FormField
+                                  label="Emoji"
+                                  htmlFor={`mood-emoji-${mood.id}`}
+                                >
+                                  <input
+                                    id={`mood-emoji-${mood.id}`}
+                                    name="emoji"
+                                    defaultValue={mood.emoji || ""}
+                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-lg text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                  />
+                                </FormField>
+                              </div>
+
+                              <div className="mt-4">
+                                <FormField
+                                  label="Description"
+                                  htmlFor={`mood-description-${mood.id}`}
+                                >
+                                  <textarea
+                                    id={`mood-description-${mood.id}`}
+                                    name="description"
+                                    rows={3}
+                                    defaultValue={mood.description || ""}
+                                    className="w-full resize-y rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                  />
+                                </FormField>
+                              </div>
+
+                              <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:justify-between">
+                                <button
+                                  type="submit"
+                                  className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                                >
+                                  Save Mood
+                                </button>
+
+                                <button
+                                  type="submit"
+                                  formAction={deleteMood}
+                                  className="rounded-lg border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                                >
+                                  Delete Mood
+                                </button>
+                              </div>
+                            </form>
+                          </details>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              </section>
+            )}
+
+            {/* ======================================================
+                SOCIAL MEDIA
+            ====================================================== */}
+
+            {activeSection ===
+              "socials" && (
+              <section>
+                <SectionHeader
+                  eyebrow="Brand & community"
+                  title="Social Media"
+                  description="Manage the social media accounts shown across MindSettle. Enabled links with a valid URL can be displayed automatically in the user footer."
+                />
+
+                {socialError && (
+                  <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700">
+                    {socialError}
+                  </div>
+                )}
+
+                <article className="rounded-xl border border-sky-100 bg-white p-6 shadow-md">
+                  {/* ADD SOCIAL LINK */}
+
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-950">
+                      Add Social Platform
+                    </h3>
+
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      Add another social platform if MindSettle starts using a new account. Existing Instagram, Facebook, YouTube, LinkedIn and TikTok rows can be edited below.
+                    </p>
+                  </div>
+
+                  <form
+                    action={addSocialLink}
+                    className="mt-6 grid gap-4 border-b border-slate-100 pb-8 lg:grid-cols-2"
+                  >
+                    <FormField
+                      label="Platform"
+                      htmlFor="new-social-platform"
+                    >
+                      <input
+                        id="new-social-platform"
+                        name="platform"
+                        required
+                        placeholder="e.g. Instagram"
+                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                      />
+                    </FormField>
+
+                    <FormField
+                      label="Profile URL"
+                      htmlFor="new-social-url"
+                    >
+                      <input
+                        id="new-social-url"
+                        name="url"
+                        type="url"
+                        placeholder="https://..."
+                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                      />
+                    </FormField>
+
+                    <FormField
+                      label="Display order"
+                      htmlFor="new-social-sort-order"
+                    >
+                      <input
+                        id="new-social-sort-order"
+                        name="sortOrder"
+                        type="number"
+                        min="1"
+                        defaultValue={socialLinks.length + 1}
+                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                      />
+                    </FormField>
+
+                    <div className="flex items-end">
+                      <label className="flex w-full cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                        <input
+                          type="checkbox"
+                          name="isEnabled"
+                          className="mt-1 h-4 w-4 accent-emerald-600"
+                        />
+
+                        <span>
+                          <span className="block text-sm font-semibold text-slate-800">
+                            Enabled
+                          </span>
+
+                          <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+                            Show this account once a valid profile URL is saved.
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+
+                    <div className="lg:col-span-2">
+                      <button
+                        type="submit"
+                        className="rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                      >
+                        Add Social Platform
+                      </button>
+                    </div>
+                  </form>
+
+                  {/* EXISTING SOCIAL LINKS */}
+
+                  <div className="mt-8">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-950">
+                          Existing Social Links
+                        </h3>
+
+                        <p className="mt-1 text-sm leading-6 text-slate-600">
+                          Open a platform to edit its URL, visibility or display order.
+                        </p>
+                      </div>
+
+                      <p className="text-xs font-medium text-slate-500">
+                        Enabled links without a URL will stay hidden from the user footer.
+                      </p>
+                    </div>
+
+                    {socialLinks.length === 0 ? (
+                      <div className="mt-5 rounded-xl border border-dashed border-sky-200 bg-sky-50/50 px-6 py-12 text-center">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-xl text-emerald-700">
+                          ↗
+                        </div>
+
+                        <p className="mt-4 text-sm font-semibold text-slate-700">
+                          No social platforms yet
+                        </p>
+
+                        <p className="mt-1 text-xs text-slate-500">
+                          Add the first platform using the form above.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="mt-5 space-y-3">
+                        {socialLinks.map((social) => (
+                          <details
+                            key={social.id}
+                            className="group overflow-hidden rounded-xl border border-slate-200 bg-slate-50"
+                          >
+                            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 transition hover:bg-emerald-50">
+                              <div className="flex min-w-0 items-center gap-3">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold uppercase text-emerald-700 shadow-sm">
+                                  {social.platform
+                                    ?.trim()
+                                    ?.slice(0, 2) || "↗"}
+                                </div>
+
+                                <div className="min-w-0">
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <p className="truncate text-sm font-bold text-slate-900">
+                                      {social.platform}
+                                    </p>
+
+                                    <span
+                                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                                        social.is_enabled
+                                          ? "bg-emerald-100 text-emerald-700"
+                                          : "bg-slate-200 text-slate-600"
+                                      }`}
+                                    >
+                                      {social.is_enabled
+                                        ? "Enabled"
+                                        : "Disabled"}
+                                    </span>
+                                  </div>
+
+                                  <p className="mt-0.5 max-w-xl truncate text-xs text-slate-500">
+                                    {social.url ||
+                                      "No profile URL saved"}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex shrink-0 items-center gap-3">
+                                <span className="hidden text-xs font-semibold text-slate-500 sm:inline">
+                                  Edit link
+                                </span>
+
+                                <svg
+                                  viewBox="0 0 20 20"
+                                  className="h-5 w-5 text-slate-500 transition-transform duration-200 group-open:rotate-180"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                >
+                                  <path d="M5.5 7.5 10 12l4.5-4.5" />
+                                </svg>
+                              </div>
+                            </summary>
+
+                            <form
+                              action={updateSocialLink}
+                              className="border-t border-slate-200 bg-white p-5"
+                            >
+                              <input
+                                type="hidden"
+                                name="id"
+                                value={social.id}
+                              />
+
+                              <div className="grid gap-4 lg:grid-cols-[1fr_2fr_150px]">
+                                <FormField
+                                  label="Platform"
+                                  htmlFor={`social-platform-${social.id}`}
+                                >
+                                  <input
+                                    id={`social-platform-${social.id}`}
+                                    name="platform"
+                                    required
+                                    defaultValue={social.platform}
+                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                  />
+                                </FormField>
+
+                                <FormField
+                                  label="Profile URL"
+                                  htmlFor={`social-url-${social.id}`}
+                                >
+                                  <input
+                                    id={`social-url-${social.id}`}
+                                    name="url"
+                                    type="url"
+                                    defaultValue={social.url || ""}
+                                    placeholder="https://..."
+                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                  />
+                                </FormField>
+
+                                <FormField
+                                  label="Display order"
+                                  htmlFor={`social-order-${social.id}`}
+                                >
+                                  <input
+                                    id={`social-order-${social.id}`}
+                                    name="sortOrder"
+                                    type="number"
+                                    min="1"
+                                    defaultValue={social.sort_order || 1}
+                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                  />
+                                </FormField>
+                              </div>
+
+                              <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                <input
+                                  type="checkbox"
+                                  name="isEnabled"
+                                  defaultChecked={Boolean(
+                                    social.is_enabled
+                                  )}
+                                  className="mt-1 h-4 w-4 accent-emerald-600"
+                                />
+
+                                <span>
+                                  <span className="block text-sm font-semibold text-slate-800">
+                                    Enabled
+                                  </span>
+
+                                  <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+                                    Allow this social account to appear on MindSettle when a URL is available.
+                                  </span>
+                                </span>
+                              </label>
+
+                              <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:justify-between">
+                                <button
+                                  type="submit"
+                                  className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                                >
+                                  Save Social Link
+                                </button>
+
+                                <button
+                                  type="submit"
+                                  formAction={deleteSocialLink}
+                                  className="rounded-lg border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                                >
+                                  Delete Social Link
+                                </button>
+                              </div>
+                            </form>
+                          </details>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              </section>
+            )}
+
             {/* ======================================================
                 OVERVIEW
             ====================================================== */}
@@ -667,6 +1223,9 @@ export default function AdminDashboardClient({
                               moods={
                                 moods
                               }
+                              programs={
+                                programs
+                              }
                             />
                           )
                         )}
@@ -817,193 +1376,6 @@ export default function AdminDashboardClient({
               </section>
             )}
 
-            {/* ======================================================
-                CATEGORIES
-            ====================================================== */}
-
-            {activeSection ===
-              "categories" && (
-              <section>
-                <SectionHeader
-                  eyebrow="Organisation"
-                  title="Categories"
-                  description="Create and manage categories used to organise MindSettle content."
-                />
-
-                <article className="rounded-xl border border-sky-100 bg-white p-6 shadow-md">
-                  {categoryError && (
-                    <p className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                      {categoryError}
-                    </p>
-                  )}
-
-                  {/* ADD CATEGORY */}
-
-                  <div>
-                    <h3 className="text-lg font-semibold text-slate-950">
-                      Add Category
-                    </h3>
-
-                    <p className="mt-1 text-sm text-slate-600">
-                      Add a new
-                      category to
-                      organise media
-                      in the user
-                      library.
-                    </p>
-                  </div>
-
-                  <form
-                    action={
-                      addCategory
-                    }
-                    className="mt-6 grid gap-4 border-b border-slate-100 pb-8 sm:grid-cols-[1fr_1fr_auto]"
-                  >
-                    <div>
-                      <label
-                        htmlFor="new-name"
-                        className="mb-2 block text-sm font-medium text-slate-700"
-                      >
-                        Name
-                      </label>
-
-                      <input
-                        id="new-name"
-                        name="name"
-                        required
-                        placeholder="e.g. Meditation"
-                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="new-slug"
-                        className="mb-2 block text-sm font-medium text-slate-700"
-                      >
-                        Slug
-                      </label>
-
-                      <input
-                        id="new-slug"
-                        name="slug"
-                        required
-                        placeholder="e.g. meditation"
-                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
-                      />
-                    </div>
-
-                    <div className="flex items-end">
-                      <button
-                        type="submit"
-                        className="w-full rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 sm:w-auto"
-                      >
-                        Add Category
-                      </button>
-                    </div>
-                  </form>
-
-                  {/* EXISTING CATEGORIES */}
-
-                  <div className="mt-8">
-                    <h3 className="text-lg font-semibold text-slate-950">
-                      Existing
-                      Categories
-                    </h3>
-
-                    <p className="mt-1 text-sm text-slate-600">
-                      Update category
-                      names or remove
-                      categories that
-                      are no longer
-                      required.
-                    </p>
-
-                    <div className="mt-5 space-y-3">
-                      {categories.length ===
-                      0 ? (
-                        <div className="rounded-xl border border-dashed border-sky-200 bg-sky-50/50 px-6 py-12 text-center">
-                          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-sky-100 text-sky-700">
-                            ▦
-                          </div>
-
-                          <p className="mt-4 text-sm font-medium text-slate-700">
-                            No categories
-                            yet
-                          </p>
-
-                          <p className="mt-1 text-xs text-slate-500">
-                            Create the
-                            first category
-                            using the form
-                            above.
-                          </p>
-                        </div>
-                      ) : (
-                        categories.map(
-                          (
-                            category
-                          ) => (
-                            <form
-                              key={
-                                category.id
-                              }
-                              action={
-                                updateCategory
-                              }
-                              className="grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-[1fr_1fr_auto_auto]"
-                            >
-                              <input
-                                type="hidden"
-                                name="id"
-                                value={
-                                  category.id
-                                }
-                              />
-
-                              <input
-                                name="name"
-                                defaultValue={
-                                  category.name
-                                }
-                                required
-                                className="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none focus:border-emerald-500"
-                              />
-
-                              <input
-                                name="slug"
-                                defaultValue={
-                                  category.slug
-                                }
-                                required
-                                className="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none focus:border-emerald-500"
-                              />
-
-                              <button
-                                type="submit"
-                                className="rounded-lg border border-emerald-600 px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
-                              >
-                                Save
-                              </button>
-
-                              <button
-                                type="submit"
-                                formAction={
-                                  deleteCategory
-                                }
-                                className="rounded-lg px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
-                              >
-                                Delete
-                              </button>
-                            </form>
-                          )
-                        )
-                      )}
-                    </div>
-                  </div>
-                </article>
-              </section>
-            )}
           </div>
         </main>
       </div>
@@ -1374,9 +1746,15 @@ function MediaManagementCard({
   item,
   categories,
   moods,
+  programs,
 }) {
   const [editing, setEditing] =
     useState(false);
+
+  const assignedProgramIds =
+    Array.isArray(item.program_ids)
+      ? item.program_ids
+      : [];
 
   const category =
     categories.find(
@@ -1391,6 +1769,21 @@ function MediaManagementCard({
     )
       ? item.mood_ids
       : [];
+
+  async function handleSaveMedia(formData) {
+    await updateMedia(formData);
+    setEditing(false);
+  }
+
+  async function handleDeleteMedia(formData) {
+    await deleteMediaRecord(formData);
+    setEditing(false);
+  }
+
+  async function handleUpdatePrograms(formData) {
+    await updateMediaPrograms(formData);
+    setEditing(false);
+  }
 
   return (
     <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
@@ -1511,6 +1904,22 @@ function MediaManagementCard({
                   {mood.name}
                 </span>
               ))}
+
+            {programs
+              .filter((program) =>
+                assignedProgramIds.includes(
+                  program.id
+                )
+              )
+              .map((program) => (
+                <span
+                  key={program.id}
+                  className="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-800"
+                >
+                  Program:{" "}
+                  {program.title}
+                </span>
+              ))}
           </div>
 
           {/* ACTIONS */}
@@ -1552,7 +1961,7 @@ function MediaManagementCard({
       {editing && (
         <div className="border-t border-slate-200 bg-slate-50/80 p-5 sm:p-6">
           <form
-            action={updateMedia}
+            action={handleSaveMedia}
           >
             <input
               type="hidden"
@@ -1820,11 +2229,93 @@ function MediaManagementCard({
               <button
                 type="submit"
                 formAction={
-                  deleteMediaRecord
+                  handleDeleteMedia
                 }
                 className="rounded-lg border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
               >
                 Delete media permanently
+              </button>
+            </div>
+          </form>
+
+          {/* PROGRAM ASSIGNMENT
+              Kept separate from Save changes so the
+              working media + mood update flow stays isolated. */}
+
+          <form
+            action={handleUpdatePrograms}
+            className="mt-7 rounded-xl border border-violet-100 bg-white p-5"
+          >
+            <input
+              type="hidden"
+              name="videoId"
+              value={item.id}
+            />
+
+            <div>
+              <h4 className="text-sm font-bold text-slate-950">
+                Program assignment
+              </h4>
+
+              <p className="mt-1 text-xs leading-5 text-slate-500">
+                Choose which Admin-created programs should
+                contain this media. Updating this section
+                does not delete the media itself.
+              </p>
+            </div>
+
+            {programs.length > 0 ? (
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {programs.map(
+                  (program) => (
+                    <label
+                      key={program.id}
+                      className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 transition hover:border-violet-300 hover:bg-violet-50"
+                    >
+                      <input
+                        type="checkbox"
+                        name="programIds"
+                        value={program.id}
+                        defaultChecked={assignedProgramIds.includes(
+                          program.id
+                        )}
+                        className="mt-1 h-4 w-4 accent-violet-600"
+                      />
+
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-semibold text-slate-800">
+                          {program.title}
+                        </span>
+
+                        <span className="mt-0.5 block text-xs text-slate-500">
+                          {program.is_published
+                            ? "Published program"
+                            : "Hidden program"}
+                        </span>
+                      </span>
+                    </label>
+                  )
+                )}
+              </div>
+            ) : (
+              <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-5 py-7 text-center">
+                <p className="text-sm font-semibold text-slate-700">
+                  No programs have been created yet.
+                </p>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  Create a program from Admin → Programs
+                  and it will automatically appear here.
+                </p>
+              </div>
+            )}
+
+            <div className="mt-5 flex justify-end">
+              <button
+                type="submit"
+                className="rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700"
+              >
+                Update programs
               </button>
             </div>
           </form>

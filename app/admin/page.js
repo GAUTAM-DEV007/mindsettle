@@ -13,10 +13,10 @@ export default async function AdminDashboardPage({
     categoryError,
     mediaError,
     programError,
+    socialError,
   } = await searchParams;
 
-  const supabase =
-    await createClient();
+  const supabase = await createClient();
 
   // --------------------------------------------------
   // AUTHENTICATION
@@ -25,8 +25,7 @@ export default async function AdminDashboardPage({
   const {
     data: { user },
     error: userError,
-  } =
-    await supabase.auth.getUser();
+  } = await supabase.auth.getUser();
 
   if (userError || !user) {
     redirect("/");
@@ -85,6 +84,11 @@ export default async function AdminDashboardPage({
     {
       data: programVideoRows,
       error: programVideosError,
+    },
+
+    {
+      data: socialLinks,
+      error: socialLinksError,
     },
 
     mediaResult,
@@ -164,6 +168,26 @@ export default async function AdminDashboardPage({
         }
       ),
 
+    supabase
+      .from("social_links")
+      .select(
+        `
+        id,
+        platform,
+        url,
+        is_enabled,
+        sort_order,
+        created_at,
+        updated_at
+        `
+      )
+      .order(
+        "sort_order",
+        {
+          ascending: true,
+        }
+      ),
+
     getMedia(),
   ]);
 
@@ -234,6 +258,17 @@ export default async function AdminDashboardPage({
 
     throw new Error(
       programVideosError.message
+    );
+  }
+
+  if (socialLinksError) {
+    console.error(
+      "Admin social links error:",
+      socialLinksError
+    );
+
+    throw new Error(
+      socialLinksError.message
     );
   }
 
@@ -374,33 +409,32 @@ export default async function AdminDashboardPage({
   return (
     <AdminDashboardClient
       stats={stats}
-
       categories={
         categories || []
       }
-
       moods={
         moods || []
       }
-
       media={
         mediaWithRelations
       }
-
       programs={
         programsWithVideos
       }
-
+      socialLinks={
+        socialLinks || []
+      }
       categoryError={
         categoryError || null
       }
-
       mediaError={
         mediaError || null
       }
-
       programError={
         programError || null
+      }
+      socialError={
+        socialError || null
       }
     />
   );

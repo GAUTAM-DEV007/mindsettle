@@ -1,79 +1,19 @@
 import Link from "next/link";
+
 import { createClient } from "@/lib/supabase/server";
+
 import MediaRow from "@/components/video/MediaRow";
 import FeaturedHero from "@/components/video/FeaturedHero";
 
-const MOODS = [
-  {
-    label: "Calm",
-    emoji: "🌿",
-    value: "calm",
-    description: "Find your calm",
-    classes:
-      "border-emerald-100 bg-emerald-50/90 text-emerald-900",
-    descriptionClasses:
-      "text-emerald-700",
-  },
-  {
-    label: "Sleep",
-    emoji: "🌙",
-    value: "sleep",
-    description: "Wind down & rest",
-    classes:
-      "border-violet-100 bg-violet-50/90 text-violet-900",
-    descriptionClasses:
-      "text-violet-700",
-  },
-  {
-    label: "Stress Relief",
-    emoji: "🍂",
-    value: "stress",
-    description: "Release & relax",
-    classes:
-      "border-rose-100 bg-rose-50/90 text-rose-900",
-    descriptionClasses:
-      "text-rose-700",
-  },
-  {
-    label: "Focus",
-    emoji: "◎",
-    value: "focus",
-    description: "Stay present & sharp",
-    classes:
-      "border-sky-100 bg-sky-50/90 text-sky-900",
-    descriptionClasses:
-      "text-sky-700",
-  },
-  {
-    label: "Energy",
-    emoji: "☀️",
-    value: "energy",
-    description: "Feel uplifted & alive",
-    classes:
-      "border-amber-100 bg-amber-50/90 text-amber-900",
-    descriptionClasses:
-      "text-amber-700",
-  },
-  {
-    label: "Ease Anxiety",
-    emoji: "🫶",
-    value: "anxiety",
-    description: "Find steady ground",
-    classes:
-      "border-orange-100 bg-orange-50/90 text-orange-900",
-    descriptionClasses:
-      "text-orange-700",
-  },
-];
+/* =========================================================
+   WATCH PROGRESS
+========================================================= */
 
 function calculateProgress(
   progressSeconds,
   durationMinutes
 ) {
-  if (
-    !progressSeconds ||
-    !durationMinutes
-  ) {
+  if (!progressSeconds || !durationMinutes) {
     return 0;
   }
 
@@ -85,11 +25,13 @@ function calculateProgress(
   }
 
   return Math.round(
-    (progressSeconds /
-      totalSeconds) *
-      100
+    (progressSeconds / totalSeconds) * 100
   );
 }
+
+/* =========================================================
+   PRIVATE SIGNED STORAGE URL
+========================================================= */
 
 async function createSignedStorageUrl(
   supabase,
@@ -119,6 +61,10 @@ async function createSignedStorageUrl(
 
   return data?.signedUrl ?? null;
 }
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
 
 function SectionHeader({
   title,
@@ -151,102 +97,725 @@ function SectionHeader({
   );
 }
 
-function MoodSelector({
-  selectedMood,
+/* =========================================================
+   MOOD CARD
+
+   Preview D hover effect:
+   - slight lift
+   - emerald glow
+   - brighter icon
+   - arrow movement
+========================================================= */
+
+function MoodCard({
+  mood,
+  sessionCount = 0,
 }) {
+  const sessionLabel =
+    sessionCount === 1
+      ? "1 session"
+      : `${sessionCount} sessions`;
+
   return (
-    <aside className="rounded-[24px] border border-slate-200/80 bg-white/95 p-4 shadow-[0_12px_35px_rgba(15,23,42,0.06)]">
-      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-700">
-        Your wellbeing
-      </p>
+    <Link
+      href={`/mood?mood=${encodeURIComponent(
+        mood.slug
+      )}`}
+      aria-label={`${mood.name}, ${sessionLabel}`}
+      title={`${mood.name} · ${sessionLabel}`}
+      className="
+        group
+        relative
+        flex
+        h-full
+        w-full
+        min-w-0
+        items-center
+        gap-3
+        overflow-hidden
+        rounded-[18px]
+        border
+        border-slate-200
+        bg-white/95
+        px-4
+        shadow-[0_6px_20px_rgba(15,23,42,0.05)]
+        backdrop-blur-md
+        transition-all
+        duration-300
 
-      <h1 className="mt-1.5 text-xl font-bold leading-tight tracking-tight text-slate-950">
-        What would help
+        hover:-translate-y-1
+        hover:border-emerald-300
+        hover:bg-emerald-50/90
+        hover:shadow-[0_16px_34px_rgba(16,185,129,0.17)]
 
-        <span className="block text-emerald-800">
-          you right now?
-        </span>
-      </h1>
+        focus:outline-none
+        focus:ring-2
+        focus:ring-emerald-300
+      "
+    >
+      {/* HOVER GLOW */}
 
-      <p className="mt-2 text-xs leading-5 text-slate-600">
-        Choose a mood to discover
-        sessions that may suit your
-        moment.
-      </p>
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute
+          -left-10
+          -top-10
+          h-28
+          w-28
+          rounded-full
+          bg-emerald-200/0
+          blur-2xl
+          transition-all
+          duration-300
 
-      <div className="mt-4 space-y-2">
-        {MOODS.map((item) => {
-          const active =
-            selectedMood ===
-            item.value;
+          group-hover:bg-emerald-200/55
+        "
+      />
 
-          return (
-            <Link
-              key={item.value}
-              href={`/library?mood=${item.value}`}
-              className={`flex min-h-[48px] items-center justify-between gap-3 rounded-xl border px-3.5 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-emerald-300 ${
-                active
-                  ? "border-emerald-400 bg-emerald-100 shadow-sm"
-                  : item.classes
-              }`}
-            >
-              <div className="flex min-w-0 items-center gap-2.5">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/80 text-base shadow-sm">
-                  {item.emoji}
-                </span>
+      {/* ICON */}
 
-                <span className="truncate text-xs font-bold sm:text-sm">
-                  {item.label}
-                </span>
-              </div>
+      <span
+        className="
+          relative
+          z-10
+          flex
+          h-11
+          w-11
+          shrink-0
+          items-center
+          justify-center
+          rounded-full
+          bg-emerald-50
+          text-xl
+          shadow-sm
+          transition-all
+          duration-300
 
-              <span
-                className={`shrink-0 text-[10px] font-medium sm:text-xs ${
-                  active
-                    ? "text-emerald-800"
-                    : item.descriptionClasses
-                }`}
-              >
-                {item.description}
-              </span>
-            </Link>
-          );
-        })}
-      </div>
-    </aside>
+          group-hover:scale-110
+          group-hover:bg-white
+          group-hover:shadow-md
+        "
+      >
+        {mood.emoji || "✦"}
+      </span>
+
+      {/* NAME */}
+
+      <span className="relative z-10 min-w-0 flex-1 truncate text-sm font-bold text-slate-800 transition group-hover:text-emerald-900">
+        {mood.name}
+      </span>
+
+      {/* ARROW */}
+
+      <span
+        aria-hidden="true"
+        className="
+          relative
+          z-10
+          shrink-0
+          text-lg
+          text-slate-300
+          transition-all
+          duration-300
+
+          group-hover:translate-x-1
+          group-hover:text-emerald-700
+        "
+      >
+        →
+      </span>
+    </Link>
   );
 }
+
+/* =========================================================
+   EMPTY SLOT
+
+   If fewer than 18 moods exist, the design does not stretch.
+========================================================= */
+
+function EmptyMoodSlot() {
+  return (
+    <div
+      aria-hidden="true"
+      className="h-full w-full"
+    />
+  );
+}
+
+/* =========================================================
+   MOOD SLOT
+========================================================= */
+
+function MoodSlot({
+  mood,
+  moodSessionCounts,
+}) {
+  if (!mood) {
+    return <EmptyMoodSlot />;
+  }
+
+  return (
+    <MoodCard
+      mood={mood}
+      sessionCount={
+        moodSessionCounts[
+          mood.id
+        ] ?? 0
+      }
+    />
+  );
+}
+
+/* =========================================================
+   EXACT 18-SLOT MOOD FRAME
+
+   5 TOP
+   4 LEFT
+   4 RIGHT
+   5 BOTTOM
+
+   Mood #19+ goes to More moods.
+========================================================= */
+
+function getMoodFrame(moods) {
+  return {
+    top: moods.slice(0, 5),
+
+    left: moods.slice(5, 9),
+
+    right: moods.slice(9, 13),
+
+    bottom: moods.slice(13, 18),
+
+    extra: moods.slice(18),
+  };
+}
+
+/* =========================================================
+   FIXED SLOT ARRAY
+========================================================= */
+
+function makeFixedSlots(
+  moods,
+  size
+) {
+  return Array.from(
+    {
+      length: size,
+    },
+    (_, index) =>
+      moods[index] ?? null
+  );
+}
+
+/* =========================================================
+   WELLNESS HERO
+
+   DESKTOP:
+
+   [Mood] [Mood] [Mood] [Mood] [Mood]
+
+   [Mood]  ┌────────────────────────────┐ [Mood]
+   [Mood]  │                            │ [Mood]
+   [Mood]  │      FEATURED HERO         │ [Mood]
+   [Mood]  │                            │ [Mood]
+           └────────────────────────────┘
+
+   [Mood] [Mood] [Mood] [Mood] [Mood]
+========================================================= */
+
+function WellnessHero({
+  moods,
+  featured,
+  moodSessionCounts,
+}) {
+  const {
+    top,
+    left,
+    right,
+    bottom,
+    extra,
+  } =
+    getMoodFrame(
+      moods
+    );
+
+  const topSlots =
+    makeFixedSlots(
+      top,
+      5
+    );
+
+  const leftSlots =
+    makeFixedSlots(
+      left,
+      4
+    );
+
+  const rightSlots =
+    makeFixedSlots(
+      right,
+      4
+    );
+
+  const bottomSlots =
+    makeFixedSlots(
+      bottom,
+      5
+    );
+
+  return (
+    <section
+      className="
+        relative
+        overflow-hidden
+        rounded-[30px]
+        border
+        border-slate-200/80
+        bg-white/95
+        px-5
+        py-5
+        shadow-[0_18px_55px_rgba(15,23,42,0.07)]
+
+        sm:px-6
+        lg:px-7
+      "
+    >
+      {/* =================================================
+          BACKGROUND
+      ================================================= */}
+
+      <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-emerald-100/25 blur-3xl" />
+
+      <div className="pointer-events-none absolute -right-32 bottom-10 h-96 w-96 rounded-full bg-sky-100/25 blur-3xl" />
+
+      {/* =================================================
+          HEADING
+      ================================================= */}
+
+      <div className="relative z-10">
+        <h1
+          className="
+            max-w-[1100px]
+            text-3xl
+            font-bold
+            tracking-tight
+            text-slate-950
+
+            sm:text-4xl
+            lg:text-[38px]
+            lg:leading-[1.08]
+
+            xl:text-[40px]
+          "
+        >
+          Choose the Mood to get started for{" "}
+          <span className="whitespace-nowrap">
+            your wellbeing.
+          </span>
+        </h1>
+
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600 sm:text-base">
+          Select how you feel right now and discover sessions that may support your moment.
+        </p>
+      </div>
+
+      {/* =================================================
+          DESKTOP
+      ================================================= */}
+
+      <div className="relative z-10 mx-auto mt-6 hidden w-full max-w-[1420px] lg:block">
+        {/* =================================================
+            TOP 5
+        ================================================= */}
+
+        <div className="grid grid-cols-5 gap-3">
+          {topSlots.map(
+            (
+              mood,
+              index
+            ) => (
+              <div
+                key={
+                  mood?.id ??
+                  `top-empty-${index}`
+                }
+                className="h-[92px]"
+              >
+                <MoodSlot
+                  mood={mood}
+                  moodSessionCounts={
+                    moodSessionCounts
+                  }
+                />
+              </div>
+            )
+          )}
+        </div>
+
+        {/* =================================================
+            MIDDLE
+        ================================================= */}
+
+        <div
+          className="
+            mt-3
+            grid
+            gap-3
+          "
+          style={{
+            gridTemplateColumns:
+              "220px minmax(0, 1fr) 220px",
+          }}
+        >
+          {/* ===============================================
+              LEFT 4
+          =============================================== */}
+
+          <div className="grid grid-rows-4 gap-3">
+            {leftSlots.map(
+              (
+                mood,
+                index
+              ) => (
+                <div
+                  key={
+                    mood?.id ??
+                    `left-empty-${index}`
+                  }
+                  className="h-[96px]"
+                >
+                  <MoodSlot
+                    mood={mood}
+                    moodSessionCounts={
+                      moodSessionCounts
+                    }
+                  />
+                </div>
+              )
+            )}
+          </div>
+
+          {/* ===============================================
+              LARGE CENTRE FEATURED HERO
+          =============================================== */}
+
+          <div
+            className="
+              relative
+              min-w-0
+              overflow-hidden
+              rounded-[24px]
+            "
+            style={{
+              height:
+                "420px",
+            }}
+          >
+            <div className="pointer-events-none absolute inset-2 rounded-[28px] bg-emerald-100/30 blur-2xl" />
+
+            <div
+              className="
+                relative
+                z-10
+                h-full
+                w-full
+
+                [&>*]:h-full
+                [&>*]:w-full
+                [&>*]:max-w-none
+              "
+            >
+              <FeaturedHero
+                featured={
+                  featured
+                }
+              />
+            </div>
+          </div>
+
+          {/* ===============================================
+              RIGHT 4
+          =============================================== */}
+
+          <div className="grid grid-rows-4 gap-3">
+            {rightSlots.map(
+              (
+                mood,
+                index
+              ) => (
+                <div
+                  key={
+                    mood?.id ??
+                    `right-empty-${index}`
+                  }
+                  className="h-[96px]"
+                >
+                  <MoodSlot
+                    mood={mood}
+                    moodSessionCounts={
+                      moodSessionCounts
+                    }
+                  />
+                </div>
+              )
+            )}
+          </div>
+        </div>
+
+        {/* =================================================
+            BOTTOM 5
+        ================================================= */}
+
+        <div className="mt-3 grid grid-cols-5 gap-3">
+          {bottomSlots.map(
+            (
+              mood,
+              index
+            ) => (
+              <div
+                key={
+                  mood?.id ??
+                  `bottom-empty-${index}`
+                }
+                className="h-[92px]"
+              >
+                <MoodSlot
+                  mood={mood}
+                  moodSessionCounts={
+                    moodSessionCounts
+                  }
+                />
+              </div>
+            )
+          )}
+        </div>
+
+        {/* =================================================
+            EXTRA MOODS — MOOD #19+
+        ================================================= */}
+
+        {extra.length > 0 && (
+          <div className="mt-5">
+            <div className="mb-3 flex items-center gap-3">
+              <div className="h-px flex-1 bg-slate-200" />
+
+              <p className="shrink-0 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                More moods
+              </p>
+
+              <div className="h-px flex-1 bg-slate-200" />
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-3">
+              {extra.map(
+                (mood) => (
+                  <div
+                    key={
+                      mood.id
+                    }
+                    className="h-[82px] w-[220px]"
+                  >
+                    <MoodCard
+                      mood={mood}
+                      sessionCount={
+                        moodSessionCounts[
+                          mood.id
+                        ] ?? 0
+                      }
+                    />
+                  </div>
+                )
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* =================================================
+          TABLET / MOBILE
+      ================================================= */}
+
+      <div className="relative z-10 mt-5 lg:hidden">
+        <div className="mx-auto w-full max-w-3xl">
+          <FeaturedHero
+            featured={
+              featured
+            }
+          />
+        </div>
+
+        {moods.length > 0 && (
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {moods.map(
+              (mood) => (
+                <div
+                  key={
+                    mood.id
+                  }
+                  className="h-[76px]"
+                >
+                  <MoodCard
+                    mood={mood}
+                    sessionCount={
+                      moodSessionCounts[
+                        mood.id
+                      ] ?? 0
+                    }
+                  />
+                </div>
+              )
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* =========================================================
+   LIBRARY PAGE
+========================================================= */
 
 export default async function LibraryPage({
   searchParams,
 }) {
+  const resolvedSearchParams =
+    searchParams
+      ? await searchParams
+      : {};
+
   const {
     q = "",
     category = "",
-    mood = "",
-  } = await searchParams;
+  } =
+    resolvedSearchParams;
 
   const supabase =
     await createClient();
 
   const {
-    data: { user },
+    data: {
+      user,
+    },
   } =
     await supabase.auth.getUser();
 
-  /*
-   * CATEGORIES
-   */
+  /* ======================================================
+     CATEGORIES
+  ====================================================== */
 
-  const { data: categories } =
+  const {
+    data: categories,
+    error: categoriesError,
+  } =
     await supabase
       .from("categories")
-      .select("id, name, slug")
+      .select(
+        "id, name, slug"
+      )
       .order("name");
 
-  /*
-   * VIDEOS
-   */
+  if (categoriesError) {
+    console.error(
+      "Could not load categories:",
+      categoriesError
+    );
+  }
+
+  /* ======================================================
+     MOODS
+
+     These are REAL moods from Supabase.
+
+     Admin-added moods automatically appear here.
+  ====================================================== */
+
+  const {
+    data: moodData,
+    error: moodsError,
+  } =
+    await supabase
+      .from("moods")
+      .select(
+        `
+        id,
+        name,
+        slug,
+        emoji,
+        description,
+        created_at
+        `
+      )
+      .order(
+        "created_at",
+        {
+          ascending: true,
+        }
+      );
+
+  if (moodsError) {
+    console.error(
+      "Could not load moods:",
+      moodsError
+    );
+  }
+
+  const moods =
+    moodData || [];
+
+  /* ======================================================
+     VIDEO ↔ MOOD RELATIONSHIPS
+  ====================================================== */
+
+  const {
+    data: videoMoodData,
+    error: videoMoodError,
+  } =
+    await supabase
+      .from("video_moods")
+      .select(
+        `
+        video_id,
+        mood_id
+        `
+      );
+
+  if (videoMoodError) {
+    console.error(
+      "Could not load video mood relationships:",
+      videoMoodError
+    );
+  }
+
+  const videoMoodLinks =
+    videoMoodData || [];
+
+  /* ======================================================
+     MOOD SESSION COUNT
+  ====================================================== */
+
+  const moodSessionCounts = {};
+
+  videoMoodLinks.forEach(
+    (link) => {
+      moodSessionCounts[
+        link.mood_id
+      ] =
+        (
+          moodSessionCounts[
+            link.mood_id
+          ] || 0
+        ) + 1;
+    }
+  );
+
+  /* ======================================================
+     VIDEOS
+  ====================================================== */
 
   let videosQuery =
     supabase
@@ -268,9 +837,12 @@ export default async function LibraryPage({
         )
         `
       )
-      .order("created_at", {
-        ascending: false,
-      });
+      .order(
+        "created_at",
+        {
+          ascending: false,
+        }
+      );
 
   if (q) {
     videosQuery =
@@ -282,18 +854,19 @@ export default async function LibraryPage({
 
   const {
     data: rawVideos,
-    error,
-  } = await videosQuery;
+    error: videosError,
+  } =
+    await videosQuery;
 
-  if (error) {
+  if (videosError) {
     throw new Error(
-      error.message
+      videosError.message
     );
   }
 
-  /*
-   * PRIVATE SIGNED MEDIA
-   */
+  /* ======================================================
+     SIGNED MEDIA
+  ====================================================== */
 
   const videos =
     await Promise.all(
@@ -318,7 +891,8 @@ export default async function LibraryPage({
             ]);
 
           return {
-            id: video.id,
+            id:
+              video.id,
 
             title:
               video.title,
@@ -347,9 +921,9 @@ export default async function LibraryPage({
       )
     );
 
-  /*
-   * CATEGORY FILTER
-   */
+  /* ======================================================
+     CATEGORY FILTER
+  ====================================================== */
 
   let filteredVideos =
     videos;
@@ -358,93 +932,15 @@ export default async function LibraryPage({
     filteredVideos =
       videos.filter(
         (video) =>
-          video.category?.slug ===
+          video.category
+            ?.slug ===
           category
       );
   }
 
-  /*
-   * TEMPORARY MOOD MATCHING
-   */
-
-  const moodWords = {
-    calm: [
-      "calm",
-      "relax",
-      "nature",
-      "meditation",
-    ],
-
-    sleep: [
-      "sleep",
-      "night",
-      "relax",
-      "meditation",
-    ],
-
-    stress: [
-      "stress",
-      "relax",
-      "calm",
-      "nature",
-      "breathing",
-    ],
-
-    focus: [
-      "focus",
-      "mindfulness",
-      "meditation",
-    ],
-
-    energy: [
-      "energy",
-      "morning",
-      "movement",
-      "nature",
-    ],
-
-    anxiety: [
-      "anxiety",
-      "calm",
-      "breathing",
-      "nature",
-    ],
-  };
-
-  let moodVideos = [];
-
-  if (mood) {
-    const words =
-      moodWords[mood] || [];
-
-    moodVideos =
-      videos.filter(
-        (video) => {
-          const searchable = `
-            ${video.title || ""}
-            ${
-              video.description ||
-              ""
-            }
-            ${
-              video.category
-                ?.name || ""
-            }
-          `.toLowerCase();
-
-          return words.some(
-            (word) =>
-              searchable.includes(
-                word
-              )
-          );
-        }
-      );
-  }
-
-  /*
-   * WATCH HISTORY
-   */
+  /* ======================================================
+     WATCH HISTORY
+  ====================================================== */
 
   let watchHistory = [];
 
@@ -452,26 +948,27 @@ export default async function LibraryPage({
     const {
       data: historyData,
       error: historyError,
-    } = await supabase
-      .from("watch_history")
-      .select(
-        `
-        video_id,
-        progress_seconds,
-        completed,
-        watched_at
-        `
-      )
-      .eq(
-        "user_id",
-        user.id
-      )
-      .order(
-        "watched_at",
-        {
-          ascending: false,
-        }
-      );
+    } =
+      await supabase
+        .from("watch_history")
+        .select(
+          `
+          video_id,
+          progress_seconds,
+          completed,
+          watched_at
+          `
+        )
+        .eq(
+          "user_id",
+          user.id
+        )
+        .order(
+          "watched_at",
+          {
+            ascending: false,
+          }
+        );
 
     if (historyError) {
       console.error(
@@ -484,9 +981,9 @@ export default async function LibraryPage({
     }
   }
 
-  /*
-   * VIDEO LOOKUP
-   */
+  /* ======================================================
+     VIDEO LOOKUP
+  ====================================================== */
 
   const videoMap =
     Object.fromEntries(
@@ -498,9 +995,9 @@ export default async function LibraryPage({
       )
     );
 
-  /*
-   * PROGRESS
-   */
+  /* ======================================================
+     PROGRESS
+  ====================================================== */
 
   const progressMap = {};
 
@@ -525,17 +1022,16 @@ export default async function LibraryPage({
     }
   );
 
-  /*
-   * CONTINUE WATCHING
-   */
+  /* ======================================================
+     CONTINUE WATCHING
+  ====================================================== */
 
   const continueWatching =
     watchHistory
       .filter(
         (history) =>
           !history.completed &&
-          history.progress_seconds >
-            0
+          history.progress_seconds > 0
       )
       .map(
         (history) =>
@@ -545,9 +1041,9 @@ export default async function LibraryPage({
       )
       .filter(Boolean);
 
-  /*
-   * RECENTLY ADDED
-   */
+  /* ======================================================
+     RECENTLY ADDED
+  ====================================================== */
 
   const recentlyAdded =
     filteredVideos.slice(
@@ -555,9 +1051,9 @@ export default async function LibraryPage({
       12
     );
 
-  /*
-   * CATEGORY ROWS
-   */
+  /* ======================================================
+     CATEGORY ROWS
+  ====================================================== */
 
   const categoryRows =
     (categories || [])
@@ -580,18 +1076,21 @@ export default async function LibraryPage({
           row.videos.length > 0
       );
 
-  /*
-   * FEATURED
-   */
+  /* ======================================================
+     FEATURED
+  ====================================================== */
 
   const featured =
-    moodVideos[0] ||
     filteredVideos[0] ||
     videos[0] ||
     null;
 
   const hasSearch =
     Boolean(q);
+
+  /* ======================================================
+     PAGE
+  ====================================================== */
 
   return (
     <div className="relative pb-16">
@@ -602,8 +1101,9 @@ export default async function LibraryPage({
       <div className="pointer-events-none fixed left-0 top-20 -z-10 h-[320px] w-[320px] rounded-full bg-emerald-100/20 blur-3xl" />
 
       <div className="space-y-8">
-
-        {/* SEARCH */}
+        {/* =================================================
+            SEARCH HEADER
+        ================================================= */}
 
         {hasSearch && (
           <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-4 shadow-sm">
@@ -617,12 +1117,8 @@ export default async function LibraryPage({
               </h1>
 
               <p className="mt-1 text-sm text-slate-600">
-                {
-                  filteredVideos.length
-                }{" "}
-                result
-                {filteredVideos.length ===
-                1
+                {filteredVideos.length} result
+                {filteredVideos.length === 1
                   ? ""
                   : "s"}
               </p>
@@ -637,43 +1133,44 @@ export default async function LibraryPage({
           </section>
         )}
 
-        {/* NO RESULTS */}
+        {/* =================================================
+            NO RESULTS
+        ================================================= */}
 
         {hasSearch &&
-        filteredVideos.length ===
-          0 ? (
+        filteredVideos.length === 0 ? (
           <section className="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
             <h2 className="text-xl font-bold text-slate-950">
               No sessions found
             </h2>
 
             <p className="mt-2 text-sm text-slate-600">
-              We could not find a
-              session matching “{q}”.
+              We could not find a session matching “{q}”.
             </p>
           </section>
         ) : (
           <>
-
-            {/* MOOD + HERO */}
+            {/* =================================================
+                MOOD + FEATURED HERO
+            ================================================= */}
 
             {!hasSearch && (
-              <section className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)] xl:grid-cols-[320px_minmax(0,1fr)]">
-                <MoodSelector
-                  selectedMood={
-                    mood
-                  }
-                />
-
-                <FeaturedHero
-                  featured={
-                    featured
-                  }
-                />
-              </section>
+              <WellnessHero
+                moods={
+                  moods
+                }
+                featured={
+                  featured
+                }
+                moodSessionCounts={
+                  moodSessionCounts
+                }
+              />
             )}
 
-            {/* SEARCH HERO */}
+            {/* =================================================
+                SEARCH HERO
+            ================================================= */}
 
             {hasSearch && (
               <FeaturedHero
@@ -683,39 +1180,12 @@ export default async function LibraryPage({
               />
             )}
 
-            {/* MOOD RESULTS */}
+            {/* =================================================
+                CONTINUE WATCHING
+            ================================================= */}
 
             {!hasSearch &&
-              mood &&
-              moodVideos.length >
-                0 && (
-                <section>
-                  <SectionHeader
-                    title={
-                      MOODS.find(
-                        (item) =>
-                          item.value ===
-                          mood
-                      )?.label ||
-                      "Selected mood"
-                    }
-                    subtitle="Sessions that may suit how you feel right now."
-                    href="/library"
-                  />
-
-                  <MediaRow
-                    videos={
-                      moodVideos
-                    }
-                  />
-                </section>
-              )}
-
-            {/* CONTINUE */}
-
-            {!hasSearch &&
-              continueWatching.length >
-                0 && (
+              continueWatching.length > 0 && (
                 <section>
                   <SectionHeader
                     title="Continue your journey"
@@ -733,7 +1203,9 @@ export default async function LibraryPage({
                 </section>
               )}
 
-            {/* SEARCH RESULTS */}
+            {/* =================================================
+                SEARCH RESULTS
+            ================================================= */}
 
             {hasSearch && (
               <section>
@@ -749,7 +1221,9 @@ export default async function LibraryPage({
               </section>
             )}
 
-            {/* RECENTLY ADDED */}
+            {/* =================================================
+                RECENTLY ADDED
+            ================================================= */}
 
             {!hasSearch && (
               <section>
@@ -766,7 +1240,9 @@ export default async function LibraryPage({
               </section>
             )}
 
-            {/* CATEGORY ROWS */}
+            {/* =================================================
+                CATEGORY ROWS
+            ================================================= */}
 
             {!hasSearch &&
               categoryRows.map(
@@ -792,11 +1268,12 @@ export default async function LibraryPage({
                 )
               )}
 
-            {/* CATEGORY SHORTCUTS */}
+            {/* =================================================
+                CATEGORY SHORTCUTS
+            ================================================= */}
 
             {!hasSearch &&
-              categoryRows.length >
-                0 && (
+              categoryRows.length > 0 && (
                 <section>
                   <SectionHeader
                     title="Browse by category"
@@ -819,12 +1296,9 @@ export default async function LibraryPage({
                           </p>
 
                           <p className="mt-1 text-xs font-medium text-slate-600">
-                            {
-                              row.videos.length
-                            }{" "}
+                            {row.videos.length}{" "}
                             session
-                            {row.videos.length ===
-                            1
+                            {row.videos.length === 1
                               ? ""
                               : "s"}
                           </p>
@@ -835,7 +1309,9 @@ export default async function LibraryPage({
                 </section>
               )}
 
-            {/* BOTTOM CARDS */}
+            {/* =================================================
+                BOTTOM CARDS
+            ================================================= */}
 
             {!hasSearch && (
               <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -848,8 +1324,7 @@ export default async function LibraryPage({
                   </p>
 
                   <p className="mt-1 text-xs leading-5 text-slate-600">
-                    Small steps every day
-                    create lasting change.
+                    Small steps every day create lasting change.
                   </p>
 
                   <p className="mt-4 text-xs font-bold text-emerald-800">
@@ -866,8 +1341,7 @@ export default async function LibraryPage({
                   </p>
 
                   <p className="mt-1 text-xs leading-5 text-slate-600">
-                    Create your own
-                    collection of sessions.
+                    Create your own collection of sessions.
                   </p>
 
                   <p className="mt-4 text-xs font-bold text-emerald-800">
@@ -881,9 +1355,7 @@ export default async function LibraryPage({
                   </p>
 
                   <p className="mt-1 text-xs leading-5 text-slate-600">
-                    Take care of your
-                    mind, your body, and
-                    your life.
+                    Take care of your mind, your body, and your life.
                   </p>
                 </div>
               </section>

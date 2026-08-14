@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
+
 import {
   usePathname,
   useRouter,
   useSearchParams,
 } from "next/navigation";
+
 import {
   useEffect,
   useRef,
@@ -23,6 +25,10 @@ const MAIN_NAV = [
     label: "Library",
   },
   {
+    href: "/programs",
+    label: "Programs",
+  },
+  {
     href: "/favourites",
     label: "Favourites",
   },
@@ -34,10 +40,6 @@ const MAIN_NAV = [
 
 const ACCOUNT_NAV = [
   {
-    href: "/programs",
-    label: "Programs",
-  },
-  {
     href: "/account",
     label: "Account",
   },
@@ -48,20 +50,31 @@ const ACCOUNT_NAV = [
 ];
 
 export default function DashboardNavbar() {
-  const pathname = usePathname();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const pathname =
+    usePathname();
 
-  const [menuOpen, setMenuOpen] =
-    useState(false);
+  const router =
+    useRouter();
 
-  const [searchOpen, setSearchOpen] =
-    useState(false);
+  const searchParams =
+    useSearchParams();
 
-  const searchInputRef = useRef(null);
+  const [
+    menuOpen,
+    setMenuOpen,
+  ] = useState(false);
+
+  const [
+    searchOpen,
+    setSearchOpen,
+  ] = useState(false);
+
+  const searchInputRef =
+    useRef(null);
 
   const currentQuery =
-    searchParams.get("q") || "";
+    searchParams.get("q") ||
+    "";
 
   useEffect(() => {
     if (!searchOpen) {
@@ -69,28 +82,43 @@ export default function DashboardNavbar() {
     }
 
     const timer =
-      window.setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 50);
+      window.setTimeout(
+        () => {
+          searchInputRef.current?.focus();
+        },
+        50
+      );
 
     return () => {
-      window.clearTimeout(timer);
+      window.clearTimeout(
+        timer
+      );
     };
   }, [searchOpen]);
 
-  function handleSearchSubmit(event) {
+  function handleSearchSubmit(
+    event
+  ) {
     event.preventDefault();
 
     const formData =
-      new FormData(event.currentTarget);
+      new FormData(
+        event.currentTarget
+      );
 
-    const query = String(
-      formData.get("q") || ""
-    ).trim();
+    const query =
+      String(
+        formData.get("q") ||
+          ""
+      ).trim();
 
     if (!query) {
-      router.push("/library");
+      router.push(
+        "/library"
+      );
+
       setSearchOpen(false);
+
       return;
     }
 
@@ -103,14 +131,24 @@ export default function DashboardNavbar() {
     setSearchOpen(false);
   }
 
-  function isActive(href) {
-    if (href === "/dashboard") {
-      return pathname === "/dashboard";
+  function isActive(
+    href
+  ) {
+    if (
+      href ===
+      "/dashboard"
+    ) {
+      return (
+        pathname ===
+        "/dashboard"
+      );
     }
 
     return (
       pathname === href ||
-      pathname.startsWith(`${href}/`)
+      pathname.startsWith(
+        `${href}/`
+      )
     );
   }
 
@@ -130,31 +168,41 @@ export default function DashboardNavbar() {
             width={48}
             height={48}
             priority
-            className="h-11 w-11 object-contain"
+            className="h-16 w-16 object-contain"
           />
         </Link>
 
         {/* MAIN NAV */}
 
         <nav className="hidden items-center gap-1 md:flex">
-          {MAIN_NAV.map((item) => {
-            const active =
-              isActive(item.href);
+          {MAIN_NAV.map(
+            (item) => {
+              const active =
+                isActive(
+                  item.href
+                );
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                  active
-                    ? "bg-emerald-100 text-emerald-900"
-                    : "text-slate-700 hover:bg-emerald-50 hover:text-emerald-800"
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+              return (
+                <Link
+                  key={
+                    item.href
+                  }
+                  href={
+                    item.href
+                  }
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    active
+                      ? "bg-emerald-100 text-emerald-900"
+                      : "text-slate-700 hover:bg-emerald-50 hover:text-emerald-800"
+                  }`}
+                >
+                  {
+                    item.label
+                  }
+                </Link>
+              );
+            }
+          )}
         </nav>
 
         {/* RIGHT */}
@@ -194,11 +242,17 @@ export default function DashboardNavbar() {
                 </button>
 
                 <input
-                  key={currentQuery}
-                  ref={searchInputRef}
+                  key={
+                    currentQuery
+                  }
+                  ref={
+                    searchInputRef
+                  }
                   name="q"
                   type="search"
-                  defaultValue={currentQuery}
+                  defaultValue={
+                    currentQuery
+                  }
                   placeholder="Search MindSettle..."
                   aria-label="Search MindSettle"
                   className="w-48 bg-transparent pr-2 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 sm:w-56 lg:w-64"
@@ -207,7 +261,9 @@ export default function DashboardNavbar() {
                 <button
                   type="button"
                   onClick={() =>
-                    setSearchOpen(false)
+                    setSearchOpen(
+                      false
+                    )
                   }
                   aria-label="Close search"
                   className="flex h-11 w-10 shrink-0 items-center justify-center text-lg font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
@@ -219,7 +275,9 @@ export default function DashboardNavbar() {
               <button
                 type="button"
                 onClick={() =>
-                  setSearchOpen(true)
+                  setSearchOpen(
+                    true
+                  )
                 }
                 aria-label="Search library"
                 className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200"
@@ -251,10 +309,13 @@ export default function DashboardNavbar() {
               type="button"
               onClick={() =>
                 setMenuOpen(
-                  (open) => !open
+                  (open) =>
+                    !open
                 )
               }
-              aria-expanded={menuOpen}
+              aria-expanded={
+                menuOpen
+              }
               className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200"
             >
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-900">
@@ -284,14 +345,22 @@ export default function DashboardNavbar() {
                 {ACCOUNT_NAV.map(
                   (item) => (
                     <Link
-                      key={item.href}
-                      href={item.href}
+                      key={
+                        item.href
+                      }
+                      href={
+                        item.href
+                      }
                       onClick={() =>
-                        setMenuOpen(false)
+                        setMenuOpen(
+                          false
+                        )
                       }
                       className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-900"
                     >
-                      {item.label}
+                      {
+                        item.label
+                      }
                     </Link>
                   )
                 )}

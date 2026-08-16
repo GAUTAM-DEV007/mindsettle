@@ -377,7 +377,7 @@ function WellnessHero({
         border-slate-200/80
         bg-white/95
         px-5
-        py-5
+        py-3
         shadow-[0_18px_55px_rgba(15,23,42,0.07)]
 
         sm:px-6
@@ -399,17 +399,17 @@ function WellnessHero({
       <div className="relative z-10">
         <h1
           className="
-            max-w-[1100px]
+            max-w-[1200px]
             text-3xl
             font-bold
             tracking-tight
             text-slate-950
 
-            sm:text-4xl
-            lg:text-[38px]
-            lg:leading-[1.08]
+            sm:text-[32px]
+            lg:text-[34px]
+            lg:leading-[1.06]
 
-            xl:text-[40px]
+            xl:text-[36px]
           "
         >
           Choose the Mood to get started for{" "}
@@ -418,7 +418,7 @@ function WellnessHero({
           </span>
         </h1>
 
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600 sm:text-base">
+        <p className="mt-1 max-w-3xl text-sm leading-5 text-slate-600 sm:text-[15px]">
           Select how you feel right now and discover sessions that may support your moment.
         </p>
       </div>
@@ -427,12 +427,12 @@ function WellnessHero({
           DESKTOP
       ================================================= */}
 
-      <div className="relative z-10 mx-auto mt-6 hidden w-full max-w-[1420px] lg:block">
+      <div className="relative z-10 mx-auto mt-4 hidden w-full max-w-[1420px] lg:block">
         {/* =================================================
             TOP 5
         ================================================= */}
 
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-5 gap-2">
           {topSlots.map(
             (
               mood,
@@ -443,7 +443,7 @@ function WellnessHero({
                   mood?.id ??
                   `top-empty-${index}`
                 }
-                className="h-[92px]"
+                className="h-[64px]"
               >
                 <MoodSlot
                   mood={mood}
@@ -462,9 +462,9 @@ function WellnessHero({
 
         <div
           className="
-            mt-3
+            mt-2
             grid
-            gap-3
+            gap-2
           "
           style={{
             gridTemplateColumns:
@@ -475,7 +475,7 @@ function WellnessHero({
               LEFT 4
           =============================================== */}
 
-          <div className="grid grid-rows-4 gap-3">
+          <div className="grid grid-rows-4 gap-2">
             {leftSlots.map(
               (
                 mood,
@@ -486,7 +486,7 @@ function WellnessHero({
                     mood?.id ??
                     `left-empty-${index}`
                   }
-                  className="h-[96px]"
+                  className="h-[66px]"
                 >
                   <MoodSlot
                     mood={mood}
@@ -512,7 +512,7 @@ function WellnessHero({
             "
             style={{
               height:
-                "420px",
+                "288px",
             }}
           >
             <div className="pointer-events-none absolute inset-2 rounded-[28px] bg-emerald-100/30 blur-2xl" />
@@ -541,7 +541,7 @@ function WellnessHero({
               RIGHT 4
           =============================================== */}
 
-          <div className="grid grid-rows-4 gap-3">
+          <div className="grid grid-rows-4 gap-2">
             {rightSlots.map(
               (
                 mood,
@@ -552,7 +552,7 @@ function WellnessHero({
                     mood?.id ??
                     `right-empty-${index}`
                   }
-                  className="h-[96px]"
+                  className="h-[66px]"
                 >
                   <MoodSlot
                     mood={mood}
@@ -570,7 +570,7 @@ function WellnessHero({
             BOTTOM 5
         ================================================= */}
 
-        <div className="mt-3 grid grid-cols-5 gap-3">
+        <div className="mt-2 grid grid-cols-5 gap-2">
           {bottomSlots.map(
             (
               mood,
@@ -581,7 +581,7 @@ function WellnessHero({
                   mood?.id ??
                   `bottom-empty-${index}`
                 }
-                className="h-[92px]"
+                className="h-[64px]"
               >
                 <MoodSlot
                   mood={mood}

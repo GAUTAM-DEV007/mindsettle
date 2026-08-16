@@ -160,15 +160,42 @@ export default function DashboardNavbar() {
         <Link
           href="/library"
           aria-label="MindSettle Library"
-          className="flex shrink-0 items-center rounded-full outline-none focus-visible:ring-4 focus-visible:ring-emerald-200"
+          className="
+            flex
+            h-14
+            w-14
+            shrink-0
+            items-center
+            justify-center
+            overflow-hidden
+            rounded-full
+            bg-white
+            shadow-sm
+            ring-1
+            ring-slate-200
+
+            outline-none
+
+            transition
+
+            hover:ring-emerald-200
+
+            focus-visible:ring-4
+            focus-visible:ring-emerald-200
+          "
         >
           <Image
             src="/logo.png"
             alt="MindSettle"
-            width={48}
-            height={48}
+            width={56}
+            height={56}
             priority
-            className="h-16 w-16 object-contain"
+            className="
+              h-full
+              w-full
+              rounded-full
+              object-cover
+            "
           />
         </Link>
 

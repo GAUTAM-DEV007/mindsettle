@@ -156,7 +156,7 @@ export default function FeaturedHero({
           font-medium
           text-slate-500
 
-          lg:min-h-[420px]
+          lg:min-h-[288px]
         "
       >
         No featured session available.
@@ -368,7 +368,7 @@ export default function FeaturedHero({
         shadow-[0_18px_48px_rgba(15,23,42,0.20)]
 
         sm:min-h-[340px]
-        lg:min-h-[420px]
+        lg:min-h-[288px]
       "
     >
       {/* =================================================
@@ -665,7 +665,7 @@ export default function FeaturedHero({
           sm:px-8
           sm:py-8
 
-          lg:min-h-[420px]
+          lg:min-h-[288px]
           lg:px-10
           lg:py-10
 
@@ -701,7 +701,7 @@ export default function FeaturedHero({
 
         <h2
           className="
-            mt-4
+            mt-2.5
             max-w-xl
             text-3xl
             font-bold
@@ -710,7 +710,7 @@ export default function FeaturedHero({
             text-white
 
             sm:text-4xl
-            lg:text-[42px]
+            lg:text-[34px]
           "
         >
           {featured.title}
@@ -720,7 +720,7 @@ export default function FeaturedHero({
 
         <p
           className="
-            mt-2
+            mt-1.5
             text-xs
             font-semibold
             text-slate-200
@@ -741,8 +741,8 @@ export default function FeaturedHero({
         {featured.description && (
           <p
             className="
-              mt-4
-              line-clamp-3
+              mt-2.5
+              line-clamp-2
               max-w-lg
               text-xs
               leading-6
@@ -759,7 +759,7 @@ export default function FeaturedHero({
 
         {/* BUTTONS */}
 
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-4 flex flex-wrap gap-2.5">
           <Link
             href={`/library/${featured.id}`}
             className="
@@ -768,8 +768,8 @@ export default function FeaturedHero({
               gap-2
               rounded-full
               bg-emerald-600
-              px-5
-              py-2.5
+              px-4
+              py-2
               text-sm
               font-bold
               text-white
@@ -798,8 +798,8 @@ export default function FeaturedHero({
               border
               border-white/40
               bg-slate-950/35
-              px-5
-              py-2.5
+              px-4
+              py-2
               text-sm
               font-bold
               text-white

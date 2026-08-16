@@ -4,10 +4,20 @@ import {
   getMedia,
   uploadMedia,
 } from "@/lib/media/media-service";
-import { createClient } from "@/lib/supabase/server";
+import { getApiRoleContext, roleErrorResponse } from "@/lib/auth/api-role";
+
+const MAX_LEGACY_UPLOAD_BYTES = 100 * 1024 * 1024;
+const ALLOWED_MEDIA_TYPES = new Set([
+  "video/mp4", "video/webm", "video/quicktime",
+  "audio/mpeg", "audio/mp4", "audio/wav", "audio/ogg",
+  "image/jpeg", "image/png", "image/webp", "image/avif",
+]);
 
 export async function GET() {
   try {
+    const auth = await getApiRoleContext("admin");
+    if (!auth.allowed) return roleErrorResponse(auth.status);
+
     const media = await getMedia();
 
     return Response.json({
@@ -21,7 +31,7 @@ export async function GET() {
     return Response.json(
       {
         success: false,
-        error: error.message || "Failed to load media.",
+        error: "Failed to load media.",
       },
       { status: 500 }
     );
@@ -32,21 +42,12 @@ export async function POST(request) {
   let uploadedPath = null;
 
   try {
-    const supabase = await createClient();
+    const auth = await getApiRoleContext("admin");
+    if (!auth.allowed) return roleErrorResponse(auth.status);
 
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      return Response.json(
-        {
-          success: false,
-          error: "You must be logged in before uploading.",
-        },
-        { status: 401 }
-      );
+    const contentLength = Number(request.headers.get("content-length") || 0);
+    if (contentLength > MAX_LEGACY_UPLOAD_BYTES) {
+      return Response.json({ success: false, error: "This upload is too large for the standard uploader. Use the resumable admin uploader." }, { status: 413 });
     }
 
     const formData = await request.formData();
@@ -64,6 +65,14 @@ export async function POST(request) {
         },
         { status: 400 }
       );
+    }
+
+    if (file.size <= 0 || file.size > MAX_LEGACY_UPLOAD_BYTES) {
+      return Response.json({ success: false, error: "The media file must be between 1 byte and 100 MB." }, { status: 400 });
+    }
+
+    if (!ALLOWED_MEDIA_TYPES.has(file.type)) {
+      return Response.json({ success: false, error: "Unsupported media type." }, { status: 400 });
     }
 
     const safeFileName = file.name
@@ -88,13 +97,13 @@ export async function POST(request) {
     const mediaRecord = await createMediaRecord({
       title:
         typeof title === "string" && title.trim()
-          ? title.trim()
+          ? title.trim().slice(0, 160)
           : fallbackTitle,
       description:
-        typeof description === "string" ? description.trim() : "",
+        typeof description === "string" ? description.trim().slice(0, 4000) : "",
       instructor:
         typeof instructor === "string" && instructor.trim()
-          ? instructor.trim()
+          ? instructor.trim().slice(0, 120)
           : "MindSettle",
       storagePath: uploadResult.path,
       contentType: file.type,
@@ -120,10 +129,6 @@ export async function POST(request) {
           path: uploadedPath,
         });
 
-        console.log(
-          "Rollback successful. Deleted uploaded file:",
-          uploadedPath
-        );
       } catch (cleanupError) {
         console.error(
           "Rollback failed. Uploaded file could not be deleted:",
@@ -135,7 +140,7 @@ export async function POST(request) {
     return Response.json(
       {
         success: false,
-        error: error.message || "Media upload failed.",
+        error: "Media upload failed. Please try again.",
       },
       { status: 500 }
     );

@@ -1,0 +1,1216 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/wv89cb",
+    "id": "wv89cb",
+    "slide": 5,
+    "layoutId": "/ppt/slideLayouts/slideLayout2.xml",
+    "layoutName": "MASTER",
+    "masterLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+    "backgroundColor": "#F7FAFC",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1279.97,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "Office",
+    "colors": {
+      "accent1": "#4472C4",
+      "accent2": "#ED7D31",
+      "accent3": "#A5A5A5",
+      "accent4": "#FFC000",
+      "accent5": "#5B9BD5",
+      "accent6": "#70AD47",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#44546A",
+      "lt2": "#E7E6E6",
+      "hlink": "#0563C1",
+      "folHlink": "#954F72"
+    },
+    "fontScheme": {
+      "name": "Office",
+      "majorFont": {
+        "latinTypeface": "Aptos Display"
+      },
+      "minorFont": {
+        "latinTypeface": "Aptos"
+      }
+    },
+    "typefaces": [
+      "Aptos",
+      "Aptos Display"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "/ppt/slideLayouts/slideLayout2.xml",
+      "name": "MASTER",
+      "parentLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+      "backgroundColor": "#F7FAFC",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "/ppt/slideMasters/slideMaster1.xml",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/o7a90nyh",
+      "id": "2",
+      "name": "Text 0",
+      "bbox": [
+        62.4,
+        46.08,
+        403.2,
+        24
+      ],
+      "geometry": "rect",
+      "text": "FINAL TAKEAWAY",
+      "textPreview": "FINAL TAKEAWAY",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "FINAL TAKEAWAY"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "FINAL TAKEAWAY",
+          "runs": [
+            {
+              "index": 1,
+              "text": "FINAL TAKEAWAY",
+              "fontSize": 12,
+              "color": "#10B981",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p8jqtsfm",
+      "id": "3",
+      "name": "Text 1",
+      "bbox": [
+        62.4,
+        75.84,
+        844.8,
+        46.08
+      ],
+      "geometry": "rect",
+      "text": "Responsible ICT practice",
+      "textPreview": "Responsible ICT practice",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Responsible ICT practice"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Responsible ICT practice",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Responsible ICT practice",
+              "fontSize": 36,
+              "color": "#0F172A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qtsr2xg7",
+      "id": "4",
+      "name": "Text 2",
+      "bbox": [
+        64.32,
+        127.68,
+        835.2,
+        28.8
+      ],
+      "geometry": "rect",
+      "text": "Technology should be judged by how fairly it treats people.",
+      "textPreview": "Technology should be judged by how fairly it treats people.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Technology should be judged by how fairly it treats people."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Technology should be judged by how fairly it treats people.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Technology should be judged by how fairly it treats people.",
+              "fontSize": 16.4,
+              "color": "#475569"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/bul8v2xs",
+      "id": "5",
+      "name": "Shape 3",
+      "bbox": [
+        81.6,
+        196.8,
+        518.4,
+        379.2
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#0F172A",
+      "lineColor": "rgba(51, 51, 51, 0)",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/cvu947yd",
+      "id": "6",
+      "name": "Text 4",
+      "bbox": [
+        120,
+        235.2,
+        230.4,
+        24
+      ],
+      "geometry": "rect",
+      "text": "Final position",
+      "textPreview": "Final position",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Final position"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Final position",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Final position",
+              "fontSize": 20,
+              "color": "#BAE6FD",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dw3qxsfy",
+      "id": "7",
+      "name": "Text 5",
+      "bbox": [
+        120,
+        288,
+        432,
+        96
+      ],
+      "geometry": "rect",
+      "text": "Organisations should clearly disclose automated systems and should not sell identifiable customer information without informed permission.",
+      "textPreview": "Organisations should clearly disclose automated systems and should not sell identifiable customer information without informed permission.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "insets": {
+          "top": 0.03,
+          "right": 0.03,
+          "bottom": 0.03,
+          "left": 0.03
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Organisations should clearly disclose"
+          },
+          {
+            "index": 2,
+            "text": "automated systems and should not sell"
+          },
+          {
+            "index": 3,
+            "text": "identifiable customer information without"
+          },
+          {
+            "index": 4,
+            "text": "informed permission."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Organisations should clearly disclose automated systems and should not sell identifiable customer information without informed permission.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Organisations should clearly disclose automated systems and should not sell identifiable customer information without informed permission.",
+              "fontSize": 22.67,
+              "color": "#FFFFFF",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/yxcr6xgj",
+      "id": "8",
+      "name": "Text 6",
+      "bbox": [
+        120,
+        436.8,
+        403.2,
+        33.6
+      ],
+      "geometry": "rect",
+      "text": "Transparency + consent + privacy + trust",
+      "textPreview": "Transparency + consent + privacy + trust",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Transparency + consent + privacy + trust"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Transparency + consent + privacy + trust",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Transparency + consent + privacy + trust",
+              "fontSize": 17.33,
+              "color": "#D1FAE5",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zyl8z2x4",
+      "id": "9",
+      "name": "Text 7",
+      "bbox": [
+        686.4,
+        206.4,
+        24,
+        23.04
+      ],
+      "geometry": "rect",
+      "text": "✓",
+      "textPreview": "✓",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "✓"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "✓",
+          "runs": [
+            {
+              "index": 1,
+              "text": "✓",
+              "fontSize": 18.67,
+              "color": "#10B981",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/rax43ehw",
+      "id": "10",
+      "name": "Text 8",
+      "bbox": [
+        721.92,
+        208.32,
+        451.2,
+        24.96
+      ],
+      "geometry": "rect",
+      "text": "Tell customers when AI is being used",
+      "textPreview": "Tell customers when AI is being used",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Tell customers when AI is being used"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Tell customers when AI is being used",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Tell customers when AI is being used",
+              "fontSize": 18,
+              "color": "#0F172A"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/69o3u9gb",
+      "id": "11",
+      "name": "Text 9",
+      "bbox": [
+        686.4,
+        275.52,
+        24,
+        23.04
+      ],
+      "geometry": "rect",
+      "text": "✓",
+      "textPreview": "✓",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "✓"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "✓",
+          "runs": [
+            {
+              "index": 1,
+              "text": "✓",
+              "fontSize": 18.67,
+              "color": "#10B981",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/twfm54z2",
+      "id": "12",
+      "name": "Text 10",
+      "bbox": [
+        721.92,
+        277.44,
+        451.2,
+        24.96
+      ],
+      "geometry": "rect",
+      "text": "Offer human assistance when necessary",
+      "textPreview": "Offer human assistance when necessary",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Offer human assistance when necessary"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Offer human assistance when necessary",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Offer human assistance when necessary",
+              "fontSize": 18,
+              "color": "#0F172A"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sv6lwzyh",
+      "id": "13",
+      "name": "Text 11",
+      "bbox": [
+        686.4,
+        344.64,
+        24,
+        23.04
+      ],
+      "geometry": "rect",
+      "text": "✓",
+      "textPreview": "✓",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "✓"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "✓",
+          "runs": [
+            {
+              "index": 1,
+              "text": "✓",
+              "fontSize": 18.67,
+              "color": "#10B981",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/j6d4zuh0",
+      "id": "14",
+      "name": "Text 12",
+      "bbox": [
+        721.92,
+        346.56,
+        451.2,
+        24.96
+      ],
+      "geometry": "rect",
+      "text": "Ask permission before sharing data",
+      "textPreview": "Ask permission before sharing data",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Ask permission before sharing data"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Ask permission before sharing data",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Ask permission before sharing data",
+              "fontSize": 18,
+              "color": "#0F172A"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/i543qp0f",
+      "id": "15",
+      "name": "Text 13",
+      "bbox": [
+        686.4,
+        413.76,
+        24,
+        23.04
+      ],
+      "geometry": "rect",
+      "text": "✓",
+      "textPreview": "✓",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "✓"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "✓",
+          "runs": [
+            {
+              "index": 1,
+              "text": "✓",
+              "fontSize": 18.67,
+              "color": "#10B981",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/58vm14zq",
+      "id": "16",
+      "name": "Text 14",
+      "bbox": [
+        721.92,
+        415.68,
+        451.2,
+        24.96
+      ],
+      "geometry": "rect",
+      "text": "Collect only necessary information",
+      "textPreview": "Collect only necessary information",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Collect only necessary information"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Collect only necessary information",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Collect only necessary information",
+              "fontSize": 18,
+              "color": "#0F172A"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/47mlszyl",
+      "id": "17",
+      "name": "Text 15",
+      "bbox": [
+        686.4,
+        482.88,
+        24,
+        23.04
+      ],
+      "geometry": "rect",
+      "text": "✓",
+      "textPreview": "✓",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "✓"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "✓",
+          "runs": [
+            {
+              "index": 1,
+              "text": "✓",
+              "fontSize": 18.67,
+              "color": "#10B981",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/32h4byh4",
+      "id": "18",
+      "name": "Text 16",
+      "bbox": [
+        721.92,
+        484.8,
+        451.2,
+        24.96
+      ],
+      "geometry": "rect",
+      "text": "Keep privacy policies clear",
+      "textPreview": "Keep privacy policies clear",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Keep privacy policies clear"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Keep privacy policies clear",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Keep privacy policies clear",
+              "fontSize": 18,
+              "color": "#0F172A"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/218n2tgj",
+      "id": "19",
+      "name": "Shape 17",
+      "bbox": [
+        686.4,
+        580.8,
+        460.8,
+        0
+      ],
+      "geometry": "line",
+      "lineColor": "#CBD5E1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/yxs7ux0r",
+      "id": "20",
+      "name": "Text 18",
+      "bbox": [
+        686.4,
+        602.88,
+        470.4,
+        23.04
+      ],
+      "geometry": "rect",
+      "text": "Key sources: ACM, OAIC, Cheng et al., Mozafari et al., Ullah et al., van der Goot et al.",
+      "textPreview": "Key sources: ACM, OAIC, Cheng et al., Mozafari et al., Ullah et al., van der Goot et al.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "autoFit": "shrinkText",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Key sources: ACM, OAIC, Cheng et al., Mozafari et al., Ullah et al., van der Goot et al."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Key sources: ACM, OAIC, Cheng et al., Mozafari et al., Ullah et al., van der Goot et al.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Key sources: ACM, OAIC, Cheng et al., Mozafari et al., Ullah et al., van der Goot et al.",
+              "fontSize": 11.33,
+              "color": "#475569"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zy1o321c",
+      "id": "21",
+      "name": "Text 19",
+      "bbox": [
+        52.8,
+        681.6,
+        489.6,
+        21.12
+      ],
+      "geometry": "rect",
+      "text": "ICT303 Professional Ethics in Computing",
+      "textPreview": "ICT303 Professional Ethics in Computing",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "ICT303 Professional Ethics in Computing"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "ICT303 Professional Ethics in Computing",
+          "runs": [
+            {
+              "index": 1,
+              "text": "ICT303 Professional Ethics in Computing",
+              "fontSize": 10,
+              "typeface": "Aptos",
+              "color": "#64748B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kzapwnix",
+      "id": "22",
+      "name": "Text 20",
+      "bbox": [
+        1176,
+        666.24,
+        52.8,
+        36.48
+      ],
+      "geometry": "rect",
+      "text": "05",
+      "textPreview": "05",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "05"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "05",
+          "resolvedTextStyle": {
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "05",
+              "fontSize": 21.33,
+              "typeface": "Aptos Display",
+              "color": "#94A3B8",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ]
+    }
+  ],
+  "composeRuns": []
+}

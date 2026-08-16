@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { signOut } from "@/lib/actions/auth";
 
 import {
   usePathname,
@@ -160,42 +161,15 @@ export default function DashboardNavbar() {
         <Link
           href="/library"
           aria-label="MindSettle Library"
-          className="
-            flex
-            h-14
-            w-14
-            shrink-0
-            items-center
-            justify-center
-            overflow-hidden
-            rounded-full
-            bg-white
-            shadow-sm
-            ring-1
-            ring-slate-200
-
-            outline-none
-
-            transition
-
-            hover:ring-emerald-200
-
-            focus-visible:ring-4
-            focus-visible:ring-emerald-200
-          "
+          className="flex shrink-0 items-center rounded-full outline-none focus-visible:ring-4 focus-visible:ring-emerald-200"
         >
           <Image
-            src="/logo.png"
+            src="/logo-full.png"
             alt="MindSettle"
-            width={56}
-            height={56}
+            width={120}
+            height={74}
             priority
-            className="
-              h-full
-              w-full
-              rounded-full
-              object-cover
-            "
+            className="h-16 w-auto object-contain"
           />
         </Link>
 
@@ -391,6 +365,11 @@ export default function DashboardNavbar() {
                     </Link>
                   )
                 )}
+                <form action={signOut} className="mt-1 border-t border-slate-100 pt-1">
+                  <button type="submit" className="block w-full rounded-xl px-4 py-3 text-left text-sm font-medium text-red-700 transition hover:bg-red-50">
+                    Sign out
+                  </button>
+                </form>
               </div>
             )}
           </div>

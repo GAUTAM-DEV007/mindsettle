@@ -1,243 +1,40 @@
 import Link from "next/link";
+import LegalDocument, { LegalList, LegalSection } from "@/components/legal/LegalDocument";
+
+export const metadata = { title: "Terms of Service", description: "Terms governing use of Mindsettle services and content." };
 
 export default function TermsPage() {
-  return (
-    <main className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-emerald-50 px-6 py-16 pt-32">
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-10 text-center">
-          <span className="inline-flex rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-sky-700">
-            Legal information
-          </span>
-
-          <h1 className="mt-5 text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">
-            Mindsettle Terms of Service
-          </h1>
-
-          <p className="mt-4 text-base text-slate-600">
-            Last updated: August 2026
-          </p>
-        </div>
-
-        <article className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/60 sm:p-12">
-          <div className="rounded-2xl bg-sky-50 p-6 text-base leading-7 text-slate-700">
-            These draft Terms of Service explain the conditions that apply when
-            users and organisations access Mindsettle. They should be reviewed
-            and approved by the client and an appropriate legal professional
-            before production release.
-          </div>
-
-          <div className="mt-10 space-y-10 text-base leading-8 text-slate-700">
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                1. Agreement to These Terms
-              </h2>
-
-              <p className="mt-4">
-                By creating an account, accessing or using Mindsettle, you agree
-                to follow these Terms of Service. If you do not agree with these
-                terms, you should not use the platform.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                2. About Mindsettle
-              </h2>
-
-              <p className="mt-4">
-                Mindsettle provides calming videos, mindfulness resources,
-                ambient content and wellbeing tools for hospitals, clinics,
-                aged-care facilities, organisations and authorised users.
-              </p>
-
-              <p className="mt-4">
-                Mindsettle is a wellness platform and does not provide medical
-                advice, diagnosis or treatment.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                3. User Accounts
-              </h2>
-
-              <p className="mt-4">
-                Users must provide accurate information when creating an
-                account and must keep their login details secure.
-              </p>
-
-              <ul className="mt-4 list-disc space-y-3 pl-6">
-                <li>Do not share your password with another person.</li>
-                <li>Notify Mindsettle if you suspect unauthorised access.</li>
-                <li>
-                  You are responsible for activity performed through your
-                  account.
-                </li>
-                <li>
-                  Organisation administrators are responsible for managing
-                  access within their organisation.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                4. Organisation Accounts
-              </h2>
-
-              <p className="mt-4">
-                An organisation administrator may invite members, assign
-                organisation-level roles and manage the organisation&apos;s
-                subscription and access settings.
-              </p>
-
-              <p className="mt-4">
-                Organisation administrators may only manage users and data
-                associated with their own organisation. They may not access
-                another organisation&apos;s records or the Mindsettle system
-                administration area.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                5. Acceptable Use
-              </h2>
-
-              <p className="mt-4">
-                Users must use Mindsettle lawfully and responsibly.
-              </p>
-
-              <ul className="mt-4 list-disc space-y-3 pl-6">
-                <li>Do not upload illegal, harmful or unauthorised content.</li>
-                <li>Do not attempt to bypass security controls.</li>
-                <li>
-                  Do not interfere with the operation or availability of the
-                  platform.
-                </li>
-                <li>
-                  Do not copy, redistribute or misuse protected platform
-                  content.
-                </li>
-                <li>
-                  Follow any relevant workplace, clinical and organisational
-                  policies.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                6. Subscriptions and Payments
-              </h2>
-
-              <p className="mt-4">
-                Some Mindsettle features may require a paid subscription.
-                Pricing, billing periods, included features and cancellation
-                conditions will be shown before a subscription is confirmed.
-              </p>
-
-              <p className="mt-4">
-                Cancellation will not normally result in an immediate loss of
-                access. Access may continue until the end of the current paid
-                billing period, subject to the selected plan.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                7. Intellectual Property
-              </h2>
-
-              <p className="mt-4">
-                The Mindsettle name, logo, software, interface, videos,
-                graphics, written content and other materials remain the
-                property of Mindsettle or the relevant content owner unless
-                otherwise stated.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                8. Privacy
-              </h2>
-
-              <p className="mt-4">
-                The collection and handling of personal information is
-                described in the{" "}
-                <Link
-                  href="/privacy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-sky-700 underline decoration-sky-300 underline-offset-4 hover:text-sky-900"
-                >
-                  Privacy Policy
-                </Link>
-                .
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                9. Availability and Changes
-              </h2>
-
-              <p className="mt-4">
-                Mindsettle may update, improve, suspend or change parts of the
-                platform when reasonably necessary. Planned maintenance may
-                occasionally affect availability.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                10. Suspension or Termination
-              </h2>
-
-              <p className="mt-4">
-                Mindsettle may suspend or terminate access where an account
-                breaches these terms, creates a security risk, misuses the
-                service or fails to meet payment obligations.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                11. Disclaimer
-              </h2>
-
-              <p className="mt-4">
-                Mindsettle provides general wellness and relaxation content. It
-                is not a substitute for professional medical advice, diagnosis,
-                treatment, emergency services or clinical care.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-950">
-                12. Contact
-              </h2>
-
-              <p className="mt-4">
-                Questions about these Terms of Service can be submitted through
-                the{" "}
-                <Link
-                  href="/contact"
-                  className="font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-900"
-                >
-                  Contact page
-                </Link>
-                .
-              </p>
-            </section>
-          </div>
-
-          <div className="mt-12 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-900">
-            Draft notice: This document is provided for project development and
-            client review. It is not final legal advice.
-          </div>
-        </article>
-      </div>
-    </main>
-  );
+  return <LegalDocument eyebrow="Legal information" title="Terms of Service" intro="These terms govern your access to and use of Mindsettle's services and content.">
+    <LegalSection title="Agreement to Terms"><p>By using our Services, you agree to be bound by these Terms. If you do not agree to be bound by these Terms, do not use the Services.</p></LegalSection>
+    <LegalSection title="Privacy Policy"><p>Please refer to our <Link href="/privacy" className="font-semibold text-[#285c4f] underline underline-offset-4">Privacy Policy</Link> for information on how we collect, use and disclose information from our users. You acknowledge and agree that your use of the Services is subject to our Privacy Policy.</p></LegalSection>
+    <LegalSection title="Changes to Terms or Services"><p>We may modify these Terms at any time at our sole discretion. We will let you know by posting the modified Terms on the Site or through other communications. If you continue to use the Services after modified Terms are posted, you agree to be bound by them. Because our Services evolve over time, we may change or discontinue all or any part of the Services at any time and without notice.</p></LegalSection>
+    <LegalSection title="Eligibility"><p>You may use the Services only if you are 13 years or older and are not barred from using the Services under applicable law. To make a purchase through the Services, you must be 18 years or older and capable of forming a binding contract.</p></LegalSection>
+    <LegalSection title="Registration and Your Information"><p>Certain features require an Account. You agree to provide accurate, complete and current information and to keep it updated. You must not disclose your password and must notify us immediately of unauthorised use. You are responsible for all activity under your Account, whether or not you know about it.</p></LegalSection>
+    <LegalSection title="Using the Services"><p>The Services are not intended, designed or implied to diagnose, prevent or treat any condition or disease, ascertain the state of your health, or replace professional medical care. Not all activities are suitable for everyone. Do not use the Services while driving, operating heavy machinery or performing tasks that require attention and concentration. You are solely responsible for your use of the Services.</p></LegalSection>
+    <LegalSection title="Fees"><p>Mindsettle offers Services available through monthly or annual Subscriptions. The amount due will be presented before you place an order. By purchasing a Subscription, you agree to pay applicable fees and taxes and authorise payment verification, pre-authorisation and processing.</p><p>Your order is not binding on Mindsettle until accepted and confirmed. Payments are non-refundable and non-transferable except as expressly provided in these Terms.</p></LegalSection>
+    <LegalSection title="Automatic Renewal and Cancellation"><p>Subscriptions renew automatically for a period equal to the expiring term until cancelled. You must cancel before renewal to avoid being billed for the next period. To cancel a Subscription purchased through the Site, contact <a href="mailto:mindsettle@gmail.com" className="font-semibold text-[#285c4f] underline underline-offset-4">mindsettle@gmail.com</a>.</p><p>If you have concerns about a charge, you agree to raise them with Mindsettle first and make a reasonable attempt to resolve the matter directly. We may decline or cancel an order where payment is declined, fraud is suspected, identity cannot be verified, or in other circumstances we consider appropriate.</p></LegalSection>
+    <LegalSection title="Changes to Pricing"><p>Mindsettle may change Subscription pricing and will notify you before changes take effect. Pricing changes do not apply retroactively and apply only to renewals after they are communicated. If you do not agree, you may choose not to renew.</p></LegalSection>
+    <LegalSection title="Future Functionality"><p>Your purchases are not contingent on future functionality or features, or on oral or written public comments made by Mindsettle about future functionality or features.</p></LegalSection>
+    <LegalSection title="Content and Content Rights"><p>“Content” means text, graphics, images, music, software, audio, video, works of authorship, information and other materials made available through the Services.</p><p>Mindsettle owns all rights, title and interest in the Services and Content, including associated intellectual property rights. The Services and Content are protected by Australian copyright, trade mark and other laws. You must not remove, alter or obscure proprietary rights notices.</p><p>Subject to these Terms, Mindsettle grants you a limited, non-exclusive, non-transferable and non-sublicensable licence to view and display Content solely for permitted use. For an agreed commercial application, the Subscription allows public display in waiting rooms, treatment rooms, hospital wards, patient rooms, classrooms, patient lounges or reception areas.</p></LegalSection>
+    <LegalSection title="Prohibitions"><p>You agree not to:</p><LegalList>
+      <li>Post or transmit content that infringes intellectual property or privacy rights, violates law, is fraudulent or deceptive, is defamatory or obscene, promotes discrimination, hatred or violence, or promotes illegal or harmful activity.</li>
+      <li>Use, display, mirror or frame the Services, Mindsettle name, trade marks, logos, proprietary information, page layouts or forms without written consent.</li>
+      <li>Access non-public areas, tamper with systems, test vulnerabilities or breach security or authentication measures.</li>
+      <li>Avoid, bypass or interfere with technological measures that protect the Services.</li>
+      <li>Use crawlers, scraping tools, data-mining tools or other mechanisms not provided by Mindsettle or a generally available browser to access or download Content.</li>
+      <li>Send unauthorised advertising, spam, junk mail or other solicitation.</li>
+      <li>Use hidden text or metadata containing Mindsettle trade marks, logos or product names without consent.</li>
+      <li>Use the Services for an unauthorised commercial purpose or the benefit of a third party.</li>
+      <li>Decipher, decompile, disassemble or reverse-engineer software used to provide the Services.</li>
+      <li>Violate applicable law or encourage another person to do any of these things.</li>
+    </LegalList><p>We may monitor access and use, investigate violations, remove or disable access to Content, and cooperate with law enforcement where required to operate the Services, enforce these Terms or comply with law.</p></LegalSection>
+    <LegalSection title="Third-Party Websites or Resources"><p>The Services may contain links to third-party websites or resources. These links are provided for convenience. Mindsettle is not responsible for content, products or services available through them, and you assume the risk arising from their use.</p></LegalSection>
+    <LegalSection title="Termination"><p>We may terminate access to the Services at our discretion. You may cancel your Account by emailing <a href="mailto:mindsettle@gmail.com" className="font-semibold text-[#285c4f] underline underline-offset-4">mindsettle@gmail.com</a>. Provisions that by their nature should survive termination—including ownership, warranty disclaimers, limitation of liability and dispute provisions—will survive.</p></LegalSection>
+    <LegalSection title="Warranty Disclaimers"><p>The Services and Content are provided “as is” without warranty of any kind. To the fullest extent permitted by law, Mindsettle disclaims warranties of merchantability, fitness for a particular purpose, quiet enjoyment, non-infringement and warranties arising from course of dealing or trade usage.</p><p>We do not warrant that the Services will meet your requirements or be uninterrupted, secure or error-free, or that Content will be accurate, timely, complete or reliable.</p></LegalSection>
+    <LegalSection title="Indemnity"><p>You will indemnify and hold harmless Mindsettle and its officers, directors, employees and agents from claims, liabilities, damages, losses, costs and expenses arising from your use of the Services or Content or your violation of these Terms.</p></LegalSection>
+    <LegalSection title="Limitation of Liability"><p>To the fullest extent permitted by law, Mindsettle and parties involved in providing the Services or Content will not be liable for incidental, special, exemplary or consequential damages, lost profits, loss of data or goodwill, service interruption, system damage or the cost of substitute services arising from these Terms or use of the Services or Content.</p><p>Mindsettle&apos;s total liability arising from these Terms or use of the Services or Content will not exceed the amounts you paid to Mindsettle, or fifty Australian dollars (A$50) where you had no payment obligation.</p></LegalSection>
+    <LegalSection title="Refund Policy"><p>If you believe purchased Services do not fit the description on this website, Mindsettle may consider whether a refund as a credit is appropriate at its absolute discretion.</p></LegalSection>
+    <LegalSection title="General Terms"><p>These Terms are the complete agreement between you and Mindsettle regarding the Services and Content. If a provision is invalid or unenforceable, it will be enforced to the maximum extent permitted and remaining provisions continue in effect.</p><p>You may not assign these Terms without Mindsettle&apos;s written consent. Mindsettle may assign or transfer them without restriction. Notices may be provided by email or posted through the Services. A failure to enforce a right is not a waiver of that right.</p></LegalSection>
+    <LegalSection title="Contact Information"><p>Questions about these Terms or the Services can be sent to <a href="mailto:mindsettle@gmail.com" className="font-semibold text-[#285c4f] underline underline-offset-4">mindsettle@gmail.com</a>.</p></LegalSection>
+  </LegalDocument>;
 }

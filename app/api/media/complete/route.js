@@ -3,29 +3,20 @@ import {
   deleteMedia,
 } from "@/lib/media/media-service";
 
-import { createClient } from "@/lib/supabase/server";
+import { getApiRoleContext, roleErrorResponse } from "@/lib/auth/api-role";
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const STORAGE_PATH_RE = /^[a-z0-9][a-z0-9._/-]{0,500}$/i;
+const ALLOWED_MEDIA_TYPES = new Set(["video/mp4", "video/webm", "video/quicktime", "audio/mpeg", "audio/mp4", "audio/wav", "audio/ogg", "image/jpeg", "image/png", "image/webp", "image/avif"]);
+
+function validStoragePath(path, prefix) {
+  return typeof path === "string" && path.startsWith(`${prefix}/`) && STORAGE_PATH_RE.test(path) && !path.includes("..") && !path.includes("//");
+}
 
 export async function POST(request) {
   try {
-    const supabase =
-      await createClient();
-
-    const {
-      data: { user },
-      error,
-    } =
-      await supabase.auth.getUser();
-
-    if (error || !user) {
-      return Response.json(
-        {
-          success: false,
-          error:
-            "You must be logged in.",
-        },
-        { status: 401 }
-      );
-    }
+    const auth = await getApiRoleContext("admin");
+    if (!auth.allowed) return roleErrorResponse(auth.status);
 
     const body =
       await request.json();
@@ -47,23 +38,42 @@ export async function POST(request) {
       isPremium = true,
     } = body;
 
-    if (!storagePath) {
+    const safeBoolean = (value, fallback) =>
+      typeof value === "boolean" ? value : fallback;
+
+    if (!validStoragePath(storagePath, "uploads")) {
       return Response.json(
         {
           success: false,
           error:
-            "Storage path is required.",
+            "A valid uploaded media path is required.",
         },
         { status: 400 }
       );
     }
 
+    if (thumbnailPath && !validStoragePath(thumbnailPath, "thumbnails")) {
+      return Response.json({ success: false, error: "The thumbnail path is invalid." }, { status: 400 });
+    }
+
+    if (!ALLOWED_MEDIA_TYPES.has(contentType)) {
+      return Response.json({ success: false, error: "Unsupported media type." }, { status: 400 });
+    }
+
+    const safeTitle = typeof title === "string" ? title.trim().slice(0, 160) : "";
+    const safeDescription = typeof description === "string" ? description.trim().slice(0, 4000) : "";
+    const safeInstructor = typeof instructor === "string" ? instructor.trim().slice(0, 120) : "";
+    const safeCategoryId = categoryId && UUID_RE.test(String(categoryId)) ? String(categoryId) : null;
+    const safeMoodIds = Array.isArray(moodIds) ? [...new Set(moodIds.map(String).filter((id) => UUID_RE.test(id)))].slice(0, 50) : [];
+
+    if (!safeTitle) return Response.json({ success: false, error: "A media title is required." }, { status: 400 });
+
     try {
       const media =
         await createMediaRecord({
-          title,
-          description,
-          instructor,
+          title: safeTitle,
+          description: safeDescription,
+          instructor: safeInstructor,
 
           storagePath,
 
@@ -73,36 +83,21 @@ export async function POST(request) {
 
           contentType,
 
-          categoryId:
-            categoryId ||
-            null,
+          categoryId: safeCategoryId,
 
-          moodIds:
-            Array.isArray(
-              moodIds
-            )
-              ? moodIds
-              : [],
+          moodIds: safeMoodIds,
 
           isFeatured:
-            Boolean(
-              isFeatured
-            ),
+            safeBoolean(isFeatured, false),
 
           showOnHomepage:
-            Boolean(
-              showOnHomepage
-            ),
+            safeBoolean(showOnHomepage, false),
 
           isPublished:
-            Boolean(
-              isPublished
-            ),
+            safeBoolean(isPublished, true),
 
           isPremium:
-            Boolean(
-              isPremium
-            ),
+            safeBoolean(isPremium, true),
         });
 
       return Response.json({
@@ -160,10 +155,7 @@ export async function POST(request) {
       {
         success: false,
 
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to save media.",
+        error: "Failed to save media. Please try again.",
       },
       { status: 500 }
     );

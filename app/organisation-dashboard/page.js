@@ -57,14 +57,14 @@ export default async function OrganisationDashboardPage() {
 
       <section className="grid gap-4 sm:grid-cols-2">
         <StatCard label="Members" value={members.length} />
-        <StatCard label="Pending invites" value={pending.length} />
+        <StatCard label="Pending members" value={pending.length} />
       </section>
 
       <section className="mt-10 rounded-xl border border-neutral-200 p-6">
         <h2 className="text-lg font-medium">Add a member</h2>
         <p className="mt-1 text-sm text-neutral-600">
-          Invite a teammate by email. They&apos;ll be added automatically the
-          next time they sign up or log in with that address.
+          Add a teammate&apos;s email. They&apos;ll become active automatically
+          when they sign up with that address. This does not send an email.
         </p>
         <div className="mt-4">
           <AddMemberForm />
@@ -74,9 +74,9 @@ export default async function OrganisationDashboardPage() {
       <section className="mt-8 grid gap-6 lg:grid-cols-2">
         <MemberList title="Members" people={members} emptyText="No members yet." />
         <MemberList
-          title="Pending invites"
+          title="Pending members"
           people={pending}
-          emptyText="No pending invites."
+          emptyText="No pending members."
         />
       </section>
     </div>

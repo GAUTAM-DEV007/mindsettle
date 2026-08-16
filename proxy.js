@@ -5,6 +5,7 @@ import { getSupabaseUrl } from "@/lib/supabase/url";
 const PROTECTED_PATHS = [
   "/dashboard",
   "/library",
+  "/mood",
   "/programs",
   "/account",
   "/favourites",

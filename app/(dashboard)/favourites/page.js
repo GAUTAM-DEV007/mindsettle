@@ -57,6 +57,7 @@ export default async function FavouritesPage() {
         duration_minutes,
         thumbnail_url,
         video_url,
+        is_published,
         categories(
           id,
           name,
@@ -88,7 +89,7 @@ export default async function FavouritesPage() {
           ({ videos }) =>
             videos
         )
-        .filter(Boolean)
+        .filter((video) => video?.is_published)
         .map(
           async (video) => {
             const [

@@ -837,6 +837,7 @@ export default async function LibraryPage({
         )
         `
       )
+      .eq("is_published", true)
       .order(
         "created_at",
         {

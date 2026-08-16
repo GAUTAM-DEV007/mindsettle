@@ -198,9 +198,9 @@ export default function AdminDashboardClient({
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/logo.png"
+                src="/logo-full.png"
                 alt="MindSettle"
-                className="h-12 w-12 object-contain"
+                className="h-14 w-auto object-contain"
               />
 
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-600">

@@ -8,22 +8,21 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    remember: false,
   });
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
-    const { name, value, type, checked } = event.target;
+    const { name, value } = event.target;
 
     setFormData((current) => ({
       ...current,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
@@ -40,13 +39,19 @@ export default function LoginPage() {
     setIsSubmitting(false);
 
     if (authError) {
-      setError(authError.message);
+      setError("The email or password is incorrect. Please try again.");
       return;
     }
 
-    // /post-login looks up the user's role and sends them to the right
-    // dashboard (user/organisation/admin) instead of assuming one here.
-    router.push("/post-login");
+    const requestedPath = new URLSearchParams(window.location.search).get(
+      "redirectTo"
+    );
+    const redirectTo =
+      requestedPath?.startsWith("/") && !requestedPath.startsWith("//")
+        ? requestedPath
+        : "/post-login";
+
+    router.push(redirectTo);
     router.refresh();
   };
 
@@ -57,14 +62,14 @@ export default function LoginPage() {
         <div className="absolute -bottom-24 right-0 h-80 w-80 rounded-full bg-emerald-400/10 blur-3xl" />
 
         <div className="relative z-10 max-w-md text-center">
-          <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border border-white/20 bg-white/10 shadow-2xl backdrop-blur-md">
+          <div className="mx-auto flex h-36 w-52 items-center justify-center rounded-[2rem] border border-white/20 bg-white/10 shadow-2xl backdrop-blur-md">
             <Image
-              src="/logo.png"
+              src="/logo-full.png"
               alt="Mindsettle logo"
-              width={88}
-              height={88}
+              width={176}
+              height={108}
               priority
-              className="rounded-full object-cover"
+              className="rounded-2xl bg-white/90 p-3 object-contain"
             />
           </div>
 
@@ -121,6 +126,8 @@ export default function LoginPage() {
                   id="email"
                   name="email"
                   type="email"
+                  autoComplete="email"
+                  maxLength={320}
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter your email"
@@ -141,6 +148,8 @@ export default function LoginPage() {
                   id="password"
                   name="password"
                   type="password"
+                  autoComplete="current-password"
+                  maxLength={128}
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter your password"
@@ -149,18 +158,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-between gap-4">
-                <label className="flex items-center gap-2 text-sm text-slate-600">
-                  <input
-                    name="remember"
-                    type="checkbox"
-                    checked={formData.remember}
-                    onChange={handleChange}
-                    className="h-4 w-4 rounded border-slate-300 accent-emerald-600"
-                  />
-                  Remember me
-                </label>
-
+              <div className="flex justify-end">
                 <Link
                   href="/forgot-password"
                   className="text-sm font-semibold text-sky-700 transition hover:text-sky-900"
@@ -182,16 +180,6 @@ export default function LoginPage() {
               >
                 {isSubmitting ? "Signing in..." : "Login"}
               </button>
-              <p className="mt-4 text-center text-sm text-slate-600">
-  By creating an account, you agree to our{" "}
-  <a href="/terms" className="font-semibold text-emerald-600 hover:underline">
-    Terms of Service
-  </a>{" "}
-  and{" "}
-  <a href="/privacy" className="font-semibold text-emerald-600 hover:underline">
-    Privacy Policy
-  </a>.
-</p>
             </form>
 
             <div className="my-8 flex items-center gap-4">

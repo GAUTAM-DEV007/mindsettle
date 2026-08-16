@@ -1,0 +1,144 @@
+{"kind":"deck","id":"pr/zdbfwf","name":"Deck"}
+{"kind":"layout","layoutId":"/ppt/slideMasters/slideMaster1.xml","name":"","type":"master"}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout1.xml","name":"DEFAULT"}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout2.xml","name":"MASTER"}
+{"kind":"slide","id":"sl/qfz33j","slide":1,"title":"ASSESSMENT 2","textShapes":18}
+{"kind":"shape","id":"sh/m5obadgv","slide":1,"name":"Shape 0","bbox":[0,0,1279.97,720]}
+{"kind":"shape","id":"sh/n6xs3ih0","slide":1,"name":"Shape 1","bbox":[69.12,65.28,120,30.72]}
+{"kind":"textbox","id":"sh/wvqtgnyx","slide":1,"name":"Text 2","text":"ASSESSMENT 2","textPreview":"ASSESSMENT 2","textChars":12,"textLines":1,"bbox":[80.64,72.48,97.92,15.36]}
+{"kind":"textbox","id":"sh/xwzu9szi","slide":1,"name":"Text 3","text":"Technology, Ethics & Trust","textPreview":"Technology, Ethics & Trust","textChars":26,"textLines":1,"bbox":[69.12,117.12,748.8,65.28]}
+{"kind":"textbox","id":"sh/a9obedgr","slide":1,"name":"Text 4","text":"Two questions. Eight theories. One central issue: trust.","textPreview":"Two questions. Eight theories. One central issue: trust.","textChars":56,"textLines":1,"bbox":[72,193.92,652.8,33.6]}
+{"kind":"textbox","id":"sh/vuhc7ihc","slide":1,"name":"Text 5","text":"🤖","textPreview":"🤖","textChars":2,"textLines":1,"bbox":[849.6,122.88,91.2,91.2]}
+{"kind":"textbox","id":"sh/4zqtk7yt","slide":1,"name":"Text 6","text":"📱","textPreview":"📱","textChars":2,"textLines":1,"bbox":[1022.4,196.8,91.2,91.2]}
+{"kind":"shape","id":"sh/50zudcze","slide":1,"name":"Shape 7","bbox":[72,292.8,532.8,100.8]}
+{"kind":"textbox","id":"sh/xobehg3e","slide":1,"name":"Text 8","text":"🤖","textPreview":"🤖","textChars":2,"textLines":1,"bbox":[93.12,311.04,40.32,33.6]}
+{"kind":"textbox","id":"sh/wn2x8bmt","slide":1,"name":"Text 9","text":"AI customer service","textPreview":"AI customer service","textChars":19,"textLines":1,"bbox":[141.12,311.04,442.56,21.12]}
+{"kind":"textbox","id":"sh/bmtwf6l8","slide":1,"name":"Text 10","text":"Should customers know when they are speaking with an automated system?","textPreview":"Should customers know when they are speaking with an automated system?","textChars":70,"textLines":1,"bbox":[141.12,344.64,442.56,39.36]}
+{"kind":"shape","id":"sh/alkf6143","slide":1,"name":"Shape 11","bbox":[72,417.6,532.8,100.8]}
+{"kind":"textbox","id":"sh/lsvelg3q","slide":1,"name":"Text 12","text":"📱","textPreview":"📱","textChars":2,"textLines":1,"bbox":[93.12,435.84,40.32,33.6]}
+{"kind":"textbox","id":"sh/krmxcbm5","slide":1,"name":"Text 13","text":"Customer data","textPreview":"Customer data","textChars":13,"textLines":1,"bbox":[141.12,435.84,442.56,21.12]}
+{"kind":"textbox","id":"sh/jqdwj6lk","slide":1,"name":"Text 14","text":"Should companies be allowed to sell mobile app information to advertisers?","textPreview":"Should companies be allowed to sell mobile app information to advertisers?","textChars":74,"textLines":1,"bbox":[141.12,469.44,442.56,39.36]}
+{"kind":"shape","id":"sh/ypkfa14z","slide":1,"name":"Shape 15","bbox":[686.4,388.8,148.8,33.6]}
+{"kind":"textbox","id":"sh/1wre9cn6","slide":1,"name":"Text 16","text":"Transparency","textPreview":"Transparency","textChars":12,"textLines":1,"bbox":[694.08,397.92,133.44,14.4]}
+{"kind":"shape","id":"sh/0vid0rml","slide":1,"name":"Shape 17","bbox":[854.4,388.8,115.2,33.6]}
+{"kind":"textbox","id":"sh/szmxgruh","slide":1,"name":"Text 18","text":"Consent","textPreview":"Consent","textChars":7,"textLines":1,"bbox":[862.08,397.92,99.84,14.4]}
+{"kind":"shape","id":"sh/d0vepwv2","slide":1,"name":"Shape 19","bbox":[988.8,388.8,105.6,33.6]}
+{"kind":"textbox","id":"sh/qx4fehcr","slide":1,"name":"Text 20","text":"Privacy","textPreview":"Privacy","textChars":7,"textLines":1,"bbox":[996.48,397.92,90.24,14.4]}
+{"kind":"shape","id":"sh/rydwnmdw","slide":1,"name":"Shape 21","bbox":[1108.8,388.8,86.4,33.6]}
+{"kind":"textbox","id":"sh/03mxkrut","slide":1,"name":"Text 22","text":"Trust","textPreview":"Trust","textChars":5,"textLines":1,"bbox":[1116.48,397.92,71.04,14.4]}
+{"kind":"textbox","id":"sh/14fytwve","slide":1,"name":"Text 23","text":"Anjan Basnet","textPreview":"Anjan Basnet","textChars":12,"textLines":1,"bbox":[72,619.2,240,24]}
+{"kind":"textbox","id":"sh/e14fi1cn","slide":1,"name":"Text 24","text":"ICT303 Professional Ethics in Computing","textPreview":"ICT303 Professional Ethics in Computing","textChars":39,"textLines":1,"bbox":[52.8,681.6,489.6,21.12]}
+{"kind":"textbox","id":"sh/f2dwrmd8","slide":1,"name":"Text 25","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1176,666.24,52.8,36.48]}
+{"kind":"notes","id":"nt/qfz33j","slide":1,"text":"Introduce the topic as a short ethical analysis of two practical ICT cases: chatbot disclosure and the sale of mobile app customer information. Mention that the report uses eight ethical theories in total."}
+{"kind":"slide","id":"sl/22m4so","slide":2,"title":"QUESTION 1","textShapes":18}
+{"kind":"textbox","id":"sh/cf2lcrmt","slide":2,"name":"Text 0","text":"QUESTION 1","textPreview":"QUESTION 1","textChars":10,"textLines":1,"bbox":[62.4,46.08,403.2,24]}
+{"kind":"textbox","id":"sh/dgbm5wne","slide":2,"name":"Text 1","text":"Should customers know it is AI?","textPreview":"Should customers know it is AI?","textChars":31,"textLines":1,"bbox":[62.4,75.84,844.8,46.08]}
+{"kind":"textbox","id":"sh/yh43e14z","slide":2,"name":"Text 2","text":"Automated customer service can feel human, so disclosure matters.","textPreview":"Automated customer service can feel human, so disclosure matters.","textChars":65,"textLines":1,"bbox":[64.32,127.68,835.2,28.8]}
+{"kind":"shape","id":"sh/zid4765k","slide":2,"name":"Shape 3","bbox":[69.12,192,307.2,379.2]}
+{"kind":"textbox","id":"sh/0jmlgbm5","slide":2,"name":"Text 4","text":"🤖","textPreview":"🤖","textChars":2,"textLines":1,"bbox":[107.52,225.6,86.4,86.4]}
+{"kind":"textbox","id":"sh/lkvm9gnq","slide":2,"name":"Text 5","text":"Clear disclosure","textPreview":"Clear disclosure","textChars":16,"textLines":1,"bbox":[103.68,321.6,230.4,33.6]}
+{"kind":"textbox","id":"sh/ml43il4b","slide":2,"name":"Text 6","text":"“I am an automated assistant.”","textPreview":"“I am an automated assistant.”","textChars":30,"textLines":1,"bbox":[103.68,374.4,211.2,67.2]}
+{"kind":"shape","id":"sh/7md4b65g","slide":2,"name":"Shape 7","bbox":[103.68,465.6,196.8,0]}
+{"kind":"textbox","id":"sh/b6d0n6pc","slide":2,"name":"Text 8","text":"Automation is acceptable, but hiding automation weakens trust and informed choice.","textPreview":"Automation is acceptable, but hiding automation weakens trust and informed choice.","textChars":82,"textLines":1,"bbox":[103.68,487.68,225.6,52.8]}
+{"kind":"textbox","id":"sh/q54je1or","slide":2,"name":"Text 9","text":"Kantianism","textPreview":"Kantianism","textChars":10,"textLines":1,"bbox":[427.2,206.4,288,26.88]}
+{"kind":"shape","id":"sh/d8vipw7i","slide":2,"name":"Shape 10","bbox":[427.2,246.72,65.28,0]}
+{"kind":"textbox","id":"sh/c7m1gb6x","slide":2,"name":"Text 11","text":"Honesty is a duty; customers should not be misled.","textPreview":"Honesty is a duty; customers should not be misled.","textChars":50,"textLines":1,"bbox":[427.2,265.92,292.8,59.52]}
+{"kind":"textbox","id":"sh/32t0jmpg","slide":2,"name":"Text 12","text":"Rule Utilitarianism","textPreview":"Rule Utilitarianism","textChars":19,"textLines":1,"bbox":[787.2,206.4,288,26.88]}
+{"kind":"shape","id":"sh/21kjahov","slide":2,"name":"Shape 13","bbox":[787.2,246.72,65.28,0]}
+{"kind":"textbox","id":"sh/p4bilw76","slide":2,"name":"Text 14","text":"A disclosure rule builds long-term trust.","textPreview":"A disclosure rule builds long-term trust.","textChars":41,"textLines":1,"bbox":[787.2,265.92,292.8,59.52]}
+{"kind":"textbox","id":"sh/o321cr61","slide":2,"name":"Text 15","text":"Social Contract","textPreview":"Social Contract","textChars":15,"textLines":1,"bbox":[427.2,388.8,288,26.88]}
+{"kind":"shape","id":"sh/nyxkvqpk","slide":2,"name":"Shape 16","bbox":[427.2,429.12,65.28,0]}
+{"kind":"textbox","id":"sh/mxojmloz","slide":2,"name":"Text 17","text":"Fair service relationships need informed choice.","textPreview":"Fair service relationships need informed choice.","textChars":48,"textLines":1,"bbox":[427.2,448.32,292.8,59.52]}
+{"kind":"textbox","id":"sh/it83ep87","slide":2,"name":"Text 18","text":"Virtue Ethics","textPreview":"Virtue Ethics","textChars":13,"textLines":1,"bbox":[787.2,388.8,288,26.88]}
+{"kind":"shape","id":"sh/juh4nu9s","slide":2,"name":"Shape 19","bbox":[787.2,429.12,65.28,0]}
+{"kind":"textbox","id":"sh/kvqlgfqd","slide":2,"name":"Text 20","text":"Good organisations act openly and honestly.","textPreview":"Good organisations act openly and honestly.","textChars":43,"textLines":1,"bbox":[787.2,448.32,292.8,59.52]}
+{"kind":"shape","id":"sh/5wjmpkry","slide":2,"name":"Shape 21","bbox":[427.2,577.92,667.2,52.8]}
+{"kind":"textbox","id":"sh/6xs3ip8j","slide":2,"name":"Text 22","text":"Answer: Yes, disclose it.","textPreview":"Answer: Yes, disclose it.","textChars":25,"textLines":1,"bbox":[451.2,595.2,316.8,17.28]}
+{"kind":"textbox","id":"sh/7i14ru94","slide":2,"name":"Text 23","text":"ICT303 Professional Ethics in Computing","textPreview":"ICT303 Professional Ethics in Computing","textChars":39,"textLines":1,"bbox":[52.8,681.6,489.6,21.12]}
+{"kind":"textbox","id":"sh/sjalkzq9","slide":2,"name":"Text 24","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1176,666.24,52.8,36.48]}
+{"kind":"notes","id":"nt/22m4so","slide":2,"text":"Explain that the issue is not whether organisations can use automation. The issue is whether they should tell customers. Apply each theory briefly and conclude that disclosure is ethically stronger."}
+{"kind":"slide","id":"sl/67927o","slide":3,"title":"QUESTION 2","textShapes":28}
+{"kind":"textbox","id":"sh/rytoza98","slide":3,"name":"Text 0","text":"QUESTION 2","textPreview":"QUESTION 2","textChars":10,"textLines":1,"bbox":[62.4,46.08,403.2,24]}
+{"kind":"textbox","id":"sh/qxkn65sn","slide":3,"name":"Text 1","text":"Should customer data be sold?","textPreview":"Should customer data be sold?","textChars":29,"textLines":1,"bbox":[62.4,75.84,844.8,46.08]}
+{"kind":"textbox","id":"sh/14b65kra","slide":3,"name":"Text 2","text":"The main ethical issue is selling identifiable data without clear permission.","textPreview":"The main ethical issue is selling identifiable data without clear permission.","textChars":77,"textLines":1,"bbox":[64.32,127.68,835.2,28.8]}
+{"kind":"shape","id":"sh/0325cfap","slide":3,"name":"Shape 3","bbox":[91.2,216,148.8,100.8]}
+{"kind":"textbox","id":"sh/z2to3a94","slide":3,"name":"Text 4","text":"👤","textPreview":"👤","textChars":2,"textLines":1,"bbox":[134.4,228.48,57.6,33.6]}
+{"kind":"textbox","id":"sh/e1knapsj","slide":3,"name":"Text 5","text":"Customer","textPreview":"Customer","textChars":8,"textLines":1,"bbox":[100.8,282.24,129.6,17.28]}
+{"kind":"shape","id":"sh/9sv694r6","slide":3,"name":"Shape 6","bbox":[250.56,265.92,41.28,0]}
+{"kind":"shape","id":"sh/orm5gzal","slide":3,"name":"Shape 7","bbox":[307.2,216,148.8,100.8]}
+{"kind":"textbox","id":"sh/mdg76tc7","slide":3,"name":"Text 8","text":"📱","textPreview":"📱","textChars":2,"textLines":1,"bbox":[350.4,228.48,57.6,33.6]}
+{"kind":"textbox","id":"sh/nepofyds","slide":3,"name":"Text 9","text":"Mobile app","textPreview":"Mobile app","textChars":10,"textLines":1,"bbox":[316.8,282.24,129.6,17.28]}
+{"kind":"shape","id":"sh/8fip83ux","slide":3,"name":"Shape 10","bbox":[466.56,265.92,41.28,0]}
+{"kind":"shape","id":"sh/9gr6h8vi","slide":3,"name":"Shape 11","bbox":[523.2,216,148.8,100.8]}
+{"kind":"textbox","id":"sh/ah07adc3","slide":3,"name":"Text 12","text":"🏢","textPreview":"🏢","textChars":2,"textLines":1,"bbox":[566.4,228.48,57.6,33.6]}
+{"kind":"textbox","id":"sh/vi98jido","slide":3,"name":"Text 13","text":"Company","textPreview":"Company","textChars":7,"textLines":1,"bbox":[532.8,282.24,129.6,17.28]}
+{"kind":"shape","id":"sh/wjipc3u9","slide":3,"name":"Shape 14","bbox":[682.56,265.92,41.28,0]}
+{"kind":"shape","id":"sh/xkrql8vu","slide":3,"name":"Shape 15","bbox":[739.2,216,148.8,100.8]}
+{"kind":"textbox","id":"sh/qlw7y9wz","slide":3,"name":"Text 16","text":"📢","textPreview":"📢","textChars":2,"textLines":1,"bbox":[782.4,228.48,57.6,33.6]}
+{"kind":"textbox","id":"sh/bm5o7edk","slide":3,"name":"Text 17","text":"Advertisers","textPreview":"Advertisers","textChars":11,"textLines":1,"bbox":[748.8,282.24,129.6,17.28]}
+{"kind":"shape","id":"sh/fql4fatc","slide":3,"name":"Shape 18","bbox":[984,194.88,201.6,139.2]}
+{"kind":"textbox","id":"sh/epc365cr","slide":3,"name":"Text 19","text":"Best answer","textPreview":"Best answer","textChars":11,"textLines":1,"bbox":[1012.8,222.72,148.8,19.2]}
+{"kind":"textbox","id":"sh/1s3mhkb2","slide":3,"name":"Text 20","text":"Opt-in consent","textPreview":"Opt-in consent","textChars":14,"textLines":1,"bbox":[1000.32,264.96,168,23.04]}
+{"kind":"shape","id":"sh/grul8fax","slide":3,"name":"Shape 21","bbox":[91.2,369.6,120,33.6]}
+{"kind":"textbox","id":"sh/7214bat0","slide":3,"name":"Text 22","text":"Privacy","textPreview":"Privacy","textChars":7,"textLines":1,"bbox":[98.88,378.72,104.64,14.4]}
+{"kind":"shape","id":"sh/61s325cf","slide":3,"name":"Shape 23","bbox":[230.4,369.6,120,33.6]}
+{"kind":"textbox","id":"sh/to3md0b6","slide":3,"name":"Text 24","text":"Consent","textPreview":"Consent","textChars":7,"textLines":1,"bbox":[238.08,378.72,104.64,14.4]}
+{"kind":"shape","id":"sh/snal4vul","slide":3,"name":"Shape 25","bbox":[369.6,369.6,120,33.6]}
+{"kind":"textbox","id":"sh/by54nutk","slide":3,"name":"Text 26","text":"Profiling","textPreview":"Profiling","textChars":9,"textLines":1,"bbox":[377.28,378.72,104.64,14.4]}
+{"kind":"shape","id":"sh/qxwnepsz","slide":3,"name":"Shape 27","bbox":[508.8,369.6,120,33.6]}
+{"kind":"textbox","id":"sh/83618rah","slide":3,"name":"Text 28","text":"Trust loss","textPreview":"Trust loss","textChars":10,"textLines":1,"bbox":[516.48,378.72,104.64,14.4]}
+{"kind":"shape","id":"sh/94fi1wrm","slide":3,"name":"Shape 29","bbox":[648,369.6,120,33.6]}
+{"kind":"textbox","id":"sh/m1oj6hsb","slide":3,"name":"Text 30","text":"Security risk","textPreview":"Security risk","textChars":13,"textLines":1,"bbox":[655.68,378.72,104.64,14.4]}
+{"kind":"textbox","id":"sh/n2x0zm9w","slide":3,"name":"Text 31","text":"Ethical Egoism","textPreview":"Ethical Egoism","textChars":14,"textLines":1,"bbox":[91.2,446.4,201.6,21.12]}
+{"kind":"textbox","id":"sh/w7q1cbad","slide":3,"name":"Text 32","text":"Profit now vs reputation later","textPreview":"Profit now vs reputation later","textChars":30,"textLines":1,"bbox":[292.8,448.32,297.6,19.2]}
+{"kind":"textbox","id":"sh/x8z25wry","slide":3,"name":"Text 33","text":"Act Utilitarianism","textPreview":"Act Utilitarianism","textChars":18,"textLines":1,"bbox":[619.2,446.4,201.6,21.12]}
+{"kind":"textbox","id":"sh/a58ja1s7","slide":3,"name":"Text 34","text":"Ad benefits vs privacy harm","textPreview":"Ad benefits vs privacy harm","textChars":27,"textLines":1,"bbox":[820.8,448.32,297.6,19.2]}
+{"kind":"textbox","id":"sh/v6h0369s","slide":3,"name":"Text 35","text":"Cultural Relativism","textPreview":"Cultural Relativism","textChars":19,"textLines":1,"bbox":[91.2,518.4,201.6,21.12]}
+{"kind":"textbox","id":"sh/kvq1gbqp","slide":3,"name":"Text 36","text":"Different societies, different norms","textPreview":"Different societies, different norms","textChars":36,"textLines":1,"bbox":[292.8,520.32,297.6,19.2]}
+{"kind":"textbox","id":"sh/5wj29gru","slide":3,"name":"Text 37","text":"Subjective Relativism","textPreview":"Subjective Relativism","textChars":21,"textLines":1,"bbox":[619.2,518.4,201.6,21.12]}
+{"kind":"textbox","id":"sh/5s7a9cry","slide":3,"name":"Text 38","text":"Different customers, different views","textPreview":"Different customers, different views","textChars":36,"textLines":1,"bbox":[820.8,520.32,297.6,19.2]}
+{"kind":"textbox","id":"sh/4ryt07ad","slide":3,"name":"Text 39","text":"ICT303 Professional Ethics in Computing","textPreview":"ICT303 Professional Ethics in Computing","textChars":39,"textLines":1,"bbox":[52.8,681.6,489.6,21.12]}
+{"kind":"textbox","id":"sh/jqps729s","slide":3,"name":"Text 40","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1176,666.24,52.8,36.48]}
+{"kind":"notes","id":"nt/67927o","slide":3,"text":"Explain the data flow from the customer to the app, then to the company and advertisers. The ethical problem is not advertising itself; it is selling identifiable data without clear consent."}
+{"kind":"slide","id":"sl/mzvmlp","slide":4,"title":"WHAT THE THEORIES SHOW","textShapes":14}
+{"kind":"textbox","id":"sh/f61gvupk","slide":4,"name":"Text 0","text":"WHAT THE THEORIES SHOW","textPreview":"WHAT THE THEORIES SHOW","textChars":22,"textLines":1,"bbox":[62.4,46.08,403.2,24]}
+{"kind":"textbox","id":"sh/e5sz29oz","slide":4,"name":"Text 1","text":"Two different issues. One shared message.","textPreview":"Two different issues. One shared message.","textChars":41,"textLines":1,"bbox":[62.4,75.84,844.8,46.08]}
+{"kind":"textbox","id":"sh/pcjy1o7m","slide":4,"name":"Text 2","text":"Trust depends on what users know and what they agree to.","textPreview":"Trust depends on what users know and what they agree to.","textChars":56,"textLines":1,"bbox":[64.32,127.68,835.2,28.8]}
+{"kind":"shape","id":"sh/obah8j6h","slide":4,"name":"Shape 3","bbox":[76.8,206.4,504,307.2]}
+{"kind":"shape","id":"sh/na1gzepw","slide":4,"name":"Shape 4","bbox":[691.2,206.4,504,307.2]}
+{"kind":"textbox","id":"sh/29sz69ob","slide":4,"name":"Text 5","text":"🤖","textPreview":"🤖","textChars":2,"textLines":1,"bbox":[112.32,241.92,48,38.4]}
+{"kind":"textbox","id":"sh/5gzypk7i","slide":4,"name":"Text 6","text":"Automated system disclosure","textPreview":"Automated system disclosure","textChars":27,"textLines":1,"bbox":[168,241.92,326.4,24]}
+{"kind":"textbox","id":"sh/4fqxwf6x","slide":4,"name":"Text 7","text":"Transparency wins","textPreview":"Transparency wins","textChars":17,"textLines":1,"bbox":[110.4,301.44,307.2,33.6]}
+{"kind":"textbox","id":"sh/ex4r69k7","slide":4,"name":"Text 8","text":"All four theories point toward disclosure because customers need honesty, trust and informed choice.","textPreview":"All four theories point toward disclosure because customers need honesty, trust and informed choice.","textChars":100,"textLines":1,"bbox":[110.4,366.72,417.6,62.4]}
+{"kind":"textbox","id":"sh/zyd8fe1s","slide":4,"name":"Text 9","text":"📱","textPreview":"📱","textChars":2,"textLines":1,"bbox":[726.72,241.92,48,38.4]}
+{"kind":"textbox","id":"sh/0zm98j2d","slide":4,"name":"Text 10","text":"Selling customer information","textPreview":"Selling customer information","textChars":28,"textLines":1,"bbox":[784.32,241.92,326.4,24]}
+{"kind":"textbox","id":"sh/10vqhoji","slide":4,"name":"Text 11","text":"Consent matters","textPreview":"Consent matters","textChars":15,"textLines":1,"bbox":[724.8,301.44,307.2,33.6]}
+{"kind":"textbox","id":"sh/ml4ra9k3","slide":4,"name":"Text 12","text":"Data sharing can create business value, but the concern becomes serious when customers are unaware.","textPreview":"Data sharing can create business value, but the concern becomes serious when customers are unaware.","textChars":99,"textLines":1,"bbox":[724.8,366.72,417.6,62.4]}
+{"kind":"shape","id":"sh/nmd8je1o","slide":4,"name":"Shape 13","bbox":[201.6,571.2,873.6,52.8]}
+{"kind":"textbox","id":"sh/onm9cj29","slide":4,"name":"Text 14","text":"Common message: no trust without transparency.","textPreview":"Common message: no trust without transparency.","textChars":46,"textLines":1,"bbox":[220.8,588.48,835.2,19.2]}
+{"kind":"textbox","id":"sh/9ofqloju","slide":4,"name":"Text 15","text":"ICT303 Professional Ethics in Computing","textPreview":"ICT303 Professional Ethics in Computing","textChars":39,"textLines":1,"bbox":[52.8,681.6,489.6,21.12]}
+{"kind":"textbox","id":"sh/aporetkf","slide":4,"name":"Text 16","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1176,666.24,52.8,36.48]}
+{"kind":"notes","id":"nt/mzvmlp","slide":4,"text":"This slide links both questions. For the chatbot issue, the theories mostly point in the same direction. For data selling, the theories show a balance, but informed consent is still the strongest ethical response."}
+{"kind":"slide","id":"sl/wv89cb","slide":5,"title":"FINAL TAKEAWAY","textShapes":19}
+{"kind":"textbox","id":"sh/o7a90nyh","slide":5,"name":"Text 0","text":"FINAL TAKEAWAY","textPreview":"FINAL TAKEAWAY","textChars":14,"textLines":1,"bbox":[62.4,46.08,403.2,24]}
+{"kind":"textbox","id":"sh/p8jqtsfm","slide":5,"name":"Text 1","text":"Responsible ICT practice","textPreview":"Responsible ICT practice","textChars":24,"textLines":1,"bbox":[62.4,75.84,844.8,46.08]}
+{"kind":"textbox","id":"sh/qtsr2xg7","slide":5,"name":"Text 2","text":"Technology should be judged by how fairly it treats people.","textPreview":"Technology should be judged by how fairly it treats people.","textChars":59,"textLines":1,"bbox":[64.32,127.68,835.2,28.8]}
+{"kind":"shape","id":"sh/bul8v2xs","slide":5,"name":"Shape 3","bbox":[81.6,196.8,518.4,379.2]}
+{"kind":"textbox","id":"sh/cvu947yd","slide":5,"name":"Text 4","text":"Final position","textPreview":"Final position","textChars":14,"textLines":1,"bbox":[120,235.2,230.4,24]}
+{"kind":"textbox","id":"sh/dw3qxsfy","slide":5,"name":"Text 5","text":"Organisations should clearly disclose automated systems and should not sell identifiable customer information without informed permission.","textPreview":"Organisations should clearly disclose automated systems and should not sell identifiable customer information without informed permission.","textChars":138,"textLines":1,"bbox":[120,288,432,96]}
+{"kind":"textbox","id":"sh/yxcr6xgj","slide":5,"name":"Text 6","text":"Transparency + consent + privacy + trust","textPreview":"Transparency + consent + privacy + trust","textChars":40,"textLines":1,"bbox":[120,436.8,403.2,33.6]}
+{"kind":"textbox","id":"sh/zyl8z2x4","slide":5,"name":"Text 7","text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[686.4,206.4,24,23.04]}
+{"kind":"textbox","id":"sh/rax43ehw","slide":5,"name":"Text 8","text":"Tell customers when AI is being used","textPreview":"Tell customers when AI is being used","textChars":36,"textLines":1,"bbox":[721.92,208.32,451.2,24.96]}
+{"kind":"textbox","id":"sh/69o3u9gb","slide":5,"name":"Text 9","text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[686.4,275.52,24,23.04]}
+{"kind":"textbox","id":"sh/twfm54z2","slide":5,"name":"Text 10","text":"Offer human assistance when necessary","textPreview":"Offer human assistance when necessary","textChars":37,"textLines":1,"bbox":[721.92,277.44,451.2,24.96]}
+{"kind":"textbox","id":"sh/sv6lwzyh","slide":5,"name":"Text 11","text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[686.4,344.64,24,23.04]}
+{"kind":"textbox","id":"sh/j6d4zuh0","slide":5,"name":"Text 12","text":"Ask permission before sharing data","textPreview":"Ask permission before sharing data","textChars":34,"textLines":1,"bbox":[721.92,346.56,451.2,24.96]}
+{"kind":"textbox","id":"sh/i543qp0f","slide":5,"name":"Text 13","text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[686.4,413.76,24,23.04]}
+{"kind":"textbox","id":"sh/58vm14zq","slide":5,"name":"Text 14","text":"Collect only necessary information","textPreview":"Collect only necessary information","textChars":34,"textLines":1,"bbox":[721.92,415.68,451.2,24.96]}
+{"kind":"textbox","id":"sh/47mlszyl","slide":5,"name":"Text 15","text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[686.4,482.88,24,23.04]}
+{"kind":"textbox","id":"sh/32h4byh4","slide":5,"name":"Text 16","text":"Keep privacy policies clear","textPreview":"Keep privacy policies clear","textChars":27,"textLines":1,"bbox":[721.92,484.8,451.2,24.96]}
+{"kind":"shape","id":"sh/218n2tgj","slide":5,"name":"Shape 17","bbox":[686.4,580.8,460.8,0]}
+{"kind":"textbox","id":"sh/yxs7ux0r","slide":5,"name":"Text 18","text":"Key sources: ACM, OAIC, Cheng et al., Mozafari et al., Ullah et al., van der Goot et al.","textPreview":"Key sources: ACM, OAIC, Cheng et al., Mozafari et al., Ullah et al., van der Goot et al.","textChars":88,"textLines":1,"bbox":[686.4,602.88,470.4,23.04]}
+{"kind":"textbox","id":"sh/zy1o321c","slide":5,"name":"Text 19","text":"ICT303 Professional Ethics in Computing","textPreview":"ICT303 Professional Ethics in Computing","textChars":39,"textLines":1,"bbox":[52.8,681.6,489.6,21.12]}
+{"kind":"textbox","id":"sh/kzapwnix","slide":5,"name":"Text 20","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1176,666.24,52.8,36.48]}
+{"kind":"notes","id":"nt/wv89cb","slide":5,"text":"Close by saying that responsible ICT practice is not only about what technology can do. It is about transparency, consent, privacy and trust. Invite questions."}

@@ -2,15 +2,17 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request) {
-  const { searchParams, origin } =
-    new URL(request.url);
+  const requestUrl = new URL(request.url);
+  const { searchParams, origin } = requestUrl;
 
   const code =
     searchParams.get("code");
 
+  const requestedRedirect = searchParams.get("redirectTo");
   const redirectTo =
-    searchParams.get("redirectTo") ??
-    "/post-login";
+    requestedRedirect?.startsWith("/") && !requestedRedirect.startsWith("//")
+      ? requestedRedirect
+      : "/post-login";
 
   if (code) {
     const supabase =
@@ -21,13 +23,9 @@ export async function GET(request) {
         .exchangeCodeForSession(code);
 
     if (!error) {
-      return NextResponse.redirect(
-        `${origin}${redirectTo}`
-      );
+      return NextResponse.redirect(new URL(redirectTo, origin));
     }
   }
 
-  return NextResponse.redirect(
-    `${origin}/login?error=auth-code-error`
-  );
+  return NextResponse.redirect(new URL("/login?error=auth-code-error", origin));
 }

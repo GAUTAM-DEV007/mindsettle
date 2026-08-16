@@ -11,7 +11,7 @@ export default async function AccountPage() {
     .from("profiles")
     .select("full_name, avatar_url, created_at")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   if (error) {
     throw new Error(error.message);
@@ -48,6 +48,7 @@ export default async function AccountPage() {
             <input
               id="fullName"
               name="fullName"
+              maxLength={100}
               defaultValue={profile?.full_name ?? ""}
               placeholder="Your name"
               className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-500"
@@ -62,6 +63,7 @@ export default async function AccountPage() {
               id="avatarUrl"
               name="avatarUrl"
               type="url"
+              maxLength={2048}
               defaultValue={profile?.avatar_url ?? ""}
               placeholder="https://..."
               className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-500"

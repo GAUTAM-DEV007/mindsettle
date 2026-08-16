@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Mindsettle
 
-## Getting Started
+Mindsettle is a Next.js application for calming clinical environments through nature imagery, soundscapes, guided wellbeing content and organisation-managed access.
 
-First, run the development server:
+## Local setup
+
+Requirements:
+
+- Node.js 20.9 or newer
+- npm
+- A Supabase project
+
+Copy `.env.example` to `.env.local` and replace the placeholders with the URL and anonymous key from your Supabase project settings.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Database and authentication
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Apply the migrations in `supabase/migrations` in filename order. With the Supabase CLI linked to the intended project:
 
-## Learn More
+```bash
+supabase db push
+```
 
-To learn more about Next.js, take a look at the following resources:
+The migrations create the content, profile, membership and subscription tables; signup triggers; admin analytics function; private media bucket; and row-level security policies.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Supabase Authentication should have email/password enabled. Add these redirect URLs in the Supabase dashboard for each environment:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `http://localhost:3000/auth/callback`
+- `https://your-production-domain/auth/callback`
 
-## Deploy on Vercel
+New accounts receive the `user` role. Organisation registration can request only the `organisation` role. Admin access must be granted manually by a trusted database operator:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```sql
+update public.user_roles
+set role = 'admin'
+where user_id = '<trusted-user-uuid>';
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Never expose the Supabase service-role key in a `NEXT_PUBLIC_` variable.
+
+## Media
+
+Media is stored in the private `videos` bucket. Admin users can upload and manage files; signed-in members can create signed URLs only for files connected to published content. The resumable uploader supports files up to 5 GB, subject to the Supabase project plan.
+
+## Billing
+
+The billing page displays real rows from `subscriptions`. The webhook deliberately returns `503` until a payment provider, signing secret and verified event handler are configured. Do not point a live Stripe webhook at it until that integration is complete.
+
+## Checks
+
+Run these before publishing:
+
+```bash
+npm run lint
+npm run build
+npm audit --omit=dev --audit-level=high
+```
+
+## Production
+
+Set the two public Supabase variables in the host, apply the database migrations to the production project, configure the production auth callback URL, and run `npm run build`. HTTPS should be required in production.

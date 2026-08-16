@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getVideoById } from "@/lib/data/content";
 import { createClient } from "@/lib/supabase/server";
 
 import {
@@ -176,6 +175,7 @@ export default async function VideoPage({
           "id",
           videoId
         )
+        .eq("is_published", true)
         .single();
 
     if (error) {
@@ -265,6 +265,7 @@ export default async function VideoPage({
             created_at
             `
           )
+          .eq("is_published", true)
           .neq(
             "id",
             videoId
@@ -355,6 +356,7 @@ export default async function VideoPage({
               created_at
               `
             )
+            .eq("is_published", true)
             .neq(
               "id",
               videoId
@@ -430,15 +432,6 @@ export default async function VideoPage({
           favourite
         );
     }
-  } else {
-    /* ====================================================
-       OLD STATIC CONTENT SUPPORT
-    ==================================================== */
-
-    video =
-      getVideoById(
-        videoId
-      );
   }
 
   /* ======================================================

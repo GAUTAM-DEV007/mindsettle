@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { signOut } from "@/lib/actions/auth";
 
 import {
   usePathname,
@@ -163,12 +164,12 @@ export default function DashboardNavbar() {
           className="flex shrink-0 items-center rounded-full outline-none focus-visible:ring-4 focus-visible:ring-emerald-200"
         >
           <Image
-            src="/logo.png"
+            src="/logo-full.png"
             alt="MindSettle"
-            width={48}
-            height={48}
+            width={120}
+            height={74}
             priority
-            className="h-16 w-16 object-contain"
+            className="h-16 w-auto object-contain"
           />
         </Link>
 
@@ -364,6 +365,11 @@ export default function DashboardNavbar() {
                     </Link>
                   )
                 )}
+                <form action={signOut} className="mt-1 border-t border-slate-100 pt-1">
+                  <button type="submit" className="block w-full rounded-xl px-4 py-3 text-left text-sm font-medium text-red-700 transition hover:bg-red-50">
+                    Sign out
+                  </button>
+                </form>
               </div>
             )}
           </div>

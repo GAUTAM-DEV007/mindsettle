@@ -22,6 +22,26 @@ body {
 html { scroll-behavior: smooth; }
 ::selection { background: #d7f2ad; color: #12372f; }
 .eyebrow { color: #65805d; font-size: .75rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+
+.auth-shell:has(.login-experience) {
+  display: block;
+  padding: 0;
+}
+
+.auth-shell:has(.login-experience) > .auth-home-link {
+  display: none;
+}
+
+.login-nature-image {
+  animation: login-nature-drift 20s ease-in-out infinite alternate;
+  transform: scale(1.035);
+}
+
+@keyframes login-nature-drift {
+  from { transform: scale(1.035) translate3d(-.4%, -.2%, 0); }
+  to { transform: scale(1.085) translate3d(.7%, .35%, 0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

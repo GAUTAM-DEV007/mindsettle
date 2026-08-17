@@ -54,6 +54,20 @@ create table if not exists user_roles (
   created_at timestamptz not null default now()
 );
 
+-- Organisation-invited members. An organisation account (user_roles.role
+-- = 'organisation') invites people by email before they necessarily have
+-- an account; handle_new_user_role() below activates the row (sets
+-- user_id + status) the moment that email signs up or logs in.
+create table if not exists organisation_members (
+  id uuid primary key default gen_random_uuid(),
+  organisation_id uuid not null references auth.users (id) on delete cascade,
+  email text not null,
+  user_id uuid references auth.users (id) on delete set null,
+  status text not null default 'pending' check (status in ('pending', 'active')),
+  invited_at timestamptz not null default now(),
+  unique (organisation_id, email)
+);
+
 create table if not exists favourites (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references profiles (id) on delete cascade,
@@ -91,6 +105,7 @@ create table if not exists subscriptions (
 -- ---------------------------------------------------------------------------
 
 create index if not exists videos_category_id_idx on videos (category_id);
+create index if not exists organisation_members_organisation_id_idx on organisation_members (organisation_id);
 create index if not exists favourites_user_id_idx on favourites (user_id);
 create index if not exists favourites_video_id_idx on favourites (video_id);
 create index if not exists watch_history_user_id_idx on watch_history (user_id);
@@ -148,6 +163,13 @@ begin
     case when requested = 'organisation' then 'organisation'::app_role else 'user'::app_role end
   )
   on conflict (user_id) do nothing;
+
+  -- Activate any pending organisation invite for this email so an
+  -- organisation doesn't have to manually reconcile emails to accounts.
+  update public.organisation_members
+  set user_id = new.id, status = 'active'
+  where lower(email) = lower(new.email) and status = 'pending';
+
   return new;
 end;
 $$;
@@ -186,6 +208,7 @@ alter table categories enable row level security;
 alter table videos enable row level security;
 alter table profiles enable row level security;
 alter table user_roles enable row level security;
+alter table organisation_members enable row level security;
 alter table favourites enable row level security;
 alter table watch_history enable row level security;
 alter table subscriptions enable row level security;
@@ -270,6 +293,15 @@ create policy "Users can update their own profile"
 create policy "Users can view their own role"
   on user_roles for select
   using (auth.uid() = user_id);
+
+-- organisation_members: an organisation account can read/add/remove only
+-- the members it invited. Activation (setting user_id/status) happens via
+-- the handle_new_user_role trigger, which runs as postgres and bypasses
+-- this policy.
+create policy "Organisations manage their own members"
+  on organisation_members for all
+  using (auth.uid() = organisation_id)
+  with check (auth.uid() = organisation_id);
 
 -- favourites: users manage only their own favourites.
 create policy "Users can view their own favourites"

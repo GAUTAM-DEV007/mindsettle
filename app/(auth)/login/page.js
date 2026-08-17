@@ -5,25 +5,28 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
 
 export default function LoginPage() {
   const router = useRouter();
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    remember: false,
   });
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (event) => {
-    const { name, value, type, checked } = event.target;
+    const { name, value } = event.target;
+
+    if (error) setError(null);
 
     setFormData((current) => ({
       ...current,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
@@ -40,137 +43,182 @@ export default function LoginPage() {
     setIsSubmitting(false);
 
     if (authError) {
-      setError(authError.message);
+      setError("The email or password is incorrect. Please try again.");
       return;
     }
 
-    // /post-login looks up the user's role and sends them to the right
-    // dashboard (user/organisation/admin) instead of assuming one here.
-    router.push("/post-login");
+    const requestedPath = new URLSearchParams(window.location.search).get(
+      "redirectTo"
+    );
+    const redirectTo =
+      requestedPath?.startsWith("/") && !requestedPath.startsWith("//")
+        ? requestedPath
+        : "/post-login";
+
+    router.push(redirectTo);
     router.refresh();
   };
 
   return (
-    <main className="grid min-h-screen bg-slate-50 lg:grid-cols-[42%_58%]">
-      <section className="relative hidden overflow-hidden bg-gradient-to-br from-slate-950 via-sky-950 to-emerald-900 px-10 text-white lg:flex lg:items-center lg:justify-center">
-        <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-sky-400/10 blur-3xl" />
-        <div className="absolute -bottom-24 right-0 h-80 w-80 rounded-full bg-emerald-400/10 blur-3xl" />
+    <div className="login-experience grid min-h-dvh overflow-hidden bg-[#eef0e9] lg:grid-cols-[minmax(0,1.05fr)_minmax(31rem,.95fr)]">
+      <section className="relative hidden min-h-dvh overflow-hidden text-white lg:flex lg:flex-col lg:justify-between">
+        <Image
+          src="/hero-forest-stream.jpg"
+          alt="Water flowing through a quiet forest stream"
+          fill
+          priority
+          sizes="(min-width: 1024px) 55vw, 0vw"
+          className="login-nature-image object-cover"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,38,35,.34)_0%,rgba(8,39,34,.12)_36%,rgba(7,31,29,.88)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(222,241,189,.18),transparent_32%)]" />
 
-        <div className="relative z-10 max-w-md text-center">
-          <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border border-white/20 bg-white/10 shadow-2xl backdrop-blur-md">
-            <Image
-              src="/logo.png"
-              alt="Mindsettle logo"
-              width={88}
-              height={88}
-              priority
-              className="rounded-full object-cover"
-            />
-          </div>
+        <Link
+          href="/"
+          aria-label="Mindsettle home"
+          className="relative z-10 m-10 flex w-fit items-center rounded-2xl border border-white/30 bg-[#f8f7f0]/90 px-5 py-3 shadow-xl shadow-black/10 backdrop-blur-md transition hover:bg-white"
+        >
+          <Image
+            src="/logo-full.png"
+            alt="Mindsettle"
+            width={138}
+            height={84}
+            className="h-auto w-[7.25rem] object-contain"
+          />
+        </Link>
 
-          <h1 className="mt-8 text-4xl font-bold tracking-tight">
-            Welcome to Mindsettle
+        <div className="relative z-10 max-w-2xl px-10 pb-12 xl:px-16 xl:pb-16">
+          <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[.24em] text-[#d9f3aa]">
+            <span className="h-2 w-2 rounded-full bg-[#d9f3aa]" />
+            Your calm space
+          </p>
+          <h1 className="mt-5 max-w-xl text-5xl font-semibold leading-[1.02] tracking-[-.04em] xl:text-6xl">
+            Return to a quieter state of mind.
           </h1>
-
-          <p className="mt-4 text-lg leading-8 text-sky-100">
-            A calm digital space for mindfulness, wellbeing, and better daily
-            habits.
+          <p className="mt-5 max-w-lg text-lg leading-8 text-white/78">
+            Nature-led moments, mindful tools and gentle routines—ready when
+            you are.
           </p>
 
-          <div className="mt-10 grid grid-cols-3 gap-3 text-sm">
-            <div className="rounded-xl border border-white/10 bg-white/10 p-4 backdrop-blur">
-              Calm
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/10 p-4 backdrop-blur">
-              Focus
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/10 p-4 backdrop-blur">
-              Reset
-            </div>
+          <div className="mt-9 flex flex-wrap gap-3 text-sm font-medium text-white/90">
+            <span className="rounded-full border border-white/25 bg-white/10 px-4 py-2 backdrop-blur-md">
+              Curated calm
+            </span>
+            <span className="rounded-full border border-white/25 bg-white/10 px-4 py-2 backdrop-blur-md">
+              Personal library
+            </span>
+            <span className="rounded-full border border-white/25 bg-white/10 px-4 py-2 backdrop-blur-md">
+              Mindful moments
+            </span>
           </div>
         </div>
       </section>
 
-      <section className="flex items-center justify-center px-6 py-12 sm:px-10 lg:px-16">
-        <div className="w-full max-w-lg">
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/60 sm:p-10">
-            <div>
-              <span className="inline-flex rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sky-700">
-                Secure login
-              </span>
+      <section className="relative flex min-h-dvh items-center justify-center overflow-hidden px-5 py-8 sm:px-10 lg:px-12 xl:px-16">
+        <div className="pointer-events-none absolute -right-28 -top-28 h-80 w-80 rounded-full bg-[#d9e8cf]/70 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 left-4 h-80 w-80 rounded-full bg-[#e9d8c5]/55 blur-3xl" />
 
-              <h2 className="mt-5 text-4xl font-bold tracking-tight text-slate-950">
-                Welcome Back
-              </h2>
+        <div className="relative z-10 w-full max-w-[33rem]">
+          <div className="mb-7 flex items-center justify-between lg:hidden">
+            <Link href="/" aria-label="Mindsettle home">
+              <Image
+                src="/logo-full.png"
+                alt="Mindsettle"
+                width={126}
+                height={76}
+                priority
+                className="h-auto w-24 object-contain"
+              />
+            </Link>
+            <Link
+              href="/"
+              className="text-sm font-semibold text-[#52645e] transition hover:text-[#163d34]"
+            >
+              Back home
+            </Link>
+          </div>
 
-              <p className="mt-3 text-base text-slate-600">
-                Sign in to continue your wellness journey.
-              </p>
-            </div>
+          <div className="rounded-[2rem] border border-white/80 bg-[#fbfbf7]/90 p-6 shadow-[0_28px_80px_rgba(32,59,51,.12)] backdrop-blur-xl sm:p-9 xl:p-11">
+            <p className="text-xs font-bold uppercase tracking-[.22em] text-[#75856d]">
+              Member access
+            </p>
+            <h2 className="mt-4 text-[2.65rem] font-semibold leading-none tracking-[-.045em] text-[#153b33] sm:text-5xl">
+              Welcome back.
+            </h2>
+            <p className="mt-4 max-w-md text-[1.02rem] leading-7 text-[#61706a]">
+              Take one steady breath, then continue where you left off.
+            </p>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-2 block text-sm font-semibold text-slate-700"
+                  className="mb-2 block text-sm font-semibold text-[#2d4a42]"
                 >
                   Email address
                 </label>
-
                 <input
                   id="email"
                   name="email"
                   type="email"
+                  inputMode="email"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  spellCheck={false}
+                  maxLength={320}
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Enter your email"
+                  placeholder="you@example.com"
                   required
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3.5 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-100"
+                  className="w-full rounded-2xl border border-[#ced8d2] bg-white/85 px-4 py-3.5 text-[#173e35] shadow-sm outline-none transition placeholder:text-[#9aa6a1] hover:border-[#aebfb7] focus:border-[#58796d] focus:bg-white focus:ring-4 focus:ring-[#dce8e1]"
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="password"
-                  className="mb-2 block text-sm font-semibold text-slate-700"
-                >
-                  Password
-                </label>
+                <div className="mb-2 flex items-center justify-between gap-4">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-semibold text-[#2d4a42]"
+                  >
+                    Password
+                  </label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-sm font-semibold text-[#567368] underline-offset-4 transition hover:text-[#163d34] hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
 
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter your password"
-                  required
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3.5 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100"
-                />
-              </div>
-
-              <div className="flex items-center justify-between gap-4">
-                <label className="flex items-center gap-2 text-sm text-slate-600">
+                <div className="relative">
                   <input
-                    name="remember"
-                    type="checkbox"
-                    checked={formData.remember}
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    maxLength={128}
+                    value={formData.password}
                     onChange={handleChange}
-                    className="h-4 w-4 rounded border-slate-300 accent-emerald-600"
+                    placeholder="Enter your password"
+                    required
+                    className="w-full rounded-2xl border border-[#ced8d2] bg-white/85 px-4 py-3.5 pr-20 text-[#173e35] shadow-sm outline-none transition placeholder:text-[#9aa6a1] hover:border-[#aebfb7] focus:border-[#58796d] focus:bg-white focus:ring-4 focus:ring-[#dce8e1]"
                   />
-                  Remember me
-                </label>
-
-                <Link
-                  href="/forgot-password"
-                  className="text-sm font-semibold text-sky-700 transition hover:text-sky-900"
-                >
-                  Forgot password?
-                </Link>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((current) => !current)}
+                    className="absolute inset-y-1 right-1 rounded-xl px-4 text-xs font-bold uppercase tracking-[.08em] text-[#60756c] transition hover:bg-[#eef2ed] hover:text-[#163d34] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6e8e82]"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
               </div>
 
               {error && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+                <p
+                  role="alert"
+                  className="rounded-2xl border border-[#efccc5] bg-[#fff1ed] px-4 py-3 text-sm leading-6 text-[#8a3d32]"
+                >
                   {error}
                 </p>
               )}
@@ -178,63 +226,71 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full rounded-xl bg-gradient-to-r from-sky-600 to-emerald-600 px-5 py-3.5 font-semibold text-white shadow-lg shadow-emerald-100 transition hover:-translate-y-0.5 hover:from-sky-700 hover:to-emerald-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+                className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-[#163d34] px-5 py-4 font-semibold text-white shadow-[0_14px_30px_rgba(22,61,52,.22)] transition hover:-translate-y-0.5 hover:bg-[#214d43] hover:shadow-[0_18px_34px_rgba(22,61,52,.26)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#bbcf9a] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
-                {isSubmitting ? "Signing in..." : "Login"}
+                <span>{isSubmitting ? "Signing you in…" : "Sign in"}</span>
+                {!isSubmitting && (
+                  <span
+                    aria-hidden="true"
+                    className="text-[#d6f2a7] transition-transform group-hover:translate-x-1"
+                  >
+                    →
+                  </span>
+                )}
               </button>
-              <p className="mt-4 text-center text-sm text-slate-600">
-  By creating an account, you agree to our{" "}
-  <a href="/terms" className="font-semibold text-emerald-600 hover:underline">
-    Terms of Service
-  </a>{" "}
-  and{" "}
-  <a href="/privacy" className="font-semibold text-emerald-600 hover:underline">
-    Privacy Policy
-  </a>.
-</p>
             </form>
 
-            <div className="my-8 flex items-center gap-4">
-              <div className="h-px flex-1 bg-slate-200" />
-              <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                New to Mindsettle?
+            <div className="my-6 flex items-center gap-4">
+              <div className="h-px flex-1 bg-[#dfe5df]" />
+              <span className="text-[.68rem] font-bold uppercase tracking-[.16em] text-[#86918b]">
+                Or continue with
               </span>
-              <div className="h-px flex-1 bg-slate-200" />
+              <div className="h-px flex-1 bg-[#dfe5df]" />
             </div>
 
-            <div className="space-y-3 text-center text-sm text-slate-600">
-              <p>
-                Don&apos;t have an account?{" "}
-                <Link
-                  href="/signup"
-                  className="font-semibold text-emerald-700 hover:text-emerald-900"
-                >
-                  Sign up
-                </Link>
-              </p>
+            <SocialAuthButtons />
 
-              <p>
-                Registering an organisation?{" "}
-                <Link
-                  href="/organisation-register"
-                  className="font-semibold text-sky-700 hover:text-sky-900"
-                >
-                  Register here
-                </Link>
-              </p>
-            </div>
+            <div className="my-7 h-px bg-[#dfe5df]" />
 
-            <div className="mt-8 border-t border-slate-200 pt-6 text-center">
+            <div className="grid gap-3 sm:grid-cols-2">
               <Link
-                href="/admin-login"
-                className="text-sm font-medium text-slate-500 transition hover:text-slate-950"
+                href="/signup"
+                className="rounded-2xl border border-[#d5ddd7] bg-white/65 px-4 py-3.5 transition hover:-translate-y-0.5 hover:border-[#9faf9f] hover:bg-white"
               >
-                Admin Login
+                <span className="block text-xs font-bold uppercase tracking-[.14em] text-[#7a897f]">
+                  New here?
+                </span>
+                <span className="mt-1 block text-sm font-semibold text-[#183f36]">
+                  Create an account →
+                </span>
+              </Link>
+              <Link
+                href="/organisation-register"
+                className="rounded-2xl border border-[#d5ddd7] bg-white/65 px-4 py-3.5 transition hover:-translate-y-0.5 hover:border-[#9faf9f] hover:bg-white"
+              >
+                <span className="block text-xs font-bold uppercase tracking-[.14em] text-[#7a897f]">
+                  For workplaces
+                </span>
+                <span className="mt-1 block text-sm font-semibold text-[#183f36]">
+                  Register an organisation →
+                </span>
               </Link>
             </div>
+
+            <p className="mt-6 text-center text-xs leading-5 text-[#839089]">
+              By continuing, you agree to our{" "}
+              <Link href="/terms" className="underline underline-offset-2 hover:text-[#163d34]">
+                Terms of Use
+              </Link>{" "}
+              and acknowledge our{" "}
+              <Link href="/privacy" className="underline underline-offset-2 hover:text-[#163d34]">
+                Privacy Policy
+              </Link>
+              .
+            </p>
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 async function requireOrganisation() {
   const supabase = await createClient();
@@ -30,9 +31,11 @@ export async function addMember(_prevState, formData) {
   const { supabase, user } = await requireOrganisation();
   const email = String(formData.get("email") || "").trim().toLowerCase();
 
-  if (!EMAIL_RE.test(email)) {
+  if (!EMAIL_RE.test(email) || email.length > 320) {
     return { error: "Enter a valid email address." };
   }
+
+  if (email === user.email?.toLowerCase()) return { error: "Your organisation account is already included." };
 
   const { error } = await supabase.from("organisation_members").insert({
     organisation_id: user.id,
@@ -53,11 +56,15 @@ export async function addMember(_prevState, formData) {
 export async function removeMember(memberId) {
   const { supabase, user } = await requireOrganisation();
 
-  await supabase
+  if (!UUID_RE.test(String(memberId || ""))) throw new Error("Invalid member identifier.");
+
+  const { error } = await supabase
     .from("organisation_members")
     .delete()
     .eq("id", memberId)
     .eq("organisation_id", user.id);
+
+  if (error) throw new Error("Could not remove this member. Please try again.");
 
   revalidatePath("/organisation-dashboard");
 }

@@ -19,6 +19,17 @@ export async function POST(request) {
     return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   }
 
+  // Billing is intentionally fail-closed until both secrets are
+  // configured. Returning success here would silently discard real
+  // subscription changes; letting getStripeClient() throw instead would
+  // produce an opaque 500 rather than this explicit response.
+  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+    return NextResponse.json(
+      { error: "Subscription webhooks are not configured." },
+      { status: 503 }
+    );
+  }
+
   const stripe = getStripeClient();
   let event;
 

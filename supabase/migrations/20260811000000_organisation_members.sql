@@ -24,11 +24,17 @@ create policy "Organisations manage their own members"
 
 -- Auto-activate a pending invite the moment the invited person signs up, so
 -- an organisation doesn't have to manually reconcile emails to accounts.
--- This replaces (extends) the trigger function from
--- 20260805120000_user_roles.sql rather than adding a second trigger on
--- auth.users -- the existing `on_auth_user_created` trigger already points
--- at this function name.
-create or replace function public.handle_new_user()
+--
+-- IMPORTANT: this extends handle_new_user_role() (from
+-- 20260805120000_user_roles.sql), NOT handle_new_user(). handle_new_user()
+-- is a different, separate function/trigger (on_auth_user_created) that
+-- creates the `profiles` row on signup -- redefining it here would
+-- silently stop new signups from getting a profiles row, breaking the
+-- admin analytics user count, the account page, and the media table's
+-- uploaded_by FK. handle_new_user_role() already runs on its own
+-- on_auth_user_created-independent trigger (on_auth_user_role_created)
+-- and already has the requested_role -> role logic this needs.
+create or replace function public.handle_new_user_role()
 returns trigger
 language plpgsql
 security definer
@@ -40,7 +46,7 @@ begin
   insert into public.user_roles (user_id, role)
   values (
     new.id,
-    case when requested = 'organisation' then 'organisation' else 'user' end
+    case when requested = 'organisation' then 'organisation'::app_role else 'user'::app_role end
   )
   on conflict (user_id) do nothing;
 

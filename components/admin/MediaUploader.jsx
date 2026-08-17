@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as tus from "tus-js-client";
 import { createClient } from "@/lib/supabase/client";
 
@@ -362,6 +362,22 @@ export default function MediaUploader({
   const [instructor, setInstructor] =
     useState("MindSettle");
 
+  const [categories, setCategories] = useState([]);
+  const [moods, setMoods] = useState([]);
+
+  const [categoryId, setCategoryId] = useState("");
+  const [selectedMoodIds, setSelectedMoodIds] =
+    useState([]);
+
+  const [isFeatured, setIsFeatured] =
+    useState(false);
+  const [showOnHomepage, setShowOnHomepage] =
+    useState(false);
+  const [isPublished, setIsPublished] =
+    useState(true);
+  const [isPremium, setIsPremium] =
+    useState(true);
+
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] =
     useState("info");
@@ -384,6 +400,60 @@ export default function MediaUploader({
   const uploadRef = useRef(null);
   const fileInputRef = useRef(null);
   const thumbnailInputRef = useRef(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPreferences() {
+      try {
+        const [
+          { data: categoryData, error: categoryError },
+          { data: moodData, error: moodError },
+        ] = await Promise.all([
+          supabase
+            .from("categories")
+            .select("id, name, slug")
+            .order("name"),
+
+          supabase
+            .from("moods")
+            .select("id, name, slug, emoji, description")
+            .order("name"),
+        ]);
+
+        if (categoryError) {
+          throw categoryError;
+        }
+
+        if (moodError) {
+          throw moodError;
+        }
+
+        if (!cancelled) {
+          setCategories(categoryData || []);
+          setMoods(moodData || []);
+        }
+      } catch (error) {
+        console.error(
+          "Could not load upload preferences:",
+          error
+        );
+
+        if (!cancelled) {
+          showMessage(
+            "Media can still be uploaded, but categories or moods could not be loaded.",
+            "error"
+          );
+        }
+      }
+    }
+
+    loadPreferences();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase]);
 
   function showMessage(text, type = "info") {
     setMessage(text);
@@ -613,6 +683,12 @@ export default function MediaUploader({
     setTitle("");
     setDescription("");
     setInstructor("MindSettle");
+    setCategoryId("");
+    setSelectedMoodIds([]);
+    setIsFeatured(false);
+    setShowOnHomepage(false);
+    setIsPublished(true);
+    setIsPremium(true);
   }
 
   async function validateAndSelectFile(
@@ -701,6 +777,14 @@ export default function MediaUploader({
         selectedFile
       )} selected successfully.`,
       "info"
+    );
+  }
+
+  function toggleMood(moodId) {
+    setSelectedMoodIds((current) =>
+      current.includes(moodId)
+        ? current.filter((id) => id !== moodId)
+        : [...current, moodId]
     );
   }
 
@@ -912,6 +996,17 @@ export default function MediaUploader({
 
           contentType:
             selectedFile.type,
+
+          categoryId:
+            categoryId || null,
+
+          moodIds:
+            selectedMoodIds,
+
+          isFeatured,
+          showOnHomepage,
+          isPublished,
+          isPremium,
         }),
       }
     );
@@ -1706,6 +1801,211 @@ export default function MediaUploader({
                     placeholder="Add a short description of this media..."
                     className="w-full resize-y rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
                   />
+                </div>
+
+                <div className="mt-5">
+                  <label
+                    htmlFor="category"
+                    className="mb-2 block text-sm font-semibold text-slate-700"
+                  >
+                    Category
+                  </label>
+
+                  <select
+                    id="category"
+                    value={categoryId}
+                    onChange={(event) =>
+                      setCategoryId(event.target.value)
+                    }
+                    disabled={uploading}
+                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                  >
+                    <option value="">
+                      No category
+                    </option>
+
+                    {categories.map((category) => (
+                      <option
+                        key={category.id}
+                        value={category.id}
+                      >
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="mt-8">
+                  <h3 className="text-sm font-bold uppercase tracking-wide text-slate-700">
+                    Mood assignment
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    Select one or more moods where this media should appear.
+                  </p>
+
+                  {moods.length === 0 ? (
+                    <p className="mt-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-500">
+                      No moods are available yet.
+                    </p>
+                  ) : (
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {moods.map((mood) => {
+                        const selected =
+                          selectedMoodIds.includes(mood.id);
+
+                        return (
+                          <button
+                            key={mood.id}
+                            type="button"
+                            onClick={() =>
+                              toggleMood(mood.id)
+                            }
+                            disabled={uploading}
+                            className={`flex items-center gap-3 rounded-xl border p-3 text-left transition ${
+                              selected
+                                ? "border-emerald-500 bg-emerald-50 text-emerald-900 shadow-sm"
+                                : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:bg-emerald-50/60"
+                            }`}
+                          >
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-lg shadow-sm">
+                              {mood.emoji || "•"}
+                            </span>
+
+                            <span className="min-w-0">
+                              <span className="block truncate text-sm font-semibold">
+                                {mood.name}
+                              </span>
+
+                              {mood.description && (
+                                <span className="mt-0.5 block line-clamp-1 text-xs opacity-70">
+                                  {mood.description}
+                                </span>
+                              )}
+                            </span>
+
+                            <span className="ml-auto text-sm font-bold">
+                              {selected ? "✓" : ""}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-8 grid gap-4 lg:grid-cols-2">
+                  <div className="rounded-xl border border-sky-100 bg-sky-50/40 p-5">
+                    <h3 className="text-sm font-bold uppercase tracking-wide text-slate-700">
+                      Placement
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      Choose special locations where this media may appear.
+                    </p>
+
+                    <div className="mt-4 space-y-3">
+                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-white p-3">
+                        <input
+                          type="checkbox"
+                          checked={isFeatured}
+                          onChange={(event) =>
+                            setIsFeatured(event.target.checked)
+                          }
+                          disabled={uploading}
+                          className="mt-1 h-4 w-4 accent-emerald-600"
+                        />
+
+                        <span>
+                          <span className="block text-sm font-semibold text-slate-800">
+                            Featured / Hero
+                          </span>
+
+                          <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+                            Allow this media to appear in a featured hero position.
+                          </span>
+                        </span>
+                      </label>
+
+                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-white p-3">
+                        <input
+                          type="checkbox"
+                          checked={showOnHomepage}
+                          onChange={(event) =>
+                            setShowOnHomepage(event.target.checked)
+                          }
+                          disabled={uploading}
+                          className="mt-1 h-4 w-4 accent-emerald-600"
+                        />
+
+                        <span>
+                          <span className="block text-sm font-semibold text-slate-800">
+                            Homepage
+                          </span>
+
+                          <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+                            Allow this media to appear on the public MindSettle homepage.
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-emerald-100 bg-emerald-50/30 p-5">
+                    <h3 className="text-sm font-bold uppercase tracking-wide text-slate-700">
+                      Access & status
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      Control visibility and subscriber access.
+                    </p>
+
+                    <div className="mt-4 space-y-3">
+                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-white p-3">
+                        <input
+                          type="checkbox"
+                          checked={isPublished}
+                          onChange={(event) =>
+                            setIsPublished(event.target.checked)
+                          }
+                          disabled={uploading}
+                          className="mt-1 h-4 w-4 accent-emerald-600"
+                        />
+
+                        <span>
+                          <span className="block text-sm font-semibold text-slate-800">
+                            Published
+                          </span>
+
+                          <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+                            Published media can be displayed to users.
+                          </span>
+                        </span>
+                      </label>
+
+                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-white p-3">
+                        <input
+                          type="checkbox"
+                          checked={isPremium}
+                          onChange={(event) =>
+                            setIsPremium(event.target.checked)
+                          }
+                          disabled={uploading}
+                          className="mt-1 h-4 w-4 accent-emerald-600"
+                        />
+
+                        <span>
+                          <span className="block text-sm font-semibold text-slate-800">
+                            Premium / subscriber only
+                          </span>
+
+                          <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+                            Mark this media as protected subscription content.
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
 

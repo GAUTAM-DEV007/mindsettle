@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import MediaUploader from "@/components/admin/MediaUploader";
+import UserManagement from "@/components/admin/UserManagement";
+import SubscriptionManagement from "@/components/admin/SubscriptionManagement";
+import InvoiceManagement from "@/components/admin/InvoiceManagement";
 
 import {
   addCategory,
@@ -14,12 +19,28 @@ export default function AdminDashboardClient({
   stats,
   categories,
   categoryError,
+  users,
+  subscriptions,
+  invoices,
+  adminApiConfigured,
+  usersError,
+  subscriptionsError,
+  invoicesError,
 }) {
   const [activeSection, setActiveSection] =
     useState("overview");
 
   const [sidebarOpen, setSidebarOpen] =
     useState(false);
+
+  const router = useRouter();
+  const supabase = createClient();
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  }
 
   const {
     total_users,
@@ -50,6 +71,21 @@ export default function AdminDashboardClient({
       id: "categories",
       label: "Categories",
       icon: "▦",
+    },
+    {
+      id: "users",
+      label: "Users",
+      icon: "◈",
+    },
+    {
+      id: "subscriptions",
+      label: "Subscriptions",
+      icon: "$",
+    },
+    {
+      id: "invoices",
+      label: "Invoices",
+      icon: "▤",
     },
   ];
 
@@ -207,6 +243,18 @@ export default function AdminDashboardClient({
 
               Back to site
             </Link>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="mt-2 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium text-red-600 transition hover:bg-red-50"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50">
+                ⏻
+              </span>
+
+              Log out
+            </button>
           </div>
 
         </aside>
@@ -631,6 +679,81 @@ export default function AdminDashboardClient({
                   </div>
 
                 </article>
+              </section>
+            )}
+
+            {/* USERS */}
+
+            {activeSection ===
+              "users" && (
+              <section>
+
+                <SectionHeader
+                  eyebrow="People"
+                  title="User Management"
+                  description="View every registered account, change roles, and suspend or delete accounts."
+                />
+
+                {usersError && (
+                  <p className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {usersError}
+                  </p>
+                )}
+
+                <UserManagement
+                  users={users}
+                  configured={adminApiConfigured}
+                />
+              </section>
+            )}
+
+            {/* SUBSCRIPTIONS */}
+
+            {activeSection ===
+              "subscriptions" && (
+              <section>
+
+                <SectionHeader
+                  eyebrow="Billing"
+                  title="Subscription Management"
+                  description="Every subscription synced from Stripe, with status and the ability to cancel."
+                />
+
+                {subscriptionsError && (
+                  <p className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {subscriptionsError}
+                  </p>
+                )}
+
+                <SubscriptionManagement
+                  subscriptions={subscriptions}
+                  configured={adminApiConfigured}
+                />
+              </section>
+            )}
+
+            {/* INVOICES */}
+
+            {activeSection ===
+              "invoices" && (
+              <section>
+
+                <SectionHeader
+                  eyebrow="Billing"
+                  title="Invoice Management"
+                  description="Invoices synced from Stripe. Email a copy to the customer with one click."
+                />
+
+                {invoicesError && (
+                  <p className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {invoicesError}
+                  </p>
+                )}
+
+                <InvoiceManagement
+                  invoices={invoices}
+                  configured={adminApiConfigured}
+                />
               </section>
             )}
 

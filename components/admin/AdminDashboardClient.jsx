@@ -138,16 +138,16 @@ export default function AdminDashboardClient({
     });
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
+    <div className="min-h-screen bg-[#f5f5ed] text-[#29383e]">
       {/* MOBILE HEADER */}
 
-      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-sky-100 bg-white/95 px-5 shadow-sm backdrop-blur lg:hidden">
+      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[#dfe5dc] bg-[#fffdfa]/95 px-5 shadow-sm backdrop-blur lg:hidden">
         <div>
-          <p className="text-base font-bold text-slate-950">
+          <p className="text-base font-bold text-[#163d34]">
             MindSettle
           </p>
 
-          <p className="text-xs font-medium text-emerald-600">
+          <p className="text-xs font-medium text-[#78906f]">
             Administration
           </p>
         </div>
@@ -159,7 +159,7 @@ export default function AdminDashboardClient({
               (current) => !current
             )
           }
-          className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600 text-xl text-white shadow-sm transition hover:bg-emerald-700"
+          className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#163d34] text-xl text-white shadow-sm transition hover:bg-[#12372f]"
           aria-label="Toggle admin menu"
         >
           ☰
@@ -183,7 +183,7 @@ export default function AdminDashboardClient({
         {/* SIDEBAR */}
 
         <aside
-          className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-sky-100 bg-white shadow-xl transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:shadow-none ${
+          className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-[#cfd8cb] bg-[#fffdfa] shadow-xl transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:shadow-none ${
             sidebarOpen
               ? "translate-x-0"
               : "-translate-x-full"
@@ -191,19 +191,19 @@ export default function AdminDashboardClient({
         >
           {/* BRAND */}
 
-          <div className="flex h-24 items-center justify-between border-b border-sky-100 px-6">
+          <div className="flex h-24 items-center justify-between border-b border-[#dfe5dc] px-6">
             <Link
               href="/admin"
-              className="flex items-center gap-3"
+              className="group flex items-center gap-3 rounded-2xl px-2 py-1 transition-all duration-300 hover:bg-[#dce8ca]/60"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo-full.png"
                 alt="MindSettle"
-                className="h-14 w-auto object-contain"
+                className="h-16 w-auto object-contain transition-all duration-300 group-hover:scale-[1.04] group-hover:brightness-110 group-hover:saturate-150"
               />
 
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-600">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#78906f]">
                 Administration
               </p>
             </Link>
@@ -213,7 +213,7 @@ export default function AdminDashboardClient({
               onClick={() =>
                 setSidebarOpen(false)
               }
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-950 lg:hidden"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-xl text-[#6c8178] transition hover:bg-[#eef1ed] hover:text-[#163d34] lg:hidden"
               aria-label="Close menu"
             >
               ×
@@ -223,7 +223,7 @@ export default function AdminDashboardClient({
           {/* NAVIGATION */}
 
           <nav className="flex-1 px-4 py-7">
-            <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+            <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#8a9992]">
               Dashboard
             </p>
 
@@ -245,15 +245,15 @@ export default function AdminDashboardClient({
                       }
                       className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition ${
                         active
-                          ? "bg-emerald-600 text-white shadow-md"
-                          : "text-slate-600 hover:bg-sky-50 hover:text-slate-950"
+                          ? "bg-[#163d34] text-white shadow-[0_8px_22px_rgba(18,55,47,0.18)]"
+                          : "text-[#5a6d66] hover:bg-[#eef3e8] hover:text-[#163d34]"
                       }`}
                     >
                       <span
                         className={`flex h-9 w-9 items-center justify-center rounded-lg ${
                           active
                             ? "bg-white/15 text-white"
-                            : "bg-sky-100 text-sky-700"
+                            : "bg-[#dfe8d6] text-[#344d5a]"
                         }`}
                       >
                         {item.icon}
@@ -269,12 +269,12 @@ export default function AdminDashboardClient({
 
           {/* SIDEBAR FOOTER */}
 
-          <div className="border-t border-sky-100 p-4">
+          <div className="border-t border-[#dfe5dc] p-4">
             <Link
               href="/library"
-              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-sky-50 hover:text-slate-950"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#5a6d66] transition hover:bg-[#eef3e8] hover:text-[#163d34]"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#eef1ed]">
                 ←
               </span>
 
@@ -285,24 +285,24 @@ export default function AdminDashboardClient({
 
         {/* MAIN CONTENT */}
 
-        <main className="min-w-0 flex-1">
+        <main className="min-w-0 flex-1 bg-[#f5f5ed]">
           {/* DESKTOP TOP BAR */}
 
-          <div className="hidden border-b border-sky-100 bg-white lg:block">
+          <div className="hidden border-b border-[#cfd8cb] bg-[#fffdfa]/95 backdrop-blur-xl lg:block">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-10 py-6">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-600">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#78906f]">
                   MindSettle Administration
                 </p>
 
-                <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
+                <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#163d34]">
                   {currentSection}
                 </h1>
               </div>
 
               <Link
                 href="/library"
-                className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-500 hover:text-emerald-700"
+                className="rounded-lg border border-[#dfe5dc] bg-white px-5 py-2.5 text-sm font-semibold text-[#4b615b] shadow-sm transition hover:border-[#78906f] hover:text-[#163d34]"
               >
                 Back to site
               </Link>
@@ -323,22 +323,22 @@ export default function AdminDashboardClient({
                   description="Create, edit and remove the moods used across MindSettle. Media can then be assigned to these moods from Media Management."
                 />
 
-                <article className="rounded-xl border border-sky-100 bg-white p-6 shadow-md">
+                <article className="rounded-[22px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
                   {/* ADD MOOD */}
 
                   <div>
-                    <h3 className="text-lg font-bold text-slate-950">
+                    <h3 className="text-lg font-bold text-[#163d34]">
                       Add Mood
                     </h3>
 
-                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                    <p className="mt-1 text-sm leading-6 text-[#5a6d66]">
                       New moods automatically become available to the MindSettle mood experience and to Admin media assignment.
                     </p>
                   </div>
 
                   <form
                     action={addMood}
-                    className="mt-6 grid gap-4 border-b border-slate-100 pb-8 lg:grid-cols-2"
+                    className="mt-6 grid gap-4 border-b border-[#e4e8df] pb-8 lg:grid-cols-2"
                   >
                     <FormField
                       label="Mood name"
@@ -349,7 +349,7 @@ export default function AdminDashboardClient({
                         name="name"
                         required
                         placeholder="e.g. Calm"
-                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                        className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition placeholder:text-[#8a9992] focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                       />
                     </FormField>
 
@@ -362,7 +362,7 @@ export default function AdminDashboardClient({
                         name="slug"
                         required
                         placeholder="e.g. calm"
-                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                        className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition placeholder:text-[#8a9992] focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                       />
                     </FormField>
 
@@ -374,7 +374,7 @@ export default function AdminDashboardClient({
                         id="new-mood-emoji"
                         name="emoji"
                         placeholder="e.g. 🌿"
-                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                        className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition placeholder:text-[#8a9992] focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                       />
                     </FormField>
 
@@ -388,7 +388,7 @@ export default function AdminDashboardClient({
                           name="description"
                           rows={3}
                           placeholder="Describe when this mood should help the user."
-                          className="w-full resize-y rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                          className="w-full resize-y rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm leading-6 text-[#163d34] outline-none transition placeholder:text-[#8a9992] focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                         />
                       </FormField>
                     </div>
@@ -396,7 +396,7 @@ export default function AdminDashboardClient({
                     <div className="lg:col-span-2">
                       <button
                         type="submit"
-                        className="rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                        className="rounded-lg bg-[#163d34] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#12372f]"
                       >
                         Add Mood
                       </button>
@@ -406,25 +406,25 @@ export default function AdminDashboardClient({
                   {/* EXISTING MOODS */}
 
                   <div className="mt-8">
-                    <h3 className="text-lg font-bold text-slate-950">
+                    <h3 className="text-lg font-bold text-[#163d34]">
                       Existing Moods
                     </h3>
 
-                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                    <p className="mt-1 text-sm leading-6 text-[#5a6d66]">
                       Edit the wording, emoji or description. Deleting a mood removes only its mood relationships; it does not delete any media.
                     </p>
 
                     {moods.length === 0 ? (
-                      <div className="mt-5 rounded-xl border border-dashed border-sky-200 bg-sky-50/50 px-6 py-12 text-center">
-                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-xl">
+                      <div className="mt-5 rounded-xl border border-dashed border-[#cfd8cb] bg-[#eef3e8]/70 px-6 py-12 text-center">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#dce8ca] text-xl">
                           ☻
                         </div>
 
-                        <p className="mt-4 text-sm font-semibold text-slate-700">
+                        <p className="mt-4 text-sm font-semibold text-[#4b615b]">
                           No moods yet
                         </p>
 
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p className="mt-1 text-xs text-[#6c8178]">
                           Create the first mood using the form above.
                         </p>
                       </div>
@@ -433,33 +433,33 @@ export default function AdminDashboardClient({
                         {moods.map((mood) => (
                           <details
                             key={mood.id}
-                            className="group overflow-hidden rounded-xl border border-slate-200 bg-slate-50"
+                            className="group overflow-hidden rounded-xl border border-[#dfe5dc] bg-[#f5f5ed]"
                           >
-                            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 transition hover:bg-emerald-50">
+                            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 transition hover:bg-[#eef3e8]">
                               <div className="flex min-w-0 items-center gap-3">
                                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-xl shadow-sm">
                                   {mood.emoji || "◌"}
                                 </div>
 
                                 <div className="min-w-0">
-                                  <p className="truncate text-sm font-bold text-slate-900">
+                                  <p className="truncate text-sm font-bold text-[#29383e]">
                                     {mood.name}
                                   </p>
 
-                                  <p className="mt-0.5 truncate text-xs text-slate-500">
+                                  <p className="mt-0.5 truncate text-xs text-[#6c8178]">
                                     /{mood.slug}
                                   </p>
                                 </div>
                               </div>
 
-                              <div className="flex items-center gap-3">
-                                <span className="hidden text-xs font-semibold text-slate-500 sm:inline">
+                              <div className="group flex items-center gap-3 rounded-2xl px-2 py-1 transition-all duration-300 hover:bg-[#dce8ca]/60">
+                                <span className="hidden text-xs font-semibold text-[#6c8178] sm:inline">
                                   Edit mood
                                 </span>
 
                                 <svg
                                   viewBox="0 0 20 20"
-                                  className="h-5 w-5 shrink-0 text-slate-500 transition-transform duration-200 group-open:rotate-180"
+                                  className="h-5 w-5 shrink-0 text-[#6c8178] transition-transform duration-200 group-open:rotate-180"
                                   fill="currentColor"
                                   aria-hidden="true"
                                 >
@@ -470,7 +470,7 @@ export default function AdminDashboardClient({
 
                             <form
                               action={updateMood}
-                              className="border-t border-slate-200 bg-white p-5"
+                              className="border-t border-[#dfe5dc] bg-white p-5"
                             >
                               <input
                                 type="hidden"
@@ -488,7 +488,7 @@ export default function AdminDashboardClient({
                                     name="name"
                                     required
                                     defaultValue={mood.name}
-                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                    className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                                   />
                                 </FormField>
 
@@ -501,7 +501,7 @@ export default function AdminDashboardClient({
                                     name="slug"
                                     required
                                     defaultValue={mood.slug}
-                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                    className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                                   />
                                 </FormField>
 
@@ -513,7 +513,7 @@ export default function AdminDashboardClient({
                                     id={`mood-emoji-${mood.id}`}
                                     name="emoji"
                                     defaultValue={mood.emoji || ""}
-                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-lg text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                    className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-center text-lg text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                                   />
                                 </FormField>
                               </div>
@@ -528,15 +528,15 @@ export default function AdminDashboardClient({
                                     name="description"
                                     rows={3}
                                     defaultValue={mood.description || ""}
-                                    className="w-full resize-y rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                    className="w-full resize-y rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm leading-6 text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                                   />
                                 </FormField>
                               </div>
 
-                              <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:justify-between">
+                              <div className="mt-5 flex flex-col gap-3 border-t border-[#dfe5dc] pt-4 sm:flex-row sm:justify-between">
                                 <button
                                   type="submit"
-                                  className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                                  className="rounded-lg bg-[#163d34] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#12372f]"
                                 >
                                   Save Mood
                                 </button>
@@ -578,22 +578,22 @@ export default function AdminDashboardClient({
                   </div>
                 )}
 
-                <article className="rounded-xl border border-sky-100 bg-white p-6 shadow-md">
+                <article className="rounded-[22px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
                   {/* ADD SOCIAL LINK */}
 
                   <div>
-                    <h3 className="text-lg font-bold text-slate-950">
+                    <h3 className="text-lg font-bold text-[#163d34]">
                       Add Social Platform
                     </h3>
 
-                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                    <p className="mt-1 text-sm leading-6 text-[#5a6d66]">
                       Add another social platform if MindSettle starts using a new account. Existing Instagram, Facebook, YouTube, LinkedIn and TikTok rows can be edited below.
                     </p>
                   </div>
 
                   <form
                     action={addSocialLink}
-                    className="mt-6 grid gap-4 border-b border-slate-100 pb-8 lg:grid-cols-2"
+                    className="mt-6 grid gap-4 border-b border-[#e4e8df] pb-8 lg:grid-cols-2"
                   >
                     <FormField
                       label="Platform"
@@ -604,7 +604,7 @@ export default function AdminDashboardClient({
                         name="platform"
                         required
                         placeholder="e.g. Instagram"
-                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                        className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition placeholder:text-[#8a9992] focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                       />
                     </FormField>
 
@@ -617,7 +617,7 @@ export default function AdminDashboardClient({
                         name="url"
                         type="url"
                         placeholder="https://..."
-                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                        className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition placeholder:text-[#8a9992] focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                       />
                     </FormField>
 
@@ -631,24 +631,24 @@ export default function AdminDashboardClient({
                         type="number"
                         min="1"
                         defaultValue={socialLinks.length + 1}
-                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                        className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                       />
                     </FormField>
 
                     <div className="flex items-end">
-                      <label className="flex w-full cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                      <label className="flex w-full cursor-pointer items-start gap-3 rounded-xl border border-[#dfe5dc] bg-[#f5f5ed] px-4 py-3">
                         <input
                           type="checkbox"
                           name="isEnabled"
-                          className="mt-1 h-4 w-4 accent-emerald-600"
+                          className="mt-1 h-4 w-4 accent-[#163d34]"
                         />
 
                         <span>
-                          <span className="block text-sm font-semibold text-slate-800">
+                          <span className="block text-sm font-semibold text-[#29383e]">
                             Enabled
                           </span>
 
-                          <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+                          <span className="mt-0.5 block text-xs leading-5 text-[#6c8178]">
                             Show this account once a valid profile URL is saved.
                           </span>
                         </span>
@@ -658,7 +658,7 @@ export default function AdminDashboardClient({
                     <div className="lg:col-span-2">
                       <button
                         type="submit"
-                        className="rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                        className="rounded-lg bg-[#163d34] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#12372f]"
                       >
                         Add Social Platform
                       </button>
@@ -670,31 +670,31 @@ export default function AdminDashboardClient({
                   <div className="mt-8">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                       <div>
-                        <h3 className="text-lg font-bold text-slate-950">
+                        <h3 className="text-lg font-bold text-[#163d34]">
                           Existing Social Links
                         </h3>
 
-                        <p className="mt-1 text-sm leading-6 text-slate-600">
+                        <p className="mt-1 text-sm leading-6 text-[#5a6d66]">
                           Open a platform to edit its URL, visibility or display order.
                         </p>
                       </div>
 
-                      <p className="text-xs font-medium text-slate-500">
+                      <p className="text-xs font-medium text-[#6c8178]">
                         Enabled links without a URL will stay hidden from the user footer.
                       </p>
                     </div>
 
                     {socialLinks.length === 0 ? (
-                      <div className="mt-5 rounded-xl border border-dashed border-sky-200 bg-sky-50/50 px-6 py-12 text-center">
-                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-xl text-emerald-700">
+                      <div className="mt-5 rounded-xl border border-dashed border-[#cfd8cb] bg-[#eef3e8]/70 px-6 py-12 text-center">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#dce8ca] text-xl text-[#163d34]">
                           ↗
                         </div>
 
-                        <p className="mt-4 text-sm font-semibold text-slate-700">
+                        <p className="mt-4 text-sm font-semibold text-[#4b615b]">
                           No social platforms yet
                         </p>
 
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p className="mt-1 text-xs text-[#6c8178]">
                           Add the first platform using the form above.
                         </p>
                       </div>
@@ -703,11 +703,11 @@ export default function AdminDashboardClient({
                         {socialLinks.map((social) => (
                           <details
                             key={social.id}
-                            className="group overflow-hidden rounded-xl border border-slate-200 bg-slate-50"
+                            className="group overflow-hidden rounded-xl border border-[#dfe5dc] bg-[#f5f5ed]"
                           >
-                            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 transition hover:bg-emerald-50">
+                            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 transition hover:bg-[#eef3e8]">
                               <div className="flex min-w-0 items-center gap-3">
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold uppercase text-emerald-700 shadow-sm">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold uppercase text-[#163d34] shadow-sm">
                                   {social.platform
                                     ?.trim()
                                     ?.slice(0, 2) || "↗"}
@@ -715,15 +715,15 @@ export default function AdminDashboardClient({
 
                                 <div className="min-w-0">
                                   <div className="flex flex-wrap items-center gap-2">
-                                    <p className="truncate text-sm font-bold text-slate-900">
+                                    <p className="truncate text-sm font-bold text-[#29383e]">
                                       {social.platform}
                                     </p>
 
                                     <span
                                       className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
                                         social.is_enabled
-                                          ? "bg-emerald-100 text-emerald-700"
-                                          : "bg-slate-200 text-slate-600"
+                                          ? "bg-[#dce8ca] text-[#163d34]"
+                                          : "bg-[#dfe5dc] text-[#5a6d66]"
                                       }`}
                                     >
                                       {social.is_enabled
@@ -732,7 +732,7 @@ export default function AdminDashboardClient({
                                     </span>
                                   </div>
 
-                                  <p className="mt-0.5 max-w-xl truncate text-xs text-slate-500">
+                                  <p className="mt-0.5 max-w-xl truncate text-xs text-[#6c8178]">
                                     {social.url ||
                                       "No profile URL saved"}
                                   </p>
@@ -740,13 +740,13 @@ export default function AdminDashboardClient({
                               </div>
 
                               <div className="flex shrink-0 items-center gap-3">
-                                <span className="hidden text-xs font-semibold text-slate-500 sm:inline">
+                                <span className="hidden text-xs font-semibold text-[#6c8178] sm:inline">
                                   Edit link
                                 </span>
 
                                 <svg
                                   viewBox="0 0 20 20"
-                                  className="h-5 w-5 text-slate-500 transition-transform duration-200 group-open:rotate-180"
+                                  className="h-5 w-5 text-[#6c8178] transition-transform duration-200 group-open:rotate-180"
                                   fill="currentColor"
                                   aria-hidden="true"
                                 >
@@ -757,7 +757,7 @@ export default function AdminDashboardClient({
 
                             <form
                               action={updateSocialLink}
-                              className="border-t border-slate-200 bg-white p-5"
+                              className="border-t border-[#dfe5dc] bg-white p-5"
                             >
                               <input
                                 type="hidden"
@@ -775,7 +775,7 @@ export default function AdminDashboardClient({
                                     name="platform"
                                     required
                                     defaultValue={social.platform}
-                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                    className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                                   />
                                 </FormField>
 
@@ -789,7 +789,7 @@ export default function AdminDashboardClient({
                                     type="url"
                                     defaultValue={social.url || ""}
                                     placeholder="https://..."
-                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                    className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition placeholder:text-[#8a9992] focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                                   />
                                 </FormField>
 
@@ -803,36 +803,36 @@ export default function AdminDashboardClient({
                                     type="number"
                                     min="1"
                                     defaultValue={social.sort_order || 1}
-                                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                                    className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                                   />
                                 </FormField>
                               </div>
 
-                              <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                              <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-[#dfe5dc] bg-[#f5f5ed] px-4 py-3">
                                 <input
                                   type="checkbox"
                                   name="isEnabled"
                                   defaultChecked={Boolean(
                                     social.is_enabled
                                   )}
-                                  className="mt-1 h-4 w-4 accent-emerald-600"
+                                  className="mt-1 h-4 w-4 accent-[#163d34]"
                                 />
 
                                 <span>
-                                  <span className="block text-sm font-semibold text-slate-800">
+                                  <span className="block text-sm font-semibold text-[#29383e]">
                                     Enabled
                                   </span>
 
-                                  <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+                                  <span className="mt-0.5 block text-xs leading-5 text-[#6c8178]">
                                     Allow this social account to appear on MindSettle when a URL is available.
                                   </span>
                                 </span>
                               </label>
 
-                              <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:justify-between">
+                              <div className="mt-5 flex flex-col gap-3 border-t border-[#dfe5dc] pt-4 sm:flex-row sm:justify-between">
                                 <button
                                   type="submit"
-                                  className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                                  className="rounded-lg bg-[#163d34] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#12372f]"
                                 >
                                   Save Social Link
                                 </button>
@@ -893,13 +893,13 @@ export default function AdminDashboardClient({
                 <div className="mt-8 grid gap-8 xl:grid-cols-2">
                   {/* SUBSCRIPTIONS */}
 
-                  <article className="rounded-xl border border-sky-100 bg-white p-6 shadow-md">
+                  <article className="rounded-[22px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
                     <div>
-                      <h3 className="text-xl font-bold text-slate-950">
+                      <h3 className="text-xl font-bold text-[#163d34]">
                         Subscriptions
                       </h3>
 
-                      <p className="mt-2 text-sm text-slate-600">
+                      <p className="mt-2 text-sm text-[#5a6d66]">
                         Current
                         subscription status
                         across registered
@@ -936,13 +936,13 @@ export default function AdminDashboardClient({
 
                   {/* USER GROWTH */}
 
-                  <article className="rounded-xl border border-sky-100 bg-white p-6 shadow-md">
+                  <article className="rounded-[22px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
                     <div>
-                      <h3 className="text-xl font-bold text-slate-950">
+                      <h3 className="text-xl font-bold text-[#163d34]">
                         User Growth
                       </h3>
 
-                      <p className="mt-2 text-sm text-slate-600">
+                      <p className="mt-2 text-sm text-[#5a6d66]">
                         New users
                         registered during
                         the last 30 days.
@@ -962,9 +962,9 @@ export default function AdminDashboardClient({
                                   key={
                                     day.date
                                   }
-                                  className="border-b border-slate-100 last:border-0"
+                                  className="border-b border-[#e4e8df] last:border-0"
                                 >
-                                  <td className="py-2.5 text-slate-600">
+                                  <td className="py-2.5 text-[#5a6d66]">
                                     {new Date(
                                       day.date
                                     ).toLocaleDateString(
@@ -979,7 +979,7 @@ export default function AdminDashboardClient({
                                     )}
                                   </td>
 
-                                  <td className="py-2.5 text-right font-semibold text-slate-950">
+                                  <td className="py-2.5 text-right font-semibold text-[#163d34]">
                                     {
                                       day.new_users
                                     }
@@ -990,7 +990,7 @@ export default function AdminDashboardClient({
                           </tbody>
                         </table>
                       ) : (
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-[#6c8178]">
                           No user growth
                           data yet.
                         </p>
@@ -1061,7 +1061,7 @@ export default function AdminDashboardClient({
 
                 {/* MEDIA SUB NAVIGATION */}
 
-                <div className="mb-6 inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+                <div className="mb-6 inline-flex rounded-xl border border-[#dfe5dc] bg-white p-1 shadow-sm">
                   <button
                     type="button"
                     onClick={() =>
@@ -1072,8 +1072,8 @@ export default function AdminDashboardClient({
                     className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition ${
                       mediaView ===
                       "manage"
-                        ? "bg-emerald-600 text-white shadow-sm"
-                        : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-800"
+                        ? "bg-[#163d34] text-white shadow-sm"
+                        : "text-[#5a6d66] hover:bg-[#eef3e8] hover:text-[#163d34]"
                     }`}
                   >
                     Manage Media
@@ -1089,8 +1089,8 @@ export default function AdminDashboardClient({
                     className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition ${
                       mediaView ===
                       "upload"
-                        ? "bg-emerald-600 text-white shadow-sm"
-                        : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-800"
+                        ? "bg-[#163d34] text-white shadow-sm"
+                        : "text-[#5a6d66] hover:bg-[#eef3e8] hover:text-[#163d34]"
                     }`}
                   >
                     Upload Media
@@ -1101,7 +1101,7 @@ export default function AdminDashboardClient({
 
                 {mediaView ===
                   "upload" && (
-                  <div className="overflow-hidden rounded-xl border border-sky-100 bg-white shadow-md">
+                  <div className="overflow-hidden rounded-xl border border-[#dfe5dc] bg-white shadow-md">
                     <MediaUploader />
                   </div>
                 )}
@@ -1113,13 +1113,13 @@ export default function AdminDashboardClient({
                   <div className="space-y-6">
                     {/* SEARCH + SUMMARY */}
 
-                    <div className="flex flex-col gap-4 rounded-xl border border-sky-100 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-4 rounded-xl border border-[#dfe5dc] bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <h3 className="text-lg font-bold text-slate-950">
+                        <h3 className="text-lg font-bold text-[#163d34]">
                           Media Library
                         </h3>
 
-                        <p className="mt-1 text-sm text-slate-600">
+                        <p className="mt-1 text-sm text-[#5a6d66]">
                           {
                             media.length
                           }{" "}
@@ -1138,7 +1138,7 @@ export default function AdminDashboardClient({
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="2"
-                          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8a9992]"
                           aria-hidden="true"
                         >
                           <circle
@@ -1165,26 +1165,26 @@ export default function AdminDashboardClient({
                             )
                           }
                           placeholder="Search media..."
-                          className="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                          className="w-full rounded-lg border border-[#dfe5dc] bg-white py-2.5 pl-10 pr-4 text-sm text-[#163d34] outline-none transition placeholder:text-[#8a9992] focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                         />
                       </div>
                     </div>
 
                     {filteredMedia.length ===
                     0 ? (
-                      <div className="rounded-xl border border-dashed border-sky-200 bg-sky-50/40 px-6 py-14 text-center">
-                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                      <div className="rounded-xl border border-dashed border-[#cfd8cb] bg-[#eef3e8]/70 px-6 py-14 text-center">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#dce8ca] text-[#163d34]">
                           ▶
                         </div>
 
-                        <h3 className="mt-4 text-base font-bold text-slate-950">
+                        <h3 className="mt-4 text-base font-bold text-[#163d34]">
                           {media.length ===
                           0
                             ? "No media uploaded yet"
                             : "No matching media"}
                         </h3>
 
-                        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
+                        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#5a6d66]">
                           {media.length ===
                           0
                             ? "Upload your first MindSettle video, audio file or image to begin building the media library."
@@ -1200,7 +1200,7 @@ export default function AdminDashboardClient({
                                 "upload"
                               )
                             }
-                            className="mt-5 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                            className="mt-5 rounded-lg bg-[#163d34] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#12372f]"
                           >
                             Upload Media
                           </button>
@@ -1256,20 +1256,20 @@ export default function AdminDashboardClient({
                   </div>
                 )}
 
-                <article className="rounded-xl border border-sky-100 bg-white p-6 shadow-md">
+                <article className="rounded-[22px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
                   <div>
-                    <h3 className="text-lg font-bold text-slate-950">
+                    <h3 className="text-lg font-bold text-[#163d34]">
                       Add Program
                     </h3>
 
-                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                    <p className="mt-1 text-sm leading-6 text-[#5a6d66]">
                       Create a program first, then add and order media inside it.
                     </p>
                   </div>
 
                   <form
                     action={addProgram}
-                    className="mt-6 grid gap-4 border-b border-slate-100 pb-7 lg:grid-cols-2"
+                    className="mt-6 grid gap-4 border-b border-[#e4e8df] pb-7 lg:grid-cols-2"
                   >
                     <FormField
                       label="Program title"
@@ -1280,7 +1280,7 @@ export default function AdminDashboardClient({
                         name="title"
                         required
                         placeholder="e.g. Better Sleep"
-                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                        className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition placeholder:text-[#8a9992] focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                       />
                     </FormField>
 
@@ -1293,7 +1293,7 @@ export default function AdminDashboardClient({
                         name="slug"
                         required
                         placeholder="e.g. better-sleep"
-                        className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                        className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition placeholder:text-[#8a9992] focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                       />
                     </FormField>
 
@@ -1307,25 +1307,25 @@ export default function AdminDashboardClient({
                           name="description"
                           rows={3}
                           placeholder="Describe what this program helps users work through."
-                          className="w-full resize-y rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                          className="w-full resize-y rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm leading-6 text-[#163d34] outline-none transition placeholder:text-[#8a9992] focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                         />
                       </FormField>
                     </div>
 
                     <div className="lg:col-span-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#dfe5dc] bg-[#f5f5ed] px-4 py-3">
                         <input
                           type="checkbox"
                           name="isPublished"
                           defaultChecked
-                          className="mt-1 h-4 w-4 accent-emerald-600"
+                          className="mt-1 h-4 w-4 accent-[#163d34]"
                         />
 
                         <span>
-                          <span className="block text-sm font-semibold text-slate-800">
+                          <span className="block text-sm font-semibold text-[#29383e]">
                             Published
                           </span>
-                          <span className="mt-0.5 block text-xs text-slate-500">
+                          <span className="mt-0.5 block text-xs text-[#6c8178]">
                             Make the program available to users.
                           </span>
                         </span>
@@ -1333,7 +1333,7 @@ export default function AdminDashboardClient({
 
                       <button
                         type="submit"
-                        className="rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                        className="rounded-lg bg-[#163d34] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#12372f]"
                       >
                         Add Program
                       </button>
@@ -1341,10 +1341,10 @@ export default function AdminDashboardClient({
                   </form>
 
                   <div className="mt-7">
-                    <h3 className="text-lg font-bold text-slate-950">
+                    <h3 className="text-lg font-bold text-[#163d34]">
                       Existing Programs
                     </h3>
-                    <p className="mt-1 text-sm text-slate-600">
+                    <p className="mt-1 text-sm text-[#5a6d66]">
                       Edit program details, add or remove media, and control the session order.
                     </p>
                   </div>
@@ -1352,14 +1352,14 @@ export default function AdminDashboardClient({
 
                 <div className="mt-6 space-y-5">
                   {programs.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-sky-200 bg-sky-50/40 px-6 py-14 text-center">
-                      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                    <div className="rounded-xl border border-dashed border-[#cfd8cb] bg-[#eef3e8]/70 px-6 py-14 text-center">
+                      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#dce8ca] text-[#163d34]">
                         ▤
                       </div>
-                      <h3 className="mt-4 text-base font-bold text-slate-950">
+                      <h3 className="mt-4 text-base font-bold text-[#163d34]">
                         No programs yet
                       </h3>
-                      <p className="mt-2 text-sm text-slate-600">
+                      <p className="mt-2 text-sm text-[#5a6d66]">
                         Create your first program using the form above.
                       </p>
                     </div>
@@ -1416,12 +1416,12 @@ function ProgramManagementCard({
     );
 
   return (
-    <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <article className="overflow-hidden rounded-xl border border-[#dfe5dc] bg-white shadow-sm">
       <div className="p-5 sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-xl font-bold text-slate-950">
+              <h3 className="text-xl font-bold text-[#163d34]">
                 {program.title}
               </h3>
 
@@ -1434,17 +1434,17 @@ function ProgramManagementCard({
               />
             </div>
 
-            <p className="mt-1 text-xs font-semibold text-slate-400">
+            <p className="mt-1 text-xs font-semibold text-[#8a9992]">
               /programs/{program.slug}
             </p>
 
             {program.description && (
-              <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-[#5a6d66]">
                 {program.description}
               </p>
             )}
 
-            <p className="mt-3 text-sm font-semibold text-emerald-700">
+            <p className="mt-3 text-sm font-semibold text-[#163d34]">
               {programVideos.length}{" "}
               {programVideos.length === 1
                 ? "session"
@@ -1459,7 +1459,7 @@ function ProgramManagementCard({
                 (current) => !current
               )
             }
-            className="shrink-0 rounded-lg border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50"
+            className="shrink-0 rounded-lg border border-[#cfd8cb] px-4 py-2 text-sm font-semibold text-[#163d34] transition hover:bg-[#eef3e8]"
           >
             {editing
               ? "Close editor"
@@ -1469,7 +1469,7 @@ function ProgramManagementCard({
       </div>
 
       {editing && (
-        <div className="border-t border-slate-200 bg-slate-50/80 p-5 sm:p-6">
+        <div className="border-t border-[#dfe5dc] bg-[#f5f5ed]/80 p-5 sm:p-6">
           <form
             action={updateProgram}
             className="grid gap-5 lg:grid-cols-2"
@@ -1491,7 +1491,7 @@ function ProgramManagementCard({
                 defaultValue={
                   program.title || ""
                 }
-                className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
               />
             </FormField>
 
@@ -1506,7 +1506,7 @@ function ProgramManagementCard({
                 defaultValue={
                   program.slug || ""
                 }
-                className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
               />
             </FormField>
 
@@ -1522,13 +1522,13 @@ function ProgramManagementCard({
                   defaultValue={
                     program.description || ""
                   }
-                  className="w-full resize-y rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                  className="w-full resize-y rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm leading-6 text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                 />
               </FormField>
             </div>
 
-            <div className="lg:col-span-2 flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
-              <label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-slate-700">
+            <div className="lg:col-span-2 flex flex-col gap-3 border-t border-[#dfe5dc] pt-5 sm:flex-row sm:items-center sm:justify-between">
+              <label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-[#4b615b]">
                 <input
                   type="checkbox"
                   name="isPublished"
@@ -1537,7 +1537,7 @@ function ProgramManagementCard({
                       program.is_published
                     )
                   }
-                  className="h-4 w-4 accent-emerald-600"
+                  className="h-4 w-4 accent-[#163d34]"
                 />
                 Published
               </label>
@@ -1545,7 +1545,7 @@ function ProgramManagementCard({
               <div className="flex flex-wrap gap-2">
                 <button
                   type="submit"
-                  className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                  className="rounded-lg bg-[#163d34] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#12372f]"
                 >
                   Save program
                 </button>
@@ -1563,13 +1563,13 @@ function ProgramManagementCard({
         </div>
       )}
 
-      <div className="border-t border-slate-200 p-5 sm:p-6">
+      <div className="border-t border-[#dfe5dc] p-5 sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h4 className="text-base font-bold text-slate-950">
+            <h4 className="text-base font-bold text-[#163d34]">
               Program sessions
             </h4>
-            <p className="mt-1 text-sm text-slate-600">
+            <p className="mt-1 text-sm text-[#5a6d66]">
               Add, remove and reorder media in this program.
             </p>
           </div>
@@ -1589,7 +1589,7 @@ function ProgramManagementCard({
                 name="videoId"
                 required
                 defaultValue=""
-                className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-emerald-500 sm:w-64"
+                className="min-w-0 flex-1 rounded-lg border border-[#dfe5dc] bg-white px-3 py-2.5 text-sm text-[#4b615b] outline-none focus:border-[#78906f] sm:w-64"
               >
                 <option value="" disabled>
                   Choose media
@@ -1609,7 +1609,7 @@ function ProgramManagementCard({
 
               <button
                 type="submit"
-                className="shrink-0 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                className="shrink-0 rounded-lg bg-[#163d34] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#12372f]"
               >
                 + Add
               </button>
@@ -1618,7 +1618,7 @@ function ProgramManagementCard({
         </div>
 
         {programVideos.length === 0 ? (
-          <div className="mt-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-5 py-8 text-center text-sm text-slate-500">
+          <div className="mt-5 rounded-xl border border-dashed border-[#cfd8cb] bg-[#f5f5ed] px-5 py-8 text-center text-sm text-[#6c8178]">
             No media has been added to this program yet.
           </div>
         ) : (
@@ -1627,10 +1627,10 @@ function ProgramManagementCard({
               (video, index) => (
                 <div
                   key={video.id}
-                  className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-3 rounded-xl border border-[#dfe5dc] bg-[#f5f5ed] p-3 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-800">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#dce8ca] text-xs font-bold text-[#163d34]">
                       {index + 1}
                     </div>
 
@@ -1644,16 +1644,16 @@ function ProgramManagementCard({
                         className="h-12 w-20 shrink-0 rounded-lg object-cover"
                       />
                     ) : (
-                      <div className="flex h-12 w-20 shrink-0 items-center justify-center rounded-lg bg-slate-200 text-slate-500">
+                      <div className="flex h-12 w-20 shrink-0 items-center justify-center rounded-lg bg-[#dfe5dc] text-[#6c8178]">
                         ▶
                       </div>
                     )}
 
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-bold text-slate-900">
+                      <p className="truncate text-sm font-bold text-[#29383e]">
                         {video.title}
                       </p>
-                      <p className="mt-0.5 text-xs text-slate-500">
+                      <p className="mt-0.5 text-xs text-[#6c8178]">
                         Position {video.position}
                       </p>
                     </div>
@@ -1676,7 +1676,7 @@ function ProgramManagementCard({
                       <button
                         type="submit"
                         disabled={index === 0}
-                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="rounded-lg border border-[#dfe5dc] bg-white px-3 py-2 text-xs font-semibold text-[#4b615b] transition hover:bg-[#eef1ed] disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         ↑ Up
                       </button>
@@ -1701,7 +1701,7 @@ function ProgramManagementCard({
                           index ===
                           programVideos.length - 1
                         }
-                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="rounded-lg border border-[#dfe5dc] bg-white px-3 py-2 text-xs font-semibold text-[#4b615b] transition hover:bg-[#eef1ed] disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         ↓ Down
                       </button>
@@ -1786,7 +1786,7 @@ function MediaManagementCard({
   }
 
   return (
-    <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
+    <article className="overflow-hidden rounded-xl border border-[#dfe5dc] bg-white shadow-sm transition hover:shadow-md">
       {/* SUMMARY */}
 
       <div className="grid gap-0 lg:grid-cols-[220px_minmax(0,1fr)]">
@@ -1803,8 +1803,8 @@ function MediaManagementCard({
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="flex h-full min-h-[150px] flex-col items-center justify-center text-slate-500">
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-emerald-700 shadow-sm">
+            <div className="flex h-full min-h-[150px] flex-col items-center justify-center text-[#6c8178]">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#163d34] shadow-sm">
                 ▶
               </span>
 
@@ -1815,7 +1815,7 @@ function MediaManagementCard({
           )}
 
           {item.is_featured && (
-            <span className="absolute left-3 top-3 rounded-full bg-emerald-700/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow backdrop-blur">
+            <span className="absolute left-3 top-3 rounded-full bg-[#12372f]/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow backdrop-blur">
               ★ Hero
             </span>
           )}
@@ -1826,11 +1826,11 @@ function MediaManagementCard({
         <div className="p-5">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div className="min-w-0">
-              <h3 className="text-lg font-bold text-slate-950">
+              <h3 className="text-lg font-bold text-[#163d34]">
                 {item.title}
               </h3>
 
-              <p className="mt-1 text-sm font-medium text-slate-600">
+              <p className="mt-1 text-sm font-medium text-[#5a6d66]">
                 {item.instructor ||
                   "MindSettle"}
 
@@ -1840,7 +1840,7 @@ function MediaManagementCard({
               </p>
 
               {item.description && (
-                <p className="mt-3 line-clamp-2 max-w-3xl text-sm leading-6 text-slate-600">
+                <p className="mt-3 line-clamp-2 max-w-3xl text-sm leading-6 text-[#5a6d66]">
                   {
                     item.description
                   }
@@ -1881,7 +1881,7 @@ function MediaManagementCard({
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {category && (
-              <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">
+              <span className="rounded-full bg-[#eef3e8] px-3 py-1 text-xs font-semibold text-[#344d5a]">
                 {category.name}
               </span>
             )}
@@ -1898,7 +1898,7 @@ function MediaManagementCard({
                   key={
                     mood.id
                   }
-                  className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800"
+                  className="rounded-full bg-[#eef3e8] px-3 py-1 text-xs font-semibold text-[#163d34]"
                 >
                   {mood.emoji}{" "}
                   {mood.name}
@@ -1914,7 +1914,7 @@ function MediaManagementCard({
               .map((program) => (
                 <span
                   key={program.id}
-                  className="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-800"
+                  className="rounded-full bg-[#eef1ed] px-3 py-1 text-xs font-semibold text-[#344d5a]"
                 >
                   Program:{" "}
                   {program.title}
@@ -1933,7 +1933,7 @@ function MediaManagementCard({
                     !current
                 )
               }
-              className="rounded-lg border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50"
+              className="rounded-lg border border-[#cfd8cb] bg-white px-4 py-2 text-sm font-semibold text-[#163d34] transition hover:bg-[#eef3e8]"
             >
               {editing
                 ? "Close editor"
@@ -1947,7 +1947,7 @@ function MediaManagementCard({
                 }
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-slate-950"
+                className="rounded-lg border border-[#dfe5dc] bg-white px-4 py-2 text-sm font-semibold text-[#5a6d66] transition hover:bg-[#f5f5ed] hover:text-[#163d34]"
               >
                 Preview
               </a>
@@ -1959,7 +1959,7 @@ function MediaManagementCard({
       {/* EDITOR */}
 
       {editing && (
-        <div className="border-t border-slate-200 bg-slate-50/80 p-5 sm:p-6">
+        <div className="border-t border-[#dfe5dc] bg-[#f5f5ed]/80 p-5 sm:p-6">
           <form
             action={handleSaveMedia}
           >
@@ -1983,7 +1983,7 @@ function MediaManagementCard({
                   defaultValue={
                     item.title || ""
                   }
-                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                  className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                 />
               </FormField>
 
@@ -2000,7 +2000,7 @@ function MediaManagementCard({
                     item.instructor ||
                     "MindSettle"
                   }
-                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                  className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                 />
               </FormField>
 
@@ -2017,7 +2017,7 @@ function MediaManagementCard({
                     item.category_id ||
                     ""
                   }
-                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                  className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                 >
                   <option value="">
                     No category
@@ -2060,7 +2060,7 @@ function MediaManagementCard({
                     item.duration_minutes ||
                     1
                   }
-                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                  className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                 />
               </FormField>
             </div>
@@ -2080,7 +2080,7 @@ function MediaManagementCard({
                     item.description ||
                     ""
                   }
-                  className="w-full resize-y rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
+                  className="w-full resize-y rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm leading-6 text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
                 />
               </FormField>
             </div>
@@ -2089,11 +2089,11 @@ function MediaManagementCard({
 
             <div className="mt-7">
               <div>
-                <h4 className="text-sm font-bold text-slate-950">
+                <h4 className="text-sm font-bold text-[#163d34]">
                   Mood assignment
                 </h4>
 
-                <p className="mt-1 text-xs leading-5 text-slate-500">
+                <p className="mt-1 text-xs leading-5 text-[#6c8178]">
                   Choose every mood
                   where this media
                   should appear.
@@ -2107,7 +2107,7 @@ function MediaManagementCard({
                       key={
                         mood.id
                       }
-                      className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 transition hover:border-emerald-300 hover:bg-emerald-50"
+                      className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dfe5dc] bg-white p-3 transition hover:border-[#9bb98a] hover:bg-[#eef3e8]"
                     >
                       <input
                         type="checkbox"
@@ -2118,7 +2118,7 @@ function MediaManagementCard({
                         defaultChecked={assignedMoodIds.includes(
                           mood.id
                         )}
-                        className="h-4 w-4 accent-emerald-600"
+                        className="h-4 w-4 accent-[#163d34]"
                       />
 
                       <span className="flex min-w-0 items-center gap-2">
@@ -2128,7 +2128,7 @@ function MediaManagementCard({
                           }
                         </span>
 
-                        <span className="truncate text-sm font-semibold text-slate-700">
+                        <span className="truncate text-sm font-semibold text-[#4b615b]">
                           {
                             mood.name
                           }
@@ -2143,12 +2143,12 @@ function MediaManagementCard({
             {/* PLACEMENT */}
 
             <div className="mt-7 grid gap-4 lg:grid-cols-2">
-              <div className="rounded-xl border border-sky-100 bg-white p-5">
-                <h4 className="text-sm font-bold text-slate-950">
+              <div className="rounded-xl border border-[#dfe5dc] bg-white p-5">
+                <h4 className="text-sm font-bold text-[#163d34]">
                   Placement
                 </h4>
 
-                <p className="mt-1 text-xs leading-5 text-slate-500">
+                <p className="mt-1 text-xs leading-5 text-[#6c8178]">
                   Choose special
                   locations where this
                   media should appear.
@@ -2179,12 +2179,12 @@ function MediaManagementCard({
                 </div>
               </div>
 
-              <div className="rounded-xl border border-emerald-100 bg-white p-5">
-                <h4 className="text-sm font-bold text-slate-950">
+              <div className="rounded-xl border border-[#dfe5dc] bg-white p-5">
+                <h4 className="text-sm font-bold text-[#163d34]">
                   Access & status
                 </h4>
 
-                <p className="mt-1 text-xs leading-5 text-slate-500">
+                <p className="mt-1 text-xs leading-5 text-[#6c8178]">
                   Control whether
                   users can see and
                   access this media.
@@ -2218,10 +2218,10 @@ function MediaManagementCard({
 
             {/* SAVE / DELETE */}
 
-            <div className="mt-7 flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-7 flex flex-col gap-3 border-t border-[#dfe5dc] pt-5 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="submit"
-                className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                className="rounded-lg bg-[#163d34] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#12372f]"
               >
                 Save changes
               </button>
@@ -2244,7 +2244,7 @@ function MediaManagementCard({
 
           <form
             action={handleUpdatePrograms}
-            className="mt-7 rounded-xl border border-violet-100 bg-white p-5"
+            className="mt-7 rounded-xl border border-[#dfe5dc] bg-white p-5"
           >
             <input
               type="hidden"
@@ -2253,11 +2253,11 @@ function MediaManagementCard({
             />
 
             <div>
-              <h4 className="text-sm font-bold text-slate-950">
+              <h4 className="text-sm font-bold text-[#163d34]">
                 Program assignment
               </h4>
 
-              <p className="mt-1 text-xs leading-5 text-slate-500">
+              <p className="mt-1 text-xs leading-5 text-[#6c8178]">
                 Choose which Admin-created programs should
                 contain this media. Updating this section
                 does not delete the media itself.
@@ -2270,7 +2270,7 @@ function MediaManagementCard({
                   (program) => (
                     <label
                       key={program.id}
-                      className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 transition hover:border-violet-300 hover:bg-violet-50"
+                      className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#dfe5dc] bg-[#f5f5ed] p-3 transition hover:border-[#9bb98a] hover:bg-[#eef1ed]"
                     >
                       <input
                         type="checkbox"
@@ -2279,15 +2279,15 @@ function MediaManagementCard({
                         defaultChecked={assignedProgramIds.includes(
                           program.id
                         )}
-                        className="mt-1 h-4 w-4 accent-violet-600"
+                        className="mt-1 h-4 w-4 accent-[#344d5a]"
                       />
 
                       <span className="min-w-0">
-                        <span className="block truncate text-sm font-semibold text-slate-800">
+                        <span className="block truncate text-sm font-semibold text-[#29383e]">
                           {program.title}
                         </span>
 
-                        <span className="mt-0.5 block text-xs text-slate-500">
+                        <span className="mt-0.5 block text-xs text-[#6c8178]">
                           {program.is_published
                             ? "Published program"
                             : "Hidden program"}
@@ -2298,12 +2298,12 @@ function MediaManagementCard({
                 )}
               </div>
             ) : (
-              <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-5 py-7 text-center">
-                <p className="text-sm font-semibold text-slate-700">
+              <div className="mt-4 rounded-xl border border-dashed border-[#cfd8cb] bg-[#f5f5ed] px-5 py-7 text-center">
+                <p className="text-sm font-semibold text-[#4b615b]">
                   No programs have been created yet.
                 </p>
 
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-xs text-[#6c8178]">
                   Create a program from Admin → Programs
                   and it will automatically appear here.
                 </p>
@@ -2313,7 +2313,7 @@ function MediaManagementCard({
             <div className="mt-5 flex justify-end">
               <button
                 type="submit"
-                className="rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700"
+                className="rounded-lg bg-[#344d5a] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#293d46]"
               >
                 Update programs
               </button>
@@ -2338,7 +2338,7 @@ function FormField({
     <div>
       <label
         htmlFor={htmlFor}
-        className="mb-2 block text-sm font-semibold text-slate-700"
+        className="mb-2 block text-sm font-semibold text-[#4b615b]"
       >
         {label}
       </label>
@@ -2359,22 +2359,22 @@ function ToggleField({
   defaultChecked,
 }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 transition hover:border-emerald-200 hover:bg-emerald-50">
+    <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#dfe5dc] bg-[#f5f5ed] p-3 transition hover:border-[#cfd8cb] hover:bg-[#eef3e8]">
       <input
         type="checkbox"
         name={name}
         defaultChecked={
           defaultChecked
         }
-        className="mt-1 h-4 w-4 accent-emerald-600"
+        className="mt-1 h-4 w-4 accent-[#163d34]"
       />
 
       <span>
-        <span className="block text-sm font-semibold text-slate-800">
+        <span className="block text-sm font-semibold text-[#29383e]">
           {label}
         </span>
 
-        <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+        <span className="mt-0.5 block text-xs leading-5 text-[#6c8178]">
           {description}
         </span>
       </span>
@@ -2395,8 +2395,8 @@ function StatusBadge({
     <span
       className={`rounded-full px-3 py-1 text-xs font-bold ${
         active
-          ? "bg-emerald-100 text-emerald-800"
-          : "bg-slate-100 text-slate-500"
+          ? "bg-[#dce8ca] text-[#163d34]"
+          : "bg-[#eef1ed] text-[#6c8178]"
       }`}
     >
       {active
@@ -2414,7 +2414,7 @@ function SmallBadge({
   children,
 }) {
   return (
-    <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">
+    <span className="rounded-full bg-[#eef3e8] px-3 py-1 text-xs font-semibold text-[#344d5a]">
       {children}
     </span>
   );
@@ -2431,15 +2431,15 @@ function SectionHeader({
 }) {
   return (
     <div className="mb-8">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
         {eyebrow}
       </p>
 
-      <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-950">
+      <h2 className="mt-2 text-3xl font-semibold tracking-[-0.035em] text-[#163d34]">
         {title}
       </h2>
 
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-[#5a6d66]">
         {description}
       </p>
     </div>
@@ -2458,18 +2458,18 @@ function StatCard({
 }) {
   const iconStyle =
     accent === "emerald"
-      ? "bg-emerald-100 text-emerald-700"
-      : "bg-sky-100 text-sky-700";
+      ? "bg-[#dce8ca] text-[#163d34]"
+      : "bg-[#dfe8d6] text-[#344d5a]";
 
   return (
-    <article className="rounded-xl border border-sky-100 bg-white p-6 shadow-md transition hover:shadow-xl">
+    <article className="rounded-xl border border-[#dfe5dc] bg-white p-6 shadow-[0_10px_30px_rgba(18,55,47,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_38px_rgba(18,55,47,0.11)]">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-slate-600">
+          <p className="text-sm font-medium text-[#5a6d66]">
             {label}
           </p>
 
-          <p className="mt-3 text-4xl font-bold tracking-tight text-slate-950">
+          <p className="mt-3 text-4xl font-semibold tracking-[-0.035em] text-[#163d34]">
             {value ?? 0}
           </p>
         </div>
@@ -2493,12 +2493,12 @@ function MiniStat({
   value,
 }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-      <p className="text-xs font-medium text-slate-500">
+    <div className="rounded-lg border border-[#dfe5dc] bg-[#f5f5ed] p-4">
+      <p className="text-xs font-medium text-[#6c8178]">
         {label}
       </p>
 
-      <p className="mt-2 text-2xl font-bold text-slate-950">
+      <p className="mt-2 text-2xl font-bold text-[#163d34]">
         {value ?? 0}
       </p>
     </div>
@@ -2518,26 +2518,26 @@ function RankedVideoList({
   icon,
 }) {
   return (
-    <article className="rounded-xl border border-sky-100 bg-white p-6 shadow-md">
+    <article className="rounded-[22px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-sky-100 text-lg text-sky-700">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#dfe8d6] text-lg text-[#344d5a]">
           {icon}
         </div>
 
         <div>
-          <h3 className="text-xl font-bold text-slate-950">
+          <h3 className="text-xl font-bold text-[#163d34]">
             {title}
           </h3>
 
-          <p className="mt-1 text-sm leading-6 text-slate-600">
+          <p className="mt-1 text-sm leading-6 text-[#5a6d66]">
             {description}
           </p>
         </div>
       </div>
 
       {!items?.length ? (
-        <div className="mt-6 rounded-lg bg-slate-50 px-4 py-8 text-center">
-          <p className="text-sm text-slate-500">
+        <div className="mt-6 rounded-lg bg-[#f5f5ed] px-4 py-8 text-center">
+          <p className="text-sm text-[#6c8178]">
             {emptyLabel}
           </p>
         </div>
@@ -2549,19 +2549,19 @@ function RankedVideoList({
                 key={
                   video.video_id
                 }
-                className="flex items-center justify-between gap-4 rounded-lg border border-slate-100 bg-slate-50 px-4 py-3"
+                className="flex items-center justify-between gap-4 rounded-lg border border-[#e4e8df] bg-[#f5f5ed] px-4 py-3"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#dce8ca] text-xs font-bold text-[#163d34]">
                     {index + 1}
                   </div>
 
-                  <span className="truncate text-sm font-medium text-slate-700">
+                  <span className="truncate text-sm font-medium text-[#4b615b]">
                     {video.title}
                   </span>
                 </div>
 
-                <span className="shrink-0 rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">
+                <span className="shrink-0 rounded-full bg-[#dfe8d6] px-3 py-1 text-xs font-semibold text-[#344d5a]">
                   {video[countKey]}
                 </span>
               </li>

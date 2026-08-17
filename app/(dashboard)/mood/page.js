@@ -11,34 +11,34 @@ import MediaRow from "@/components/video/MediaRow";
 
 const MOOD_STYLES = {
   calm:
-    "border-emerald-100 bg-emerald-50 hover:border-emerald-300",
+    "border-[#cfd8cb] bg-[#eef3e8] hover:border-[#9bb98a]",
 
   anxious:
-    "border-orange-100 bg-orange-50 hover:border-orange-300",
+    "border-[#d9d7c9] bg-[#f5f5ed] hover:border-[#a9b798]",
 
   stressed:
-    "border-rose-100 bg-rose-50 hover:border-rose-300",
+    "border-[#d8d2c8] bg-[#f4eee8] hover:border-[#b6a795]",
 
   sleepy:
-    "border-violet-100 bg-violet-50 hover:border-violet-300",
+    "border-[#d4d9cf] bg-[#eef1ed] hover:border-[#a7b69d]",
 
   focused:
-    "border-sky-100 bg-sky-50 hover:border-sky-300",
+    "border-[#cad7d1] bg-[#e8f0ec] hover:border-[#8fa69a]",
 
   low:
-    "border-teal-100 bg-teal-50 hover:border-teal-300",
+    "border-[#cad8cf] bg-[#edf3ee] hover:border-[#91a895]",
 
   energised:
-    "border-amber-100 bg-amber-50 hover:border-amber-300",
+    "border-[#ddd8bf] bg-[#f4f1df] hover:border-[#b7ad7d]",
 
   overwhelmed:
-    "border-cyan-100 bg-cyan-50 hover:border-cyan-300",
+    "border-[#cbd8d4] bg-[#eaf1ee] hover:border-[#8da49c]",
 
   positive:
-    "border-yellow-100 bg-yellow-50 hover:border-yellow-300",
+    "border-[#dedbc7] bg-[#f5f3e7] hover:border-[#b4ad82]",
 
   break:
-    "border-lime-100 bg-lime-50 hover:border-lime-300",
+    "border-[#d1d9c3] bg-[#eef2e6] hover:border-[#9eac88]",
 };
 
 /* =========================================================
@@ -91,7 +91,7 @@ function MoodCard({
     MOOD_STYLES[
       mood.slug
     ] ||
-    "border-slate-200 bg-white hover:border-emerald-300";
+    "border-[#cfd8cb] bg-[#fffdfa] hover:border-[#9bb98a]";
 
   return (
     <Link
@@ -113,17 +113,17 @@ function MoodCard({
       `}
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-xl shadow-sm">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#fffdfa] text-xl shadow-sm">
           {mood.emoji || "◌"}
         </div>
 
         <div className="min-w-0">
-          <h2 className="text-sm font-bold text-slate-900">
+          <h2 className="text-sm font-semibold text-[#163d34]">
             {mood.name}
           </h2>
 
           {mood.description && (
-            <p className="mt-1 line-clamp-3 text-xs leading-5 text-slate-600">
+            <p className="mt-1 line-clamp-3 text-xs leading-5 text-[#5a6d66]">
               {
                 mood.description
               }
@@ -145,12 +145,12 @@ function SectionTitle({
 }) {
   return (
     <div className="mb-4">
-      <h2 className="text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">
+      <h2 className="text-xl font-semibold tracking-[-0.025em] text-[#163d34] sm:text-2xl">
         {title}
       </h2>
 
       {subtitle && (
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-[#6c8178]">
           {subtitle}
         </p>
       )}
@@ -693,17 +693,17 @@ export default async function MoodPage({
         <>
           {/* INTRO */}
 
-          <section className="rounded-[28px] border border-emerald-100 bg-gradient-to-r from-emerald-50 via-white to-sky-50 px-6 py-6 shadow-sm sm:px-8">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">
-              MindSettle Mood
+          <section className="rounded-[28px] border border-emerald-100 bg-gradient-to-r from-[#dfe8d6] via-[#f5f5ed] to-[#eef3e8] px-6 py-6 shadow-sm sm:px-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
+              A moment for you
             </p>
 
-            <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
-              How are you feeling right now?
+            <h1 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#163d34] sm:text-3xl">
+              What feels closest to you right now?
             </h1>
 
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-              Choose what feels closest to your current mood and discover sessions selected to support that moment.
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#5a6d66]">
+              Choose the feeling that best matches this moment and explore sessions created to help you settle.
             </p>
           </section>
 
@@ -744,7 +744,7 @@ export default async function MoodPage({
                   >
                     <div className="mb-4 flex items-end justify-between gap-4">
                       <div>
-                        <h2 className="text-xl font-bold text-slate-950">
+                        <h2 className="text-xl font-semibold text-[#163d34]">
                           {
                             row.mood
                               .emoji
@@ -757,7 +757,7 @@ export default async function MoodPage({
 
                         {row.mood
                           .description && (
-                          <p className="mt-1 text-sm text-slate-600">
+                          <p className="mt-1 text-sm text-[#5a6d66]">
                             {
                               row.mood
                                 .description
@@ -771,7 +771,7 @@ export default async function MoodPage({
                           row.mood
                             .slug
                         )}`}
-                        className="shrink-0 text-sm font-bold text-emerald-800 transition hover:text-emerald-600"
+                        className="shrink-0 text-sm font-semibold text-[#163d34] transition hover:text-[#78906f]"
                       >
                         See all →
                       </Link>
@@ -786,12 +786,12 @@ export default async function MoodPage({
                 )
               )
             ) : (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
-                <p className="font-semibold text-slate-800">
+              <div className="rounded-2xl border border-dashed border-[#cfd8cb] bg-[#fffdfa] px-6 py-12 text-center">
+                <p className="font-semibold text-[#29383e]">
                   No media has been assigned to moods yet.
                 </p>
 
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-[#6c8178]">
                   Assign moods while uploading or editing media in the Admin Dashboard.
                 </p>
               </div>
@@ -815,11 +815,11 @@ export default async function MoodPage({
             className="
               rounded-[26px]
               border
-              border-emerald-200
+              border-[#cfd8cb]
               bg-gradient-to-r
-              from-emerald-50
-              via-white
-              to-sky-50
+              from-[#dfe8d6]
+              via-[#f5f5ed]
+              to-[#eef3e8]
               px-5
               py-4
               shadow-sm
@@ -829,7 +829,7 @@ export default async function MoodPage({
           >
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex min-w-0 items-center gap-4">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-2xl shadow-sm">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#fffdfa] text-2xl shadow-sm">
                   {
                     selectedMood.emoji ||
                     "◌"
@@ -837,18 +837,18 @@ export default async function MoodPage({
                 </div>
 
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-700">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#78906f]">
                     Selected mood
                   </p>
 
-                  <h1 className="mt-0.5 text-2xl font-bold tracking-tight text-slate-950">
+                  <h1 className="mt-0.5 text-2xl font-semibold tracking-[-0.03em] text-[#163d34]">
                     {
                       selectedMood.name
                     }
                   </h1>
 
                   {selectedMood.description && (
-                    <p className="mt-1 max-w-2xl text-sm text-slate-600">
+                    <p className="mt-1 max-w-2xl text-sm text-[#5a6d66]">
                       {
                         selectedMood.description
                       }
@@ -863,19 +863,19 @@ export default async function MoodPage({
                   shrink-0
                   rounded-full
                   border
-                  border-slate-200
-                  bg-white
+                  border-[#cfd8cb]
+                  bg-[#fffdfa]
                   px-4
                   py-2
                   text-sm
-                  font-bold
-                  text-slate-700
+                  font-semibold
+                  text-[#163d34]
                   shadow-sm
                   transition
 
-                  hover:border-emerald-300
-                  hover:bg-emerald-50
-                  hover:text-emerald-800
+                  hover:border-[#9bb98a]
+                  hover:bg-[#dce8ca]/60
+                  hover:text-[#12372f]
                 "
               >
                 Change mood
@@ -890,7 +890,7 @@ export default async function MoodPage({
           <section className="mt-6">
             <SectionTitle
               title={`${selectedMood.emoji || "◌"} Sessions for ${selectedMood.name}`}
-              subtitle="Sessions selected specifically for how you are feeling right now."
+              subtitle="Sessions selected to support how this moment feels."
             />
 
             {selectedVideos.length >
@@ -901,12 +901,12 @@ export default async function MoodPage({
                 }
               />
             ) : (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
-                <p className="font-semibold text-slate-800">
+              <div className="rounded-2xl border border-dashed border-slate-300 bg-[#fffdfa] px-6 py-10 text-center">
+                <p className="font-semibold text-[#29383e]">
                   No sessions have been assigned to this mood yet.
                 </p>
 
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-[#6c8178]">
                   An administrator can assign media to this mood from Media Management.
                 </p>
               </div>
@@ -922,7 +922,7 @@ export default async function MoodPage({
             <section className="mt-9">
               <SectionTitle
                 title="Recently watched"
-                subtitle="Continue with sessions you have viewed recently."
+                subtitle="Return to sessions you spent time with recently."
               />
 
               <MediaRow
@@ -942,7 +942,7 @@ export default async function MoodPage({
             <section className="mt-9">
               <SectionTitle
                 title="More like this"
-                subtitle="More MindSettle sessions that may suit this moment."
+                subtitle="More sessions that may feel right for this moment."
               />
 
               <MediaRow
@@ -962,10 +962,10 @@ export default async function MoodPage({
 
           {otherMoodRows.length >
             0 && (
-            <section className="mt-10 border-t border-slate-200 pt-8">
+            <section className="mt-10 border-t border-[#cfd8cb] pt-8">
               <SectionTitle
-                title="Explore more wellbeing sessions"
-                subtitle="Sessions connected to other moods when you are ready for something different."
+                title="Explore another moment"
+                subtitle="Explore sessions connected to other moods whenever you feel ready for something different."
               />
 
               <div className="space-y-10">
@@ -980,7 +980,7 @@ export default async function MoodPage({
                     >
                       <div className="mb-4 flex items-end justify-between gap-4">
                         <div>
-                          <h3 className="text-lg font-bold text-slate-950">
+                          <h3 className="text-lg font-semibold text-[#163d34]">
                             {
                               row.mood
                                 .emoji
@@ -997,7 +997,7 @@ export default async function MoodPage({
                             row.mood
                               .slug
                           )}`}
-                          className="shrink-0 text-sm font-bold text-emerald-800 transition hover:text-emerald-600"
+                          className="shrink-0 text-sm font-semibold text-[#163d34] transition hover:text-[#78906f]"
                         >
                           View mood →
                         </Link>

@@ -74,12 +74,12 @@ function SectionHeader({
   return (
     <div className="mb-4 flex items-end justify-between gap-4">
       <div>
-        <h2 className="text-lg font-bold tracking-tight text-slate-950 sm:text-xl">
+        <h2 className="text-lg font-semibold tracking-[-0.02em] text-[#163d34] sm:text-xl">
           {title}
         </h2>
 
         {subtitle && (
-          <p className="mt-1 text-sm leading-5 text-slate-600">
+          <p className="mt-1 text-sm leading-5 text-[#5a6d66]">
             {subtitle}
           </p>
         )}
@@ -88,7 +88,7 @@ function SectionHeader({
       {href && (
         <Link
           href={href}
-          className="shrink-0 rounded-full px-3 py-2 text-sm font-bold text-emerald-800 transition hover:bg-emerald-50 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+          className="shrink-0 rounded-full px-3 py-2 text-sm font-semibold text-[#163d34] transition hover:bg-[#dce8ca]/70 hover:text-[#12372f] focus:outline-none focus:ring-2 focus:ring-[#b7d889]"
         >
           See all →
         </Link>
@@ -135,22 +135,22 @@ function MoodCard({
         overflow-hidden
         rounded-[18px]
         border
-        border-slate-200
-        bg-white/95
+        border-[#cfd8cb]
+        bg-[#fffdfa]/95
         px-4
-        shadow-[0_6px_20px_rgba(15,23,42,0.05)]
+        shadow-[0_6px_20px_rgba(18,55,47,0.06)]
         backdrop-blur-md
         transition-all
         duration-300
 
         hover:-translate-y-1
-        hover:border-emerald-300
-        hover:bg-emerald-50/90
-        hover:shadow-[0_16px_34px_rgba(16,185,129,0.17)]
+        hover:border-[#9bb98a]
+        hover:bg-[#eef3e8]
+        hover:shadow-[0_16px_34px_rgba(18,55,47,0.14)]
 
         focus:outline-none
         focus:ring-2
-        focus:ring-emerald-300
+        focus:ring-[#b7d889]
       "
     >
       {/* HOVER GLOW */}
@@ -165,12 +165,12 @@ function MoodCard({
           h-28
           w-28
           rounded-full
-          bg-emerald-200/0
+          bg-[#dce8ca]/0
           blur-2xl
           transition-all
           duration-300
 
-          group-hover:bg-emerald-200/55
+          group-hover:bg-[#dce8ca]/70
         "
       />
 
@@ -187,7 +187,7 @@ function MoodCard({
           items-center
           justify-center
           rounded-full
-          bg-emerald-50
+          bg-[#eef3e8]
           text-xl
           shadow-sm
           transition-all
@@ -203,7 +203,7 @@ function MoodCard({
 
       {/* NAME */}
 
-      <span className="relative z-10 min-w-0 flex-1 truncate text-sm font-bold text-slate-800 transition group-hover:text-emerald-900">
+      <span className="relative z-10 min-w-0 flex-1 truncate text-sm font-bold text-[#29383e] transition group-hover:text-[#163d34]">
         {mood.name}
       </span>
 
@@ -221,7 +221,7 @@ function MoodCard({
           duration-300
 
           group-hover:translate-x-1
-          group-hover:text-emerald-700
+          group-hover:text-[#163d34]
         "
       >
         →
@@ -374,11 +374,11 @@ function WellnessHero({
         overflow-hidden
         rounded-[30px]
         border
-        border-slate-200/80
-        bg-white/95
+        border-[#cfd8cb]/90
+        bg-[#f5f5ed]/95
         px-5
         py-3
-        shadow-[0_18px_55px_rgba(15,23,42,0.07)]
+        shadow-[0_18px_55px_rgba(18,55,47,0.08)]
 
         sm:px-6
         lg:px-7
@@ -388,9 +388,9 @@ function WellnessHero({
           BACKGROUND
       ================================================= */}
 
-      <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-emerald-100/25 blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-[#dce8ca]/35 blur-3xl" />
 
-      <div className="pointer-events-none absolute -right-32 bottom-10 h-96 w-96 rounded-full bg-sky-100/25 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-10 h-96 w-96 rounded-full bg-[#dfe8d6]/50 blur-3xl" />
 
       {/* =================================================
           HEADING
@@ -403,7 +403,7 @@ function WellnessHero({
             text-3xl
             font-bold
             tracking-tight
-            text-slate-950
+            text-[#163d34]
 
             sm:text-[32px]
             lg:text-[34px]
@@ -418,8 +418,8 @@ function WellnessHero({
           </span>
         </h1>
 
-        <p className="mt-1 max-w-3xl text-sm leading-5 text-slate-600 sm:text-[15px]">
-          Select how you feel right now and discover sessions that may support your moment.
+        <p className="mt-1 max-w-3xl text-sm leading-5 text-[#5a6d66] sm:text-[15px]">
+          Find a moment to settle with sessions selected to support how you feel.
         </p>
       </div>
 
@@ -515,7 +515,7 @@ function WellnessHero({
                 "288px",
             }}
           >
-            <div className="pointer-events-none absolute inset-2 rounded-[28px] bg-emerald-100/30 blur-2xl" />
+            <div className="pointer-events-none absolute inset-2 rounded-[28px] bg-[#dce8ca]/40 blur-2xl" />
 
             <div
               className="
@@ -601,13 +601,13 @@ function WellnessHero({
         {extra.length > 0 && (
           <div className="mt-5">
             <div className="mb-3 flex items-center gap-3">
-              <div className="h-px flex-1 bg-slate-200" />
+              <div className="h-px flex-1 bg-[#cfd8cb]" />
 
-              <p className="shrink-0 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+              <p className="shrink-0 text-xs font-bold uppercase tracking-[0.14em] text-[#6c8178]">
                 More moods
               </p>
 
-              <div className="h-px flex-1 bg-slate-200" />
+              <div className="h-px flex-1 bg-[#cfd8cb]" />
             </div>
 
             <div className="flex flex-wrap justify-center gap-3">
@@ -1097,9 +1097,9 @@ export default async function LibraryPage({
     <div className="relative pb-16">
       {/* BACKGROUND */}
 
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[#f8faf8]" />
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[#f5f5ed]" />
 
-      <div className="pointer-events-none fixed left-0 top-20 -z-10 h-[320px] w-[320px] rounded-full bg-emerald-100/20 blur-3xl" />
+      <div className="pointer-events-none fixed left-0 top-20 -z-10 h-[320px] w-[320px] rounded-full bg-[#dce8ca]/35 blur-3xl" />
 
       <div className="space-y-8">
         {/* =================================================
@@ -1107,17 +1107,17 @@ export default async function LibraryPage({
         ================================================= */}
 
         {hasSearch && (
-          <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-4 shadow-sm">
+          <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[#cfd8cb] bg-[#fffdfa] px-6 py-4 shadow-sm">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#78906f]">
                 Search results
               </p>
 
-              <h1 className="mt-1 text-2xl font-bold text-slate-950">
+              <h1 className="mt-1 text-2xl font-bold text-[#163d34]">
                 Results for “{q}”
               </h1>
 
-              <p className="mt-1 text-sm text-slate-600">
+              <p className="mt-1 text-sm text-[#5a6d66]">
                 {filteredVideos.length} result
                 {filteredVideos.length === 1
                   ? ""
@@ -1127,7 +1127,7 @@ export default async function LibraryPage({
 
             <Link
               href="/library"
-              className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-emerald-50"
+              className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-[#eef3e8]"
             >
               Clear search
             </Link>
@@ -1140,12 +1140,12 @@ export default async function LibraryPage({
 
         {hasSearch &&
         filteredVideos.length === 0 ? (
-          <section className="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-            <h2 className="text-xl font-bold text-slate-950">
+          <section className="rounded-3xl border border-dashed border-[#cfd8cb] bg-[#fffdfa] px-6 py-16 text-center">
+            <h2 className="text-xl font-bold text-[#163d34]">
               No sessions found
             </h2>
 
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-[#5a6d66]">
               We could not find a session matching “{q}”.
             </p>
           </section>
@@ -1230,7 +1230,7 @@ export default async function LibraryPage({
               <section>
                 <SectionHeader
                   title="Recently added"
-                  subtitle="Fresh sessions to support your wellbeing."
+                  subtitle="New sessions to bring a little more calm into your day."
                 />
 
                 <MediaRow
@@ -1288,15 +1288,15 @@ export default async function LibraryPage({
                             row.category.id
                           }
                           href={`/library?category=${row.category.slug}`}
-                          className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50"
+                          className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-[#eef3e8]"
                         >
-                          <p className="text-sm font-bold text-slate-900">
+                          <p className="text-sm font-semibold text-[#163d34]">
                             {
                               row.category.name
                             }
                           </p>
 
-                          <p className="mt-1 text-xs font-medium text-slate-600">
+                          <p className="mt-1 text-xs font-medium text-[#5a6d66]">
                             {row.videos.length}{" "}
                             session
                             {row.videos.length === 1
@@ -1318,45 +1318,45 @@ export default async function LibraryPage({
               <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 <Link
                   href="/programs"
-                  className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="rounded-2xl border border-[#cfd8cb] bg-[#dce8ca]/65 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  <p className="text-sm font-bold text-emerald-900">
-                    Build a daily habit
+                  <p className="text-sm font-semibold text-[#163d34]">
+                    Create space for calm
                   </p>
 
-                  <p className="mt-1 text-xs leading-5 text-slate-600">
-                    Small steps every day create lasting change.
+                  <p className="mt-1 text-xs leading-5 text-[#5a6d66]">
+                    Gentle routines can help make calm part of your everyday life.
                   </p>
 
-                  <p className="mt-4 text-xs font-bold text-emerald-800">
+                  <p className="mt-4 text-xs font-semibold text-[#163d34]">
                     Explore Programs →
                   </p>
                 </Link>
 
                 <Link
                   href="/favourites"
-                  className="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 to-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="rounded-2xl border border-[#cfd8cb] bg-[#dfe8d6]/70 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  <p className="text-sm font-bold text-slate-900">
-                    Save your favourites
+                  <p className="text-sm font-semibold text-[#163d34]">
+                    Keep what helps close
                   </p>
 
-                  <p className="mt-1 text-xs leading-5 text-slate-600">
-                    Create your own collection of sessions.
+                  <p className="mt-1 text-xs leading-5 text-[#5a6d66]">
+                    Save the sessions you want to return to whenever you need them.
                   </p>
 
-                  <p className="mt-4 text-xs font-bold text-emerald-800">
+                  <p className="mt-4 text-xs font-semibold text-[#163d34]">
                     View Favourites →
                   </p>
                 </Link>
 
-                <div className="rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50 to-white p-5 shadow-sm">
-                  <p className="text-sm font-bold text-slate-900">
-                    You matter
+                <div className="rounded-2xl border border-[#cfd8cb] bg-[#f5f5ed] p-5 shadow-sm">
+                  <p className="text-sm font-semibold text-[#163d34]">
+                    Make room for yourself
                   </p>
 
-                  <p className="mt-1 text-xs leading-5 text-slate-600">
-                    Take care of your mind, your body, and your life.
+                  <p className="mt-1 text-xs leading-5 text-[#5a6d66]">
+                    A few quiet moments can make space for the rest of your day.
                   </p>
                 </div>
               </section>

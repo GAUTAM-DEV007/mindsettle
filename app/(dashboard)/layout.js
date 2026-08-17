@@ -79,10 +79,18 @@ export default async function DashboardLayout({
   ====================================================== */
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900">
+    <div className="relative flex min-h-screen flex-col bg-[#f5f5ed] text-[#29383e]">
+      {/* GLOBAL DASHBOARD BACKGROUND */}
+
+      <div className="pointer-events-none fixed inset-0 -z-20 bg-[#f5f5ed]" />
+
+      <div className="pointer-events-none fixed -left-32 top-28 -z-10 h-[380px] w-[380px] rounded-full bg-[#dce8ca]/25 blur-3xl" />
+
+      <div className="pointer-events-none fixed -right-28 top-[520px] -z-10 h-[360px] w-[360px] rounded-full bg-[#dfe8d6]/30 blur-3xl" />
+
       <DashboardNavbar />
 
-      <main className="mx-auto w-full max-w-[1600px] flex-1 px-6 py-8 lg:px-10">
+      <main className="mx-auto w-full max-w-[1600px] flex-1 px-6 py-8 lg:px-10 lg:py-10">
         {children}
       </main>
 

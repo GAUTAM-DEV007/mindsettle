@@ -24,13 +24,6 @@ export default function MediaRow({
   const [rightActive, setRightActive] =
     useState(false);
 
-  /*
-   * Continuous smooth scrolling.
-   *
-   * The actual speed is controlled
-   * by where the pointer is inside
-   * the row.
-   */
   useEffect(() => {
     function animate() {
       const row = rowRef.current;
@@ -67,10 +60,6 @@ export default function MediaRow({
   }
 
   function handlePointerMove(event) {
-    /*
-     * Touch users should use normal
-     * swipe scrolling.
-     */
     if (
       event.pointerType === "touch"
     ) {
@@ -96,10 +85,6 @@ export default function MediaRow({
     const distanceFromRight =
       rect.width - pointerX;
 
-    /*
-     * LEFT SIDE
-     */
-
     if (
       distanceFromLeft < EDGE_SIZE
     ) {
@@ -123,10 +108,6 @@ export default function MediaRow({
 
       return;
     }
-
-    /*
-     * RIGHT SIDE
-     */
 
     if (
       distanceFromRight < EDGE_SIZE
@@ -152,10 +133,6 @@ export default function MediaRow({
       return;
     }
 
-    /*
-     * POINTER IS IN THE MIDDLE
-     */
-
     stopEdgeScroll();
   }
 
@@ -165,7 +142,7 @@ export default function MediaRow({
 
   return (
     <div
-      className="relative"
+      className="relative rounded-[26px] border border-[#dfe5dc] bg-[#fffdfa] px-3 py-4 shadow-[0_10px_28px_rgba(18,55,47,0.05)]"
       onPointerLeave={
         stopEdgeScroll
       }
@@ -173,7 +150,7 @@ export default function MediaRow({
       {/* LEFT FADE */}
 
       <div
-        className={`pointer-events-none absolute bottom-4 left-0 top-0 z-30 w-20 bg-gradient-to-r from-[#f8faf8] via-[#f8faf8]/70 to-transparent transition-opacity duration-200 ${
+        className={`pointer-events-none absolute bottom-4 left-0 top-0 z-30 w-20 rounded-l-[26px] bg-gradient-to-r from-[#fffdfa] via-[#fffdfa]/80 to-transparent transition-opacity duration-200 ${
           leftActive
             ? "opacity-100"
             : "opacity-0"
@@ -183,7 +160,7 @@ export default function MediaRow({
       {/* LEFT DIRECTION */}
 
       {leftActive && (
-        <div className="pointer-events-none absolute left-3 top-[38%] z-40 flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-2xl font-semibold text-emerald-800 shadow-lg backdrop-blur">
+        <div className="pointer-events-none absolute left-3 top-[38%] z-40 flex h-10 w-10 items-center justify-center rounded-full border border-[#cfd8cb] bg-[#fffdfa]/95 text-2xl font-semibold text-[#163d34] shadow-[0_8px_20px_rgba(18,55,47,0.12)] backdrop-blur">
           ‹
         </div>
       )}
@@ -204,7 +181,7 @@ export default function MediaRow({
           gap-4
           overflow-x-auto
           px-1
-          pb-4
+          pb-1
           [scrollbar-width:none]
           [&::-webkit-scrollbar]:hidden
         "
@@ -227,7 +204,7 @@ export default function MediaRow({
       {/* RIGHT FADE */}
 
       <div
-        className={`pointer-events-none absolute bottom-4 right-0 top-0 z-30 w-20 bg-gradient-to-l from-[#f8faf8] via-[#f8faf8]/70 to-transparent transition-opacity duration-200 ${
+        className={`pointer-events-none absolute bottom-4 right-0 top-0 z-30 w-20 rounded-r-[26px] bg-gradient-to-l from-[#fffdfa] via-[#fffdfa]/80 to-transparent transition-opacity duration-200 ${
           rightActive
             ? "opacity-100"
             : "opacity-0"
@@ -237,7 +214,7 @@ export default function MediaRow({
       {/* RIGHT DIRECTION */}
 
       {rightActive && (
-        <div className="pointer-events-none absolute right-3 top-[38%] z-40 flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-2xl font-semibold text-emerald-800 shadow-lg backdrop-blur">
+        <div className="pointer-events-none absolute right-3 top-[38%] z-40 flex h-10 w-10 items-center justify-center rounded-full border border-[#cfd8cb] bg-[#fffdfa]/95 text-2xl font-semibold text-[#163d34] shadow-[0_8px_20px_rgba(18,55,47,0.12)] backdrop-blur">
           ›
         </div>
       )}

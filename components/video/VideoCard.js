@@ -22,6 +22,7 @@ export default function VideoCard({
     thumbnailUrl,
     previewUrl,
     category,
+    locked,
   } = video;
 
   const videoRef = useRef(null);
@@ -73,7 +74,6 @@ export default function VideoCard({
     async function startPreview() {
       try {
         await preview.play();
-
         setSoundBlocked(false);
       } catch (error) {
         console.log(
@@ -82,7 +82,6 @@ export default function VideoCard({
         );
 
         preview.pause();
-
         setPreviewLoading(false);
         setPreviewReady(true);
         setSoundBlocked(true);
@@ -268,13 +267,25 @@ export default function VideoCard({
         relative
         w-[270px]
         shrink-0
+        rounded-[24px]
+        border
+        border-[#dfe5dc]
+        bg-[#fffdfa]
+        p-2.5
+        shadow-[0_8px_24px_rgba(18,55,47,0.05)]
+        transition-all
+        duration-300
         sm:w-[310px]
         lg:w-[330px]
+
+        hover:-translate-y-0.5
+        hover:border-[#9bb98a]
+        hover:shadow-[0_16px_34px_rgba(18,55,47,0.10)]
       "
     >
       <Link
         href={`/library/${id}`}
-        className="block outline-none"
+        className="block rounded-[18px] outline-none focus-visible:ring-2 focus-visible:ring-[#9bb98a]"
       >
         {/* MEDIA */}
 
@@ -284,18 +295,15 @@ export default function VideoCard({
             aspect-video
             w-full
             overflow-hidden
-            rounded-[20px]
-            bg-slate-200
+            rounded-[18px]
+            bg-[#dfe8d6]
             shadow-sm
             ring-1
-            ring-slate-900/5
+            ring-[#dfe5dc]
             transition-all
             duration-300
-            group-hover:-translate-y-1
-            group-hover:shadow-xl
-            group-hover:ring-emerald-500/20
-            group-focus-within:ring-4
-            group-focus-within:ring-emerald-300
+
+            group-hover:ring-[#9bb98a]
           "
         >
           {/* THUMBNAIL */}
@@ -314,18 +322,18 @@ export default function VideoCard({
             />
           ) : (
             <div
-              className={`absolute inset-0 flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-[#e9f5f1] via-[#edf7f8] to-[#f4f7f6] text-slate-600 transition-opacity duration-500 ${
+              className={`absolute inset-0 flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-[#dfe8d6] via-[#eef3e8] to-[#f5f5ed] text-[#5a6d66] transition-opacity duration-500 ${
                 previewActive &&
                 previewReady
                   ? "opacity-0"
                   : "opacity-100"
               }`}
             >
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-xl text-emerald-800 shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#fffdfa] text-xl text-[#163d34] shadow-[0_8px_20px_rgba(18,55,47,0.10)]">
                 ▶
               </div>
 
-              <p className="mt-3 text-xs font-semibold">
+              <p className="mt-3 text-xs font-semibold text-[#163d34]">
                 MindSettle
               </p>
             </div>
@@ -374,8 +382,8 @@ export default function VideoCard({
 
           {previewActive &&
             previewLoading && (
-              <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950/25">
-                <div className="flex items-center gap-2 rounded-full bg-slate-950/75 px-3 py-2 text-[11px] font-semibold text-white backdrop-blur">
+              <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#12372f]/30">
+                <div className="flex items-center gap-2 rounded-full bg-[#12372f]/85 px-3 py-2 text-[11px] font-semibold text-white backdrop-blur">
                   <span className="h-3 w-3 animate-spin rounded-full border-2 border-white/40 border-t-white" />
                   Preview
                 </div>
@@ -386,13 +394,13 @@ export default function VideoCard({
 
           {previewActive &&
             soundBlocked && (
-              <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/35">
+              <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#12372f]/40">
                 <button
                   type="button"
                   onClick={
                     handleManualPreviewPlay
                   }
-                  className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold text-emerald-900 shadow-xl transition hover:bg-emerald-50"
+                  className="flex items-center gap-2 rounded-full bg-[#d7f2ad] px-4 py-2 text-xs font-semibold text-[#12372f] shadow-xl transition hover:bg-white"
                 >
                   ▶ Play preview with sound
                 </button>
@@ -404,17 +412,17 @@ export default function VideoCard({
           {previewActive &&
             previewReady &&
             !soundBlocked && (
-              <div className="absolute bottom-3 right-3 z-20 rounded-full bg-slate-950/75 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur">
+              <div className="absolute bottom-3 right-3 z-20 rounded-full bg-[#12372f]/80 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur">
                 Preview
               </div>
             )}
 
-          <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-slate-950/65 via-transparent to-transparent opacity-55 transition duration-300 group-hover:opacity-75" />
+          <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-[#12372f]/70 via-transparent to-transparent opacity-50 transition duration-300 group-hover:opacity-70" />
 
           {/* CATEGORY */}
 
           {category?.name && (
-            <div className="absolute left-3 top-3 z-20 max-w-[60%] truncate rounded-full border border-white/20 bg-slate-950/55 px-3 py-1 text-[11px] font-semibold text-white shadow-sm backdrop-blur-md">
+            <div className="absolute left-3 top-3 z-20 max-w-[60%] truncate rounded-full border border-white/20 bg-[#12372f]/65 px-3 py-1 text-[11px] font-semibold text-white shadow-sm backdrop-blur-md">
               {category.name}
             </div>
           )}
@@ -422,8 +430,18 @@ export default function VideoCard({
           {/* DURATION */}
 
           {durationMinutes && (
-            <div className="absolute right-3 top-3 z-20 rounded-full bg-slate-950/70 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
+            <div className="absolute right-3 top-3 z-20 rounded-full bg-[#12372f]/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
               {durationMinutes} min
+            </div>
+          )}
+
+          {/* LOCKED */}
+
+          {locked && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#12372f]/45">
+              <div className="flex items-center gap-1.5 rounded-full bg-[#fffdfa]/95 px-3 py-1.5 text-[11px] font-semibold text-[#163d34] shadow">
+                🔒 Subscribers only
+              </div>
             </div>
           )}
 
@@ -431,7 +449,7 @@ export default function VideoCard({
 
           {!previewActive && (
             <div className="absolute inset-0 z-20 flex items-center justify-center">
-              <div className="flex h-14 w-14 scale-90 items-center justify-center rounded-full bg-white pl-1 text-xl text-emerald-800 opacity-0 shadow-xl transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
+              <div className="flex h-14 w-14 scale-90 items-center justify-center rounded-full bg-[#d7f2ad] pl-1 text-xl text-[#12372f] opacity-0 shadow-[0_10px_28px_rgba(18,55,47,0.18)] transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
                 ▶
               </div>
             </div>
@@ -441,7 +459,7 @@ export default function VideoCard({
 
           {hasProgress &&
             !previewActive && (
-              <div className="absolute bottom-3 left-3 z-20 rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold text-slate-900 shadow">
+              <div className="absolute bottom-3 left-3 z-20 rounded-full bg-[#fffdfa]/95 px-3 py-1 text-[11px] font-semibold text-[#163d34] shadow">
                 Continue
               </div>
             )}
@@ -451,7 +469,7 @@ export default function VideoCard({
           {progressPercent !== null && (
             <div className="absolute bottom-0 left-0 right-0 z-30 h-1.5 bg-white/35">
               <div
-                className="h-full rounded-r-full bg-emerald-400"
+                className="h-full rounded-r-full bg-[#d7f2ad]"
                 style={{
                   width: `${safeProgress}%`,
                 }}
@@ -462,18 +480,18 @@ export default function VideoCard({
 
         {/* DETAILS */}
 
-        <div className="px-1 pt-3">
-          <h3 className="truncate text-[15px] font-bold tracking-tight text-slate-900 transition group-hover:text-emerald-800">
+        <div className="px-1 pb-1 pt-4">
+          <h3 className="truncate text-[15px] font-semibold tracking-[-0.015em] text-[#163d34] transition group-hover:text-[#12372f]">
             {title}
           </h3>
 
-          <p className="mt-1 truncate text-[13px] font-medium text-slate-600">
+          <p className="mt-1 truncate text-[13px] font-medium text-[#5a6d66]">
             {instructor ||
               "MindSettle"}
           </p>
 
           {hasProgress && (
-            <p className="mt-1.5 text-xs font-semibold text-emerald-800">
+            <p className="mt-1.5 text-xs font-semibold text-[#78906f]">
               {safeProgress}% watched
             </p>
           )}
@@ -482,12 +500,12 @@ export default function VideoCard({
 
       {/* SHARE */}
 
-      <div className="mt-2 flex items-center justify-between px-1">
+      <div className="mt-2 flex items-center justify-between border-t border-[#dfe5dc] px-1 pt-2">
         <button
           type="button"
           onClick={handleShare}
           aria-label={`Share ${title}`}
-          className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+          className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-[#5a6d66] transition hover:bg-[#eef3e8] hover:text-[#163d34] focus:outline-none focus:ring-2 focus:ring-[#9bb98a]"
         >
           <svg
             viewBox="0 0 24 24"
@@ -520,7 +538,7 @@ export default function VideoCard({
         </button>
 
         {shareStatus && (
-          <span className="text-[11px] font-semibold text-emerald-700">
+          <span className="text-[11px] font-semibold text-[#78906f]">
             {shareStatus}
           </span>
         )}

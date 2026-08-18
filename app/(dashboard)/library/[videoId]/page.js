@@ -9,13 +9,10 @@ import {
 
 import VideoPlayer from "@/components/video/VideoPlayer";
 import HorizontalVideoRow from "@/components/video/HorizontalVideoRow";
+import { resolveVideoAccess } from "@/lib/access/entitlement";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-/* =========================================================
-   CREATE PRIVATE SIGNED STORAGE URL
-========================================================= */
 
 async function createSignedStorageUrl(
   supabase,
@@ -31,10 +28,7 @@ async function createSignedStorageUrl(
     error,
   } = await supabase.storage
     .from("videos")
-    .createSignedUrl(
-      path,
-      3600
-    );
+    .createSignedUrl(path, 3600);
 
   if (error) {
     console.error(
@@ -45,18 +39,8 @@ async function createSignedStorageUrl(
     return null;
   }
 
-  return (
-    data?.signedUrl ??
-    null
-  );
+  return data?.signedUrl ?? null;
 }
-
-/* =========================================================
-   PREPARE A RECOMMENDATION FOR BOTH:
-
-   1. MORE LIKE THIS
-   2. PLAYER PLAYLIST
-========================================================= */
 
 async function prepareRecommendation(
   supabase,
@@ -65,86 +49,56 @@ async function prepareRecommendation(
   const [
     thumbnailUrl,
     src,
-  ] =
-    await Promise.all([
-      createSignedStorageUrl(
-        supabase,
-        recommendation.thumbnail_url,
-        "recommendation thumbnail"
-      ),
+  ] = await Promise.all([
+    createSignedStorageUrl(
+      supabase,
+      recommendation.thumbnail_url,
+      "recommendation thumbnail"
+    ),
 
-      createSignedStorageUrl(
-        supabase,
-        recommendation.video_url,
-        "recommendation video"
-      ),
-    ]);
+    createSignedStorageUrl(
+      supabase,
+      recommendation.video_url,
+      "recommendation video"
+    ),
+  ]);
 
   return {
-    id:
-      recommendation.id,
-
-    title:
-      recommendation.title,
-
-    instructor:
-      recommendation.instructor,
-
+    id: recommendation.id,
+    title: recommendation.title,
+    instructor: recommendation.instructor,
     durationMinutes:
       recommendation.duration_minutes,
-
     thumbnailUrl,
-
     src,
-
     categoryId:
-      recommendation.category_id ??
-      null,
-
+      recommendation.category_id ?? null,
     createdAt:
       recommendation.created_at,
   };
 }
 
-/* =========================================================
-   VIDEO PAGE
-========================================================= */
-
 export default async function VideoPage({
   params,
 }) {
-  const {
-    videoId,
-  } =
-    await params;
+  const { videoId } = await params;
 
   const supabase =
     await createClient();
 
   const isRealVideo =
-    UUID_RE.test(
-      videoId
-    );
+    UUID_RE.test(videoId);
 
-  let video =
-    null;
+  let video = null;
 
-  let isFavourited =
-    false;
+  let isFavourited = false;
 
-  let recommendations =
-    [];
+  let recommendations = [];
 
   const {
-    data: {
-      user,
-    },
+    data: { user },
   } =
     await supabase.auth.getUser();
-
-  /* ======================================================
-     SUPABASE VIDEO
-  ====================================================== */
 
   if (isRealVideo) {
     const {
@@ -153,8 +107,7 @@ export default async function VideoPage({
     } =
       await supabase
         .from("videos")
-        .select(
-          `
+        .select(`
           id,
           title,
           description,
@@ -163,18 +116,16 @@ export default async function VideoPage({
           thumbnail_url,
           video_url,
           category_id,
+          min_tier,
+          is_premium,
           created_at,
           categories(
             id,
             name,
             slug
           )
-          `
-        )
-        .eq(
-          "id",
-          videoId
-        )
+        `)
+        .eq("id", videoId)
         .eq("is_published", true)
         .single();
 
@@ -185,21 +136,26 @@ export default async function VideoPage({
       );
     }
 
-    /* ====================================================
-       CURRENT VIDEO SIGNED URLS
-    ==================================================== */
-
     if (data) {
+      // Check entitlement before ever asking storage for a signed URL --
+      // opening this page is the actual "watch" action, so this is also
+      // where a free view gets recorded against the 3-video allowance.
+      const access = await resolveVideoAccess(supabase, user, data, {
+        recordView: true,
+      });
+
       const [
         signedVideoUrl,
         signedThumbnailUrl,
       ] =
         await Promise.all([
-          createSignedStorageUrl(
-            supabase,
-            data.video_url,
-            "video"
-          ),
+          access.allowed
+            ? createSignedStorageUrl(
+                supabase,
+                data.video_url,
+                "video"
+              )
+            : Promise.resolve(null),
 
           createSignedStorageUrl(
             supabase,
@@ -209,52 +165,35 @@ export default async function VideoPage({
         ]);
 
       video = {
-        id:
-          data.id,
-
-        title:
-          data.title,
-
+        id: data.id,
+        title: data.title,
         description:
           data.description,
-
         instructor:
           data.instructor,
-
         durationMinutes:
           data.duration_minutes,
-
         thumbnailUrl:
           signedThumbnailUrl,
-
         src:
           signedVideoUrl,
-
         categoryId:
           data.category_id,
-
         category:
-          data.categories
-            ?.name ??
+          data.categories?.name ??
           null,
-
         createdAt:
           data.created_at,
+        locked: !access.allowed,
+        requiresLogin: access.requiresLogin,
+        requiresUpgrade: access.requiresUpgrade,
+        freeViewsRemaining: access.freeViewsRemaining,
       };
-
-      /* ==================================================
-         MORE LIKE THIS — SAME CATEGORY
-
-         IMPORTANT:
-         video_url is now included because these
-         videos must play INSIDE the existing player.
-      ================================================== */
 
       let recommendationQuery =
         supabase
           .from("videos")
-          .select(
-            `
+          .select(`
             id,
             title,
             instructor,
@@ -263,25 +202,15 @@ export default async function VideoPage({
             video_url,
             category_id,
             created_at
-            `
-          )
+          `)
           .eq("is_published", true)
-          .neq(
-            "id",
-            videoId
-          )
-          .order(
-            "created_at",
-            {
-              ascending:
-                false,
-            }
-          )
+          .neq("id", videoId)
+          .order("created_at", {
+            ascending: false,
+          })
           .limit(10);
 
-      if (
-        data.category_id
-      ) {
+      if (data.category_id) {
         recommendationQuery =
           recommendationQuery.eq(
             "category_id",
@@ -292,7 +221,6 @@ export default async function VideoPage({
       const {
         data:
           recommendationData,
-
         error:
           recommendationError,
       } =
@@ -324,13 +252,6 @@ export default async function VideoPage({
           );
       }
 
-      /* ==================================================
-         FALLBACK
-
-         If there are no other videos in the
-         same category, load recent videos.
-      ================================================== */
-
       if (
         recommendations.length ===
         0
@@ -338,14 +259,12 @@ export default async function VideoPage({
         const {
           data:
             otherVideos,
-
           error:
             otherVideosError,
         } =
           await supabase
             .from("videos")
-            .select(
-              `
+            .select(`
               id,
               title,
               instructor,
@@ -354,20 +273,12 @@ export default async function VideoPage({
               video_url,
               category_id,
               created_at
-              `
-            )
+            `)
             .eq("is_published", true)
-            .neq(
-              "id",
-              videoId
-            )
-            .order(
-              "created_at",
-              {
-                ascending:
-                  false,
-              }
-            )
+            .neq("id", videoId)
+            .order("created_at", {
+              ascending: false,
+            })
             .limit(10);
 
         if (
@@ -398,10 +309,6 @@ export default async function VideoPage({
       }
     }
 
-    /* ====================================================
-       FAVOURITE STATUS
-    ==================================================== */
-
     if (
       video &&
       user
@@ -414,9 +321,7 @@ export default async function VideoPage({
           .from(
             "favourites"
           )
-          .select(
-            "id"
-          )
+          .select("id")
           .eq(
             "user_id",
             user.id
@@ -434,60 +339,27 @@ export default async function VideoPage({
     }
   }
 
-  /* ======================================================
-     VIDEO NOT FOUND
-  ====================================================== */
-
   if (!video) {
     notFound();
   }
 
-  /* ======================================================
-     PLAYER PLAYLIST
-
-     Only include recommendations that actually
-     have a playable signed media URL.
-
-     Example:
-
-     Current:
-     Video A
-
-     Playlist:
-     Video B
-     Video C
-     Video D
-  ====================================================== */
-
   const playerPlaylist =
     recommendations
-      .filter(
-        (
-          item
-        ) =>
-          Boolean(
-            item.src
-          )
+      .filter((item) =>
+        Boolean(item.src)
       )
       .map(
-        (
-          item
-        ) => ({
+        (item) => ({
           id:
             item.id,
-
           src:
             item.src,
-
           poster:
             item.thumbnailUrl,
-
           title:
             item.title,
-
           instructor:
             item.instructor,
-
           durationMinutes:
             item.durationMinutes,
         })
@@ -496,71 +368,84 @@ export default async function VideoPage({
   const redirectPath =
     `/library/${videoId}`;
 
-  /* ======================================================
-     PAGE
-  ====================================================== */
-
   return (
-    <div className="space-y-12 pb-16">
-      {/* =================================================
-          VIDEO PLAYER
-      ================================================= */}
+    <div className="relative space-y-12 pb-16">
+      {/* BACKGROUND */}
+
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[#f5f5ed]" />
+
+      <div className="pointer-events-none fixed -right-24 top-32 -z-10 h-[320px] w-[320px] rounded-full bg-[#dce8ca]/35 blur-3xl" />
+
+      {/* PLAYER + DETAILS */}
 
       <section className="mx-auto w-full max-w-6xl">
         {video.src ? (
-          <VideoPlayer
-            key={
-              video.id
-            }
-            initialMedia={{
-              id:
-                video.id,
+          <div className="overflow-hidden rounded-[28px] shadow-[0_18px_44px_rgba(18,55,47,0.14)]">
+            <VideoPlayer
+              key={
+                video.id
+              }
+              initialMedia={{
+                id:
+                  video.id,
 
-              src:
-                video.src,
+                src:
+                  video.src,
 
-              poster:
-                video.thumbnailUrl,
+                poster:
+                  video.thumbnailUrl,
 
-              title:
-                video.title,
+                title:
+                  video.title,
 
-              instructor:
-                video.instructor,
+                instructor:
+                  video.instructor,
 
-              durationMinutes:
-                video.durationMinutes,
-            }}
-            playlist={
-              playerPlaylist
-            }
-          />
+                durationMinutes:
+                  video.durationMinutes,
+              }}
+              playlist={
+                playerPlaylist
+              }
+            />
+          </div>
+        ) : video.locked ? (
+          <div className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-[28px] bg-[#12372f] px-6 text-center shadow-[0_18px_44px_rgba(18,55,47,0.16)]">
+            <p className="text-sm text-white/75">
+              {video.requiresUpgrade
+                ? "This session needs a MindSettle subscription."
+                : "Sign in to watch this session."}
+            </p>
+            <Link
+              href={video.requiresUpgrade ? "/plans" : "/login"}
+              className="rounded-full bg-[#d7f2ad] px-6 py-3 text-sm font-semibold text-[#12372f] shadow-[0_10px_28px_rgba(0,0,0,0.18)] transition-all hover:-translate-y-0.5 hover:bg-white"
+            >
+              {video.requiresUpgrade ? "View plans" : "Log in"}
+            </Link>
+          </div>
         ) : (
-          <div className="flex aspect-video w-full items-center justify-center rounded-2xl bg-slate-950 px-6 text-center text-sm text-slate-300 shadow-xl">
-            This video does not
-            currently have a
-            playable media file.
+          <div className="flex aspect-video w-full items-center justify-center rounded-[28px] bg-[#12372f] px-6 text-center text-sm text-white/75 shadow-[0_18px_44px_rgba(18,55,47,0.16)]">
+            This session does not currently
+            have a playable media file.
           </div>
         )}
 
-        {/* ===============================================
-            VIDEO INFORMATION
-        =============================================== */}
+        {/* VIDEO INFORMATION */}
 
-        <div className="mt-7 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="mt-7 rounded-[28px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)] sm:p-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-            {/* ===========================================
-                TITLE + DETAILS
-            =========================================== */}
-
             <div className="min-w-0 flex-1">
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
+                MindSettle session
+              </p>
+
+              <h1 className="mt-2 text-3xl font-semibold tracking-[-0.035em] text-[#163d34] sm:text-4xl">
                 {
                   video.title
                 }
               </h1>
 
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-sm font-medium text-slate-500">
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-sm font-medium text-[#5a6d66]">
                 <span>
                   {video.instructor ||
                     "MindSettle"}
@@ -568,7 +453,7 @@ export default async function VideoPage({
 
                 {video.durationMinutes && (
                   <>
-                    <span>
+                    <span className="text-[#9aa9a2]">
                       •
                     </span>
 
@@ -583,11 +468,11 @@ export default async function VideoPage({
 
                 {video.category && (
                   <>
-                    <span>
+                    <span className="text-[#9aa9a2]">
                       •
                     </span>
 
-                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-800">
+                    <span className="rounded-full bg-[#dce8ca] px-3 py-1 text-xs font-semibold text-[#163d34]">
                       {
                         video.category
                       }
@@ -596,10 +481,6 @@ export default async function VideoPage({
                 )}
               </div>
             </div>
-
-            {/* ===========================================
-                FAVOURITE BUTTON
-            =========================================== */}
 
             {isRealVideo &&
               user && (
@@ -628,10 +509,10 @@ export default async function VideoPage({
 
                   <button
                     type="submit"
-                    className={`shrink-0 rounded-full px-6 py-3 text-sm font-bold shadow-sm transition ${
+                    className={`shrink-0 rounded-full px-6 py-3 text-sm font-semibold transition-all ${
                       isFavourited
-                        ? "bg-emerald-700 text-white hover:bg-emerald-600"
-                        : "border-2 border-emerald-700 bg-white text-emerald-800 hover:bg-emerald-50"
+                        ? "bg-[#163d34] text-white shadow-[0_8px_20px_rgba(18,55,47,0.16)] hover:bg-[#12372f]"
+                        : "border border-[#9bb98a] bg-[#fffdfa] text-[#163d34] hover:bg-[#eef3e8]"
                     }`}
                   >
                     {isFavourited
@@ -642,17 +523,13 @@ export default async function VideoPage({
               )}
           </div>
 
-          {/* =============================================
-              DESCRIPTION
-          ============================================= */}
-
           {video.description && (
-            <div className="mt-7 border-t border-slate-200 pt-6">
-              <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-700">
+            <div className="mt-7 border-t border-[#dfe5dc] pt-6">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
                 About this session
               </h2>
 
-              <p className="mt-3 max-w-4xl whitespace-pre-wrap text-base leading-7 text-slate-600">
+              <p className="mt-3 max-w-4xl whitespace-pre-wrap text-base leading-7 text-[#5a6d66]">
                 {
                   video.description
                 }
@@ -662,22 +539,23 @@ export default async function VideoPage({
         </div>
       </section>
 
-      {/* =================================================
-          MORE LIKE THIS
-      ================================================= */}
+      {/* MORE LIKE THIS */}
 
       {recommendations.length >
         0 && (
         <section className="min-w-0">
           <div className="mb-5">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-              More Like This
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
+              Keep exploring
+            </p>
+
+            <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-[#163d34]">
+              More like this
             </h2>
 
-            <p className="mt-1 text-sm text-slate-500">
-              More MindSettle
-              sessions you may
-              enjoy.
+            <p className="mt-1 text-sm text-[#5a6d66]">
+              More MindSettle sessions that
+              may suit this moment.
             </p>
           </div>
 
@@ -689,16 +567,14 @@ export default async function VideoPage({
         </section>
       )}
 
-      {/* =================================================
-          BACK TO LIBRARY
-      ================================================= */}
+      {/* BACK TO LIBRARY */}
 
       <section>
         <Link
           href="/library"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 transition hover:text-emerald-600"
+          className="inline-flex items-center gap-2 rounded-full border border-[#cfd8cb] bg-[#fffdfa] px-5 py-2.5 text-sm font-semibold text-[#163d34] shadow-[0_6px_18px_rgba(18,55,47,0.05)] transition-all hover:-translate-y-0.5 hover:border-[#9bb98a] hover:bg-[#eef3e8]"
         >
-          ← Back to Library
+          ← Back to library
         </Link>
       </section>
     </div>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { updateProfile } from "@/lib/actions/profile";
 
@@ -7,15 +8,25 @@ export default async function AccountPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: profile, error } = await supabase
-    .from("profiles")
-    .select("full_name, avatar_url, created_at")
-    .eq("id", user.id)
-    .maybeSingle();
+  const [{ data: profile, error }, { data: subscription }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("full_name, avatar_url, created_at")
+      .eq("id", user.id)
+      .maybeSingle(),
+    supabase
+      .from("subscriptions")
+      .select("status, current_period_end, plans(name, type)")
+      .eq("user_id", user.id)
+      .in("status", ["active", "trialing"])
+      .maybeSingle(),
+  ]);
 
   if (error) {
     throw new Error(error.message);
   }
+
+  const isPaid = Boolean(subscription);
 
   return (
     <div className="flex flex-col gap-6">
@@ -36,6 +47,36 @@ export default async function AccountPage() {
             </dd>
           </div>
         </dl>
+      </div>
+
+      <div className="max-w-md rounded-xl border border-neutral-200 p-6">
+        <h2 className="text-lg font-medium">Membership</h2>
+        <dl className="mt-4 flex flex-col gap-3 text-sm">
+          <div className="flex justify-between">
+            <dt className="text-neutral-500">Membership type</dt>
+            <dd className="font-medium">{isPaid ? "Premium" : "Free"}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-neutral-500">Current plan</dt>
+            <dd className="font-medium">{subscription?.plans?.name ?? "MindSettle Free"}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-neutral-500">Subscription status</dt>
+            <dd className="font-medium capitalize">{subscription?.status ?? "None"}</dd>
+          </div>
+        </dl>
+
+        {!isPaid && (
+          <div className="mt-5 flex items-center justify-between rounded-lg bg-emerald-50 px-4 py-3">
+            <p className="text-sm text-emerald-800">You&apos;re on a free account.</p>
+            <Link
+              href="/plans"
+              className="rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-500"
+            >
+              Upgrade
+            </Link>
+          </div>
+        )}
       </div>
 
       <div className="max-w-md rounded-xl border border-neutral-200 p-6">

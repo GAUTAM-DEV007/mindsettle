@@ -1418,11 +1418,20 @@ export default function VideoPlayer({
   const normalPlayerWidth =
     mediaOrientation ===
     "portrait"
-      ? "min(100%, 560px)"
+      ? "min(100%, 520px)"
       : mediaOrientation ===
           "square"
-        ? "min(100%, 760px)"
+        ? "min(100%, 720px)"
         : "100%";
+
+  const normalPlayerMaxHeight =
+    mediaOrientation ===
+    "portrait"
+      ? "min(70vh, 720px)"
+      : mediaOrientation ===
+          "square"
+        ? "min(72vh, 760px)"
+        : "min(72vh, 760px)";
 
   const visibleClass =
     controlsVisible
@@ -1498,6 +1507,11 @@ export default function VideoPlayer({
                 isMiniPlayer
                   ? undefined
                   : normalPlayerWidth,
+
+              maxHeight:
+                isMiniPlayer
+                  ? undefined
+                  : normalPlayerMaxHeight,
             }
       }
     >

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { removeFavourite } from "@/lib/actions/favourites";
 import VideoCard from "@/components/video/VideoCard";
+import { resolveCatalogueAccess } from "@/lib/access/entitlement";
 
 async function createSignedStorageUrl(
   supabase,
@@ -58,6 +59,8 @@ export default async function FavouritesPage() {
         thumbnail_url,
         video_url,
         is_published,
+        is_premium,
+        min_tier,
         categories(
           id,
           name,
@@ -77,106 +80,156 @@ export default async function FavouritesPage() {
     );
   }
 
-  /*
-   * Create signed thumbnail and preview
-   * URLs because the videos bucket is
-   * private.
-   */
+  const publishedFavourites =
+    (favourites || [])
+      .map(({ videos }) => videos)
+      .filter((video) => video?.is_published);
+
+  const favouritesAccess = await resolveCatalogueAccess(
+    supabase,
+    user,
+    publishedFavourites
+  );
+
   const favouriteVideos =
     await Promise.all(
-      (favourites || [])
-        .map(
-          ({ videos }) =>
-            videos
-        )
-        .filter((video) => video?.is_published)
-        .map(
-          async (video) => {
-            const [
-              thumbnailUrl,
-              previewUrl,
-            ] =
-              await Promise.all([
-                createSignedStorageUrl(
-                  supabase,
-                  video.thumbnail_url,
-                  3600
-                ),
-
-                createSignedStorageUrl(
-                  supabase,
-                  video.video_url,
-                  1800
-                ),
-              ]);
-
-            return {
-              id: video.id,
-              title: video.title,
-              description:
-                video.description,
-              instructor:
-                video.instructor,
-              durationMinutes:
-                video.duration_minutes,
-              thumbnailUrl,
-              previewUrl,
-              category:
-                video.categories ??
-                null,
+      publishedFavourites.map(
+        async (video) => {
+          const videoAccess =
+            favouritesAccess.get(video.id) ?? {
+              allowed: false,
+              requiresUpgrade: true,
             };
-          }
-        )
+
+          const [
+            thumbnailUrl,
+            previewUrl,
+          ] =
+            await Promise.all([
+              createSignedStorageUrl(
+                supabase,
+                video.thumbnail_url,
+                3600
+              ),
+
+              videoAccess.allowed
+                ? createSignedStorageUrl(
+                    supabase,
+                    video.video_url,
+                    1800
+                  )
+                : Promise.resolve(null),
+            ]);
+
+          return {
+            id: video.id,
+            title:
+              video.title,
+            description:
+              video.description,
+            instructor:
+              video.instructor,
+            durationMinutes:
+              video.duration_minutes,
+            thumbnailUrl,
+            previewUrl,
+            category:
+              video.categories ??
+              null,
+            locked: !videoAccess.allowed,
+          };
+        }
+      )
     );
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="relative flex flex-col gap-8 pb-10">
+      {/* BACKGROUND */}
+
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[#f5f5ed]" />
+
+      <div className="pointer-events-none fixed left-0 top-24 -z-10 h-[300px] w-[300px] rounded-full bg-[#dce8ca]/35 blur-3xl" />
+
       {/* HEADER */}
 
-      <div>
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">
+      <section className="rounded-[28px] border border-[#cfd8cb] bg-[#fffdfa] px-6 py-7 shadow-[0_14px_38px_rgba(18,55,47,0.07)] sm:px-8">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
           My MindSettle
         </p>
 
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
-          Your favourites
+        <h1 className="mt-2 text-3xl font-semibold tracking-[-0.035em] text-[#163d34] sm:text-4xl">
+          Keep what helps close.
         </h1>
 
-        <p className="mt-1 text-sm text-slate-600">
-          Sessions you&apos;ve saved
-          for later.
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-[#5a6d66] sm:text-base">
+          Your saved sessions are here whenever you want
+          to return to something familiar.
         </p>
-      </div>
+      </section>
 
       {/* EMPTY STATE */}
 
       {favouriteVideos.length ===
       0 ? (
-        <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
-          <h2 className="text-lg font-bold text-slate-900">
-            No favourites yet
+        <section className="rounded-[28px] border border-dashed border-[#cfd8cb] bg-[#fffdfa] px-6 py-14 text-center shadow-[0_8px_24px_rgba(18,55,47,0.04)]">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#dce8ca] text-xl text-[#163d34]">
+            ♡
+          </div>
+
+          <h2 className="mt-4 text-xl font-semibold tracking-[-0.02em] text-[#163d34]">
+            Nothing saved yet.
           </h2>
 
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
-            Browse the library and save
-            sessions you&apos;d like to
-            come back to.
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#5a6d66]">
+            Explore the library and save the sessions you
+            would like to come back to later.
           </p>
 
           <Link
             href="/library"
-            className="mt-5 inline-flex rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-600"
+            className="
+              mt-6
+              inline-flex
+              min-h-11
+              items-center
+              justify-center
+              rounded-full
+              bg-[#163d34]
+              px-6
+              text-sm
+              font-semibold
+              text-white
+              transition-all
+              duration-300
+
+              hover:-translate-y-0.5
+              hover:bg-[#12372f]
+
+              focus:outline-none
+              focus:ring-4
+              focus:ring-[#dce8ca]
+            "
           >
-            Browse Library
+            Explore the library
           </Link>
-        </div>
+        </section>
       ) : (
         <div className="grid gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {favouriteVideos.map(
             (video) => (
               <div
                 key={video.id}
-                className="flex min-w-0 flex-col"
+                className="
+                  flex
+                  min-w-0
+                  flex-col
+                  rounded-[24px]
+                  border
+                  border-[#dfe5dc]
+                  bg-[#fafbf7]
+                  p-3
+                  shadow-[0_8px_24px_rgba(18,55,47,0.05)]
+                "
               >
                 <VideoCard
                   video={
@@ -193,7 +246,9 @@ export default async function FavouritesPage() {
                   <input
                     type="hidden"
                     name="videoId"
-                    value={video.id}
+                    value={
+                      video.id
+                    }
                   />
 
                   <input
@@ -204,7 +259,28 @@ export default async function FavouritesPage() {
 
                   <button
                     type="submit"
-                    className="w-full rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-200"
+                    className="
+                      w-full
+                      rounded-full
+                      border
+                      border-[#cfd8cb]
+                      bg-[#fffdfa]
+                      px-4
+                      py-2
+                      text-sm
+                      font-semibold
+                      text-[#5a6d66]
+                      transition-all
+                      duration-300
+
+                      hover:border-[#9bb98a]
+                      hover:bg-[#eef3e8]
+                      hover:text-[#163d34]
+
+                      focus:outline-none
+                      focus:ring-2
+                      focus:ring-[#dce8ca]
+                    "
                   >
                     Remove from favourites
                   </button>

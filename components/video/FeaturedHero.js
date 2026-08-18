@@ -10,20 +10,6 @@ import {
 const PREVIEW_DELAY_MS = 700;
 const MAX_PREVIEW_SECONDS = 60;
 
-/* =========================================================
-   FEATURED HERO
-
-   IMPORTANT:
-
-   This component now fills the parent container.
-
-   The Library page decides how large the hero area is.
-   FeaturedHero no longer forces:
-   - lg:w-3/4
-   - large outer padding
-   - tiny 218px desktop height
-========================================================= */
-
 export default function FeaturedHero({
   featured,
 }) {
@@ -64,10 +50,6 @@ export default function FeaturedHero({
     ) &&
     failedPreviewUrl ===
       featured?.previewUrl;
-
-  /* ======================================================
-     PREVIEW
-  ====================================================== */
 
   useEffect(() => {
     if (
@@ -120,10 +102,6 @@ export default function FeaturedHero({
     previewFailed,
   ]);
 
-  /* ======================================================
-     CLEANUP
-  ====================================================== */
-
   useEffect(() => {
     return () => {
       if (
@@ -141,8 +119,8 @@ export default function FeaturedHero({
       <section
         className="
           flex
-          min-h-[300px]
           h-full
+          min-h-[300px]
           w-full
           items-center
           justify-center
@@ -150,23 +128,21 @@ export default function FeaturedHero({
           rounded-[22px]
           border
           border-dashed
-          border-slate-300
-          bg-slate-100
+          border-[#cfd8cb]
+          bg-[#f5f5ed]
+          px-6
+          text-center
           text-sm
           font-medium
-          text-slate-500
+          text-[#5a6d66]
 
-          lg:min-h-[420px]
+          lg:min-h-[288px]
         "
       >
-        No featured session available.
+        No featured session available right now.
       </section>
     );
   }
-
-  /* ======================================================
-     POINTER ENTER
-  ====================================================== */
 
   function handlePointerEnter(
     event
@@ -201,10 +177,6 @@ export default function FeaturedHero({
         setPreviewActive(true);
       }, PREVIEW_DELAY_MS);
   }
-
-  /* ======================================================
-     STOP PREVIEW
-  ====================================================== */
 
   function stopPreview() {
     if (
@@ -259,12 +231,6 @@ export default function FeaturedHero({
     }
   }
 
-  /* ======================================================
-     MANUAL PREVIEW
-
-     Used when browser blocks autoplay with sound.
-  ====================================================== */
-
   async function handleManualPreview(
     event
   ) {
@@ -298,10 +264,6 @@ export default function FeaturedHero({
     }
   }
 
-  /* ======================================================
-     PREVIEW FAILURE
-  ====================================================== */
-
   function handlePreviewError(
     event
   ) {
@@ -314,7 +276,6 @@ export default function FeaturedHero({
         code:
           mediaError?.code ||
           null,
-
         message:
           mediaError?.message ||
           null,
@@ -344,10 +305,6 @@ export default function FeaturedHero({
     setSoundBlocked(false);
   }
 
-  /* ======================================================
-     HERO
-  ====================================================== */
-
   return (
     <section
       onPointerEnter={
@@ -364,20 +321,13 @@ export default function FeaturedHero({
         w-full
         overflow-hidden
         rounded-[22px]
-        bg-slate-950
-        shadow-[0_18px_48px_rgba(15,23,42,0.20)]
+        bg-[#12372f]
+        shadow-[0_18px_48px_rgba(18,55,47,0.24)]
 
         sm:min-h-[340px]
-        lg:min-h-[420px]
+        lg:min-h-[288px]
       "
     >
-      {/* =================================================
-          THUMBNAIL
-
-          object-cover ensures the image completely fills
-          the large hero rectangle.
-      ================================================= */}
-
       {featured.thumbnailUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -409,9 +359,9 @@ export default function FeaturedHero({
             absolute
             inset-0
             bg-gradient-to-br
-            from-emerald-950
-            via-slate-900
-            to-sky-950
+            from-[#12372f]
+            via-[#163d34]
+            to-[#344d5a]
             transition-opacity
             duration-500
 
@@ -423,10 +373,6 @@ export default function FeaturedHero({
           `}
         />
       )}
-
-      {/* =================================================
-          VIDEO PREVIEW
-      ================================================= */}
 
       {previewActive &&
         !previewFailed &&
@@ -483,11 +429,7 @@ export default function FeaturedHero({
           </video>
         )}
 
-      {/* =================================================
-          CINEMATIC CONTRAST
-
-          Stronger on the left where the text lives.
-      ================================================= */}
+      {/* FOREST-GREEN CINEMATIC OVERLAY */}
 
       <div
         aria-hidden="true"
@@ -496,10 +438,7 @@ export default function FeaturedHero({
           absolute
           inset-0
           z-10
-          bg-gradient-to-r
-          from-slate-950/95
-          via-slate-950/58
-          to-transparent
+          bg-[linear-gradient(90deg,rgba(8,39,32,.95)_0%,rgba(8,39,32,.72)_48%,rgba(8,39,32,.16)_100%)]
         "
       />
 
@@ -510,19 +449,9 @@ export default function FeaturedHero({
           absolute
           inset-0
           z-10
-          bg-gradient-to-t
-          from-slate-950/65
-          via-transparent
-          to-slate-950/15
+          bg-[linear-gradient(0deg,rgba(8,39,32,.58)_0%,transparent_55%)]
         "
       />
-
-      {/* =================================================
-          SUBTLE INNER EDGE
-
-          Not the old white ring.
-          Just a very soft cinematic edge.
-      ================================================= */}
 
       <div
         aria-hidden="true"
@@ -538,10 +467,6 @@ export default function FeaturedHero({
         "
       />
 
-      {/* =================================================
-          LOADING PREVIEW
-      ================================================= */}
-
       {previewActive &&
         previewLoading &&
         !soundBlocked &&
@@ -556,7 +481,9 @@ export default function FeaturedHero({
               items-center
               gap-2
               rounded-full
-              bg-slate-950/75
+              border
+              border-white/10
+              bg-[#082720]/75
               px-3
               py-1.5
               text-[10px]
@@ -570,10 +497,6 @@ export default function FeaturedHero({
             Loading preview
           </div>
         )}
-
-      {/* =================================================
-          ACTIVE PREVIEW
-      ================================================= */}
 
       {previewActive &&
         previewReady &&
@@ -589,7 +512,9 @@ export default function FeaturedHero({
               items-center
               gap-2
               rounded-full
-              bg-slate-950/70
+              border
+              border-white/10
+              bg-[#082720]/70
               px-3
               py-1.5
               text-[9px]
@@ -600,15 +525,11 @@ export default function FeaturedHero({
               backdrop-blur
             "
           >
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <span className="h-2 w-2 rounded-full bg-[#d7f2ad]" />
 
             Preview
           </div>
         )}
-
-      {/* =================================================
-          SOUND BLOCKED
-      ================================================= */}
 
       {previewActive &&
         soundBlocked &&
@@ -624,28 +545,21 @@ export default function FeaturedHero({
               top-5
               z-50
               rounded-full
-              bg-white
+              bg-[#d7f2ad]
               px-4
               py-2
               text-[11px]
-              font-bold
-              text-emerald-900
+              font-semibold
+              text-[#12372f]
               shadow-xl
               transition
 
-              hover:bg-emerald-50
+              hover:bg-white
             "
           >
             ▶ Preview with sound
           </button>
         )}
-
-      {/* =================================================
-          HERO CONTENT
-
-          Content now scales appropriately for the
-          larger rectangular hero.
-      ================================================= */}
 
       <div
         className="
@@ -665,31 +579,28 @@ export default function FeaturedHero({
           sm:px-8
           sm:py-8
 
-          lg:min-h-[420px]
+          lg:min-h-[288px]
           lg:px-10
           lg:py-10
 
           xl:px-12
         "
       >
-        {/* FEATURED LABEL */}
-
         <span
           className="
             w-fit
             rounded-full
             border
-            border-emerald-300/30
-            bg-emerald-700/75
+            border-white/20
+            bg-white/10
             px-3
             py-1.5
             text-[9px]
-            font-bold
+            font-semibold
             uppercase
-            tracking-[0.16em]
-            text-emerald-50
-            shadow-sm
-            backdrop-blur
+            tracking-[0.18em]
+            text-[#d7f2ad]
+            backdrop-blur-md
 
             sm:text-[10px]
           "
@@ -697,33 +608,29 @@ export default function FeaturedHero({
           ★ Featured session
         </span>
 
-        {/* TITLE */}
-
         <h2
           className="
-            mt-4
+            mt-3
             max-w-xl
             text-3xl
-            font-bold
-            leading-[1.05]
-            tracking-tight
+            font-semibold
+            leading-[1.04]
+            tracking-[-0.035em]
             text-white
 
             sm:text-4xl
-            lg:text-[42px]
+            lg:text-[34px]
           "
         >
           {featured.title}
         </h2>
 
-        {/* META */}
-
         <p
           className="
             mt-2
             text-xs
-            font-semibold
-            text-slate-200
+            font-medium
+            text-emerald-50/80
 
             sm:text-sm
           "
@@ -736,17 +643,15 @@ export default function FeaturedHero({
             : ""}
         </p>
 
-        {/* DESCRIPTION */}
-
         {featured.description && (
           <p
             className="
-              mt-4
-              line-clamp-3
+              mt-3
+              line-clamp-2
               max-w-lg
               text-xs
               leading-6
-              text-slate-100
+              text-emerald-50/90
 
               sm:text-sm
             "
@@ -757,33 +662,30 @@ export default function FeaturedHero({
           </p>
         )}
 
-        {/* BUTTONS */}
-
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-5 flex flex-wrap gap-2.5">
           <Link
             href={`/library/${featured.id}`}
             className="
               inline-flex
+              min-h-11
               items-center
               gap-2
               rounded-full
-              bg-emerald-600
+              bg-[#d7f2ad]
               px-5
-              py-2.5
               text-sm
-              font-bold
-              text-white
-              shadow-lg
+              font-semibold
+              text-[#12372f]
+              shadow-[0_12px_28px_rgba(0,0,0,.20)]
               transition-all
               duration-300
 
               hover:-translate-y-0.5
-              hover:bg-emerald-500
-              hover:shadow-xl
+              hover:bg-white
 
               focus:outline-none
               focus:ring-4
-              focus:ring-emerald-300/40
+              focus:ring-white/20
             "
           >
             ▶ Start session
@@ -793,22 +695,22 @@ export default function FeaturedHero({
             href={`/library/${featured.id}`}
             className="
               inline-flex
+              min-h-11
               items-center
               rounded-full
               border
-              border-white/40
-              bg-slate-950/35
+              border-white/35
+              bg-white/10
               px-5
-              py-2.5
               text-sm
-              font-bold
+              font-semibold
               text-white
-              backdrop-blur
+              backdrop-blur-md
               transition-all
               duration-300
 
               hover:-translate-y-0.5
-              hover:bg-white/15
+              hover:bg-white/20
 
               focus:outline-none
               focus:ring-4

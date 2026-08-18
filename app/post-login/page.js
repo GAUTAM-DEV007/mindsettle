@@ -36,6 +36,21 @@ export default async function PostLoginPage() {
         redirect("/login?error=role-not-found");
     }
 
+    // Admins always land in /admin -- only end users and organisations
+    // are gated on having an active subscription.
+    if (roleRecord.role === "user" || roleRecord.role === "organisation") {
+        const { data: subscription } = await supabase
+            .from("subscriptions")
+            .select("status")
+            .eq("user_id", user.id)
+            .in("status", ["active", "trialing"])
+            .maybeSingle();
+
+        if (!subscription) {
+            redirect("/plans");
+        }
+    }
+
     // Send the user to the correct dashboard.
     redirect(getDashboardForRole(roleRecord.role));
 }

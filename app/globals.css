@@ -42,6 +42,108 @@ html { scroll-behavior: smooth; }
   to { transform: scale(1.085) translate3d(.7%, .35%, 0); }
 }
 
+.features-ambient-orb {
+  animation: features-ambient-drift 12s ease-in-out infinite alternate;
+}
+
+.features-ambient-orb-delayed {
+  animation-delay: -5s;
+  animation-duration: 15s;
+}
+
+@keyframes features-ambient-drift {
+  from { transform: translate3d(-2%, -1%, 0) scale(.96); }
+  to { transform: translate3d(5%, 4%, 0) scale(1.08); }
+}
+
+.breath-orb {
+  isolation: isolate;
+  overflow: visible;
+  transform: scale(.8);
+  background: radial-gradient(circle at 35% 28%, #ffffff 0%, #edf4f2 36%, #c6d8d4 72%, #9ebbb8 100%);
+  box-shadow: 0 26px 60px rgba(69, 101, 104, .16), inset 0 1px 0 rgba(255, 255, 255, .85);
+  transition: background .8s ease, box-shadow .8s ease;
+  will-change: transform;
+}
+
+.breath-orb::before,
+.breath-orb::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.breath-orb::before {
+  inset: -1.15rem;
+  z-index: -1;
+  border: 1px solid rgba(255, 255, 255, .65);
+  background: rgba(255, 255, 255, .12);
+  box-shadow: 0 0 55px rgba(125, 163, 165, .16);
+}
+
+.breath-orb::after {
+  inset: 12%;
+  z-index: -1;
+  background: rgba(255, 255, 255, .18);
+  filter: blur(18px);
+}
+
+.breath-orb[data-phase="inhale"] {
+  animation: breath-orb-inhale 4s cubic-bezier(.36, .02, .22, 1) forwards;
+  background: radial-gradient(circle at 35% 28%, #ffffff 0%, #e8f4f4 34%, #b6d6d8 72%, #86b3b8 100%);
+  box-shadow: 0 30px 72px rgba(74, 129, 134, .2), inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+.breath-orb[data-phase="hold-in"] {
+  animation: breath-orb-hold-full 4s ease-in-out forwards;
+  background: radial-gradient(circle at 35% 28%, #ffffff 0%, #f2edf5 36%, #d7cbe0 72%, #b5a4c4 100%);
+  box-shadow: 0 28px 70px rgba(113, 91, 130, .17), inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+.breath-orb[data-phase="exhale"] {
+  animation: breath-orb-exhale 4s cubic-bezier(.58, 0, .3, 1) forwards;
+  background: radial-gradient(circle at 35% 28%, #ffffff 0%, #f9eee8 36%, #e7c5b6 72%, #cf9d88 100%);
+  box-shadow: 0 25px 64px rgba(151, 100, 79, .16), inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+.breath-orb[data-phase="hold-out"] {
+  animation: breath-orb-hold-empty 4s ease-in-out forwards;
+  background: radial-gradient(circle at 35% 28%, #ffffff 0%, #f2f4ec 36%, #d5ddc5 72%, #afbea0 100%);
+  box-shadow: 0 24px 58px rgba(103, 123, 91, .15), inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+.breath-orb[data-phase="complete"] {
+  animation: breath-orb-complete .9s cubic-bezier(.3, .8, .3, 1) forwards;
+  background: radial-gradient(circle at 35% 28%, #ffffff 0%, #f5f2e2 36%, #e4d7ad 72%, #c9b873 100%);
+}
+
+@keyframes breath-orb-inhale {
+  from { transform: scale(.78); }
+  to { transform: scale(1.04); }
+}
+
+@keyframes breath-orb-hold-full {
+  0%, 100% { transform: scale(1.04); }
+  50% { transform: scale(1.065); }
+}
+
+@keyframes breath-orb-exhale {
+  from { transform: scale(1.04); }
+  to { transform: scale(.78); }
+}
+
+@keyframes breath-orb-hold-empty {
+  0%, 100% { transform: scale(.78); }
+  50% { transform: scale(.8); }
+}
+
+@keyframes breath-orb-complete {
+  from { transform: scale(.78); }
+  65% { transform: scale(.94); }
+  to { transform: scale(.88); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

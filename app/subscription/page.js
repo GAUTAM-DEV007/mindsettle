@@ -28,7 +28,7 @@ export default async function PlansPage({ searchParams }) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?redirectTo=/plans");
+    redirect("/login?redirectTo=/subscription");
   }
 
   const { data: roleRecord } = await supabase
@@ -40,7 +40,7 @@ export default async function PlansPage({ searchParams }) {
   const isOrganisation = roleRecord?.role === "organisation";
 
   const { data: plans } = await supabase
-    .from("plans")
+    .from("subscription_plans")
     .select("id, type, name, description, price_cents, billing_cycle, seat_limit, tier, is_active")
     .eq("is_active", true)
     .order("sort_order", { ascending: true });

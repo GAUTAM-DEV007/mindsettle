@@ -47,7 +47,7 @@ export default async function PostLoginPage() {
             .maybeSingle();
 
         if (!subscription) {
-            redirect("/plans");
+            redirect("/subscription");
         }
     }
 

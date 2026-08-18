@@ -37,6 +37,10 @@ const MAIN_NAV = [
     href: "/mood",
     label: "Mood",
   },
+  {
+    href: "/subscription",
+    label: "Subscription",
+  },
 ];
 
 const ACCOUNT_NAV = [

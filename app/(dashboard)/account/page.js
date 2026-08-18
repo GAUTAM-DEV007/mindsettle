@@ -16,7 +16,7 @@ export default async function AccountPage() {
       .maybeSingle(),
     supabase
       .from("subscriptions")
-      .select("status, current_period_end, plans(name, type)")
+      .select("status, current_period_end, plans:subscription_plans(name, type)")
       .eq("user_id", user.id)
       .in("status", ["active", "trialing"])
       .maybeSingle(),
@@ -70,7 +70,7 @@ export default async function AccountPage() {
           <div className="mt-5 flex items-center justify-between rounded-lg bg-emerald-50 px-4 py-3">
             <p className="text-sm text-emerald-800">You&apos;re on a free account.</p>
             <Link
-              href="/plans"
+              href="/subscription"
               className="rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-500"
             >
               Upgrade

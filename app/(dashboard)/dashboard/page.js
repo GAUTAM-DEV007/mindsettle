@@ -251,7 +251,7 @@ export default async function DashboardPage() {
 
         {!membership.isPaid && (
           <Link
-            href="/plans"
+            href="/subscription"
             className="shrink-0 rounded-full bg-[#163d34] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#12372f]"
           >
             Upgrade

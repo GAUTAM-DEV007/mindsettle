@@ -121,7 +121,7 @@ async function syncSubscription(supabase, stripe, subscription) {
 
   if (priceId) {
     const { data: planRow } = await supabase
-      .from("plans")
+      .from("subscription_plans")
       .select("id, name")
       .eq("stripe_price_id", priceId)
       .maybeSingle();

@@ -2,18 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "@/lib/actions/auth";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Overview" },
-  { href: "/library", label: "Video library" },
-  { href: "/favourites", label: "Favourites" },
-  { href: "/programs", label: "Programs" },
+  { href: "/organisation-dashboard", label: "Dashboard" },
+  { href: "/organisation-dashboard/members", label: "Members" },
+  { href: "/organisation-dashboard/programs", label: "Programs" },
+  { href: "/organisation-dashboard/reports", label: "Reports" },
   { href: "/subscription", label: "Subscription" },
-  { href: "/account", label: "Account" },
-  { href: "/account/billing", label: "Billing" },
+  { href: "/account", label: "Settings" },
 ];
 
-export default function Sidebar() {
+export default function OrganisationSidebar() {
   const pathname = usePathname();
 
   return (
@@ -26,7 +26,7 @@ export default function Sidebar() {
         {NAV_ITEMS.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            (item.href !== "/organisation-dashboard" && pathname.startsWith(item.href));
 
           return (
             <Link
@@ -42,6 +42,15 @@ export default function Sidebar() {
             </Link>
           );
         })}
+
+        <form action={signOut} className="mt-2">
+          <button
+            type="submit"
+            className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+          >
+            Logout
+          </button>
+        </form>
       </nav>
     </aside>
   );

@@ -1501,12 +1501,14 @@ export default function VideoPlayer({
           ? undefined
           : {
               aspectRatio:
-                mediaAspectRatio,
+                isMiniPlayer
+                  ? mediaAspectRatio
+                  : 16 / 9,
 
               maxWidth:
                 isMiniPlayer
                   ? undefined
-                  : normalPlayerWidth,
+                  : "100%",
 
               maxHeight:
                 isMiniPlayer
@@ -1516,25 +1518,32 @@ export default function VideoPlayer({
       }
     >
       {/* ==================================================
-          FULLSCREEN BACKGROUND
+          PLAYER BACKGROUND
+          Keeps portrait/square media visually full without
+          cropping the real video.
       ================================================== */}
 
-      {isFullscreen &&
-        currentMedia.poster && (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={
-                currentMedia.poster
-              }
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover opacity-40 blur-3xl"
-            />
+      {currentMedia.poster && (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={
+              currentMedia.poster
+            }
+            alt=""
+            aria-hidden="true"
+            className={`pointer-events-none absolute inset-0 h-full w-full scale-125 object-cover blur-2xl saturate-150 brightness-90 ${
+              isFullscreen ? "opacity-85" : "opacity-95"
+            }`}
+          />
 
-            <div className="pointer-events-none absolute inset-0 bg-black/45" />
-          </>
-        )}
+          <div
+            className={`pointer-events-none absolute inset-0 ${
+              isFullscreen ? "bg-black/15" : "bg-black/5"
+            }`}
+          />
+        </>
+      )}
 
       {/* ==================================================
           ACTUAL VIDEO
@@ -1568,7 +1577,15 @@ export default function VideoPlayer({
         disableRemotePlayback
         playsInline
         preload="auto"
-        className="relative z-10 h-full w-full bg-transparent object-contain"
+        className={`relative z-10 mx-auto block bg-transparent ${
+          isFullscreen
+            ? "h-full w-full object-contain"
+            : mediaOrientation === "portrait"
+              ? "h-full w-auto max-w-full object-contain"
+              : mediaOrientation === "square"
+                ? "h-full w-auto max-w-full object-contain"
+                : "h-full w-full object-contain"
+        }`}
         onLoadedMetadata={
           handleLoadedMetadata
         }
@@ -1663,7 +1680,7 @@ export default function VideoPlayer({
         !nextPreviewVisible && (
           <div
             aria-hidden="true"
-            className={`pointer-events-none absolute inset-0 z-20 bg-gradient-to-b from-black/25 via-transparent to-black/75 transition-opacity duration-300 ${visibleClass}`}
+            className={`pointer-events-none absolute inset-0 z-20 bg-gradient-to-b from-black/10 via-transparent to-black/45 transition-opacity duration-300 ${visibleClass}`}
           />
         )}
 

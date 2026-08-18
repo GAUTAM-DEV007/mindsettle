@@ -16,7 +16,7 @@ export default async function BillingPage({ searchParams }) {
 
   const { data: subscription, error } = await supabase
     .from("subscriptions")
-    .select("plan, status, current_period_end, updated_at, plans(name, billing_cycle)")
+    .select("plan, status, current_period_end, updated_at, plans:subscription_plans(name, billing_cycle)")
     .eq("user_id", user.id)
     .order("updated_at", { ascending: false })
     .limit(1)
@@ -79,7 +79,7 @@ export default async function BillingPage({ searchParams }) {
 
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href="/plans"
+                href="/subscription"
                 className="inline-flex rounded-full border border-emerald-700 px-5 py-2.5 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50"
               >
                 {isActive ? "Change plan" : "View plans"}
@@ -106,7 +106,7 @@ export default async function BillingPage({ searchParams }) {
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href="/plans"
+                href="/subscription"
                 className="inline-flex rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
               >
                 View plans

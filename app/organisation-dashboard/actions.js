@@ -50,6 +50,7 @@ export async function addMember(_prevState, formData) {
   }
 
   revalidatePath("/organisation-dashboard");
+  revalidatePath("/organisation-dashboard/members");
   return { error: null };
 }
 
@@ -67,4 +68,5 @@ export async function removeMember(memberId) {
   if (error) throw new Error("Could not remove this member. Please try again.");
 
   revalidatePath("/organisation-dashboard");
+  revalidatePath("/organisation-dashboard/members");
 }

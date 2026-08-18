@@ -75,7 +75,7 @@ export async function addPlan(formData) {
     redirectWithError("Name and plan type are required.");
   }
 
-  const { error } = await supabase.from("plans").insert({
+  const { error } = await supabase.from("subscription_plans").insert({
     ...fields,
     slug: slugify(`${fields.name}-${Date.now().toString(36)}`),
   });
@@ -96,7 +96,7 @@ export async function updatePlan(formData) {
     redirectWithError("Plan id and name are required.");
   }
 
-  const { error } = await supabase.from("plans").update(fields).eq("id", id);
+  const { error } = await supabase.from("subscription_plans").update(fields).eq("id", id);
 
   if (error) {
     redirectWithError(error.message);
@@ -113,7 +113,7 @@ export async function deletePlan(formData) {
     redirectWithError("Plan id is required.");
   }
 
-  const { error } = await supabase.from("plans").delete().eq("id", id);
+  const { error } = await supabase.from("subscription_plans").delete().eq("id", id);
 
   if (error) {
     redirectWithError(error.message);

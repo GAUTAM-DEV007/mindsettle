@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getStripeClient } from "@/lib/stripe/server";
 
 function redirectWithError(message) {
-  redirect(`/plans?error=${encodeURIComponent(message)}`);
+  redirect(`/subscription?error=${encodeURIComponent(message)}`);
 }
 
 async function getOrigin() {
@@ -30,7 +30,7 @@ export async function startCheckout(formData) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect(`/login?redirectTo=/plans`);
+    redirect(`/login?redirectTo=/subscription`);
   }
 
   const planId = formData.get("planId")?.toString();
@@ -40,7 +40,7 @@ export async function startCheckout(formData) {
   }
 
   const { data: plan, error: planError } = await supabase
-    .from("plans")
+    .from("subscription_plans")
     .select("id, name, stripe_price_id, is_active")
     .eq("id", planId)
     .single();
@@ -94,7 +94,7 @@ export async function startCheckout(formData) {
       line_items: [{ price: plan.stripe_price_id, quantity: 1 }],
       subscription_data: { metadata: { user_id: user.id } },
       success_url: `${origin}/account/billing?checkout=success`,
-      cancel_url: `${origin}/plans?checkout=cancelled`,
+      cancel_url: `${origin}/subscription?checkout=cancelled`,
     });
 
     if (!session.url) {

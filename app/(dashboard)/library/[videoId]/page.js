@@ -417,7 +417,7 @@ export default async function VideoPage({
                 : "Sign in to watch this session."}
             </p>
             <Link
-              href={video.requiresUpgrade ? "/plans" : "/login"}
+              href={video.requiresUpgrade ? "/subscription" : "/login"}
               className="rounded-full bg-[#d7f2ad] px-6 py-3 text-sm font-semibold text-[#12372f] shadow-[0_10px_28px_rgba(0,0,0,0.18)] transition-all hover:-translate-y-0.5 hover:bg-white"
             >
               {video.requiresUpgrade ? "View plans" : "Log in"}

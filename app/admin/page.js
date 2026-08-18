@@ -202,7 +202,7 @@ export default async function AdminDashboardPage({
     getMedia(),
 
     supabase
-      .from("plans")
+      .from("subscription_plans")
       .select(
         `
         id,
@@ -466,7 +466,7 @@ export default async function AdminDashboardPage({
         adminSupabase
           .from("subscriptions")
           .select(
-            "id, user_id, status, plan, plan_id, stripe_subscription_id, current_period_end"
+            "id, user_id, status, plan, plan_id, stripe_subscription_id, current_period_end, created_at"
           )
           .order("created_at", { ascending: false }),
         adminSupabase
@@ -514,6 +514,7 @@ export default async function AdminDashboardPage({
           billingCycle: plan?.billing_cycle ?? null,
           stripeSubscriptionId: s.stripe_subscription_id,
           currentPeriodEnd: s.current_period_end,
+          startDate: s.created_at,
         };
       });
 

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import VideoCard from "@/components/video/VideoCard";
+import { resolveCatalogueAccess } from "@/lib/access/entitlement";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,10 @@ export default async function ProgramPage({
   const { slug } = await params;
 
   const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const {
     data: program,
@@ -90,6 +95,7 @@ export default async function ProgramPage({
         thumbnail_url,
         video_url,
         is_premium,
+        min_tier,
         is_published
       )
     `)
@@ -116,12 +122,24 @@ export default async function ProgramPage({
         row.videos.is_published
     );
 
+  const access = await resolveCatalogueAccess(
+    supabase,
+    user,
+    publishedRows.map((row) => row.videos)
+  );
+
   const videos =
     await Promise.all(
       publishedRows.map(
         async (row) => {
           const video =
             row.videos;
+
+          const videoAccess =
+            access.get(video.id) ?? {
+              allowed: false,
+              requiresUpgrade: true,
+            };
 
           const [
             thumbnailUrl,
@@ -133,15 +151,18 @@ export default async function ProgramPage({
               3600
             ),
 
-            createSignedUrl(
-              supabase,
-              video.video_url,
-              1800
-            ),
+            videoAccess.allowed
+              ? createSignedUrl(
+                  supabase,
+                  video.video_url,
+                  1800
+                )
+              : Promise.resolve(null),
           ]);
 
           return {
             id: video.id,
+            locked: !videoAccess.allowed,
             title:
               video.title,
             description:

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
 import VideoCard from "@/components/video/VideoCard";
+import { resolveCatalogueAccess, getMembershipSummary } from "@/lib/access/entitlement";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,12 @@ export default async function DashboardPage() {
     await createClient();
 
   const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const membership = await getMembershipSummary(supabase, user);
+
+  const {
     data: rawVideos,
     error: videosError,
   } = await supabase
@@ -54,6 +61,7 @@ export default async function DashboardPage() {
       thumbnail_url,
       video_url,
       is_premium,
+      min_tier,
       is_published,
       created_at
     `)
@@ -73,6 +81,15 @@ export default async function DashboardPage() {
       videosError.message
     );
   }
+
+  // Browsing the dashboard shouldn't burn through the free-video
+  // allowance -- only actually opening a video (the /library/[videoId]
+  // page) records a view. This just decides which previews are unlocked.
+  const access = await resolveCatalogueAccess(
+    supabase,
+    user,
+    rawVideos || []
+  );
 
   const {
     data: programs,
@@ -110,6 +127,12 @@ export default async function DashboardPage() {
     await Promise.all(
       (rawVideos || []).map(
         async (video) => {
+          const videoAccess =
+            access.get(video.id) ?? {
+              allowed: false,
+              requiresUpgrade: true,
+            };
+
           const [
             thumbnailUrl,
             previewUrl,
@@ -121,11 +144,13 @@ export default async function DashboardPage() {
                 3600
               ),
 
-              createSignedUrl(
-                supabase,
-                video.video_url,
-                1800
-              ),
+              videoAccess.allowed
+                ? createSignedUrl(
+                    supabase,
+                    video.video_url,
+                    1800
+                  )
+                : Promise.resolve(null),
             ]);
 
           return {
@@ -141,6 +166,7 @@ export default async function DashboardPage() {
             previewUrl,
             isPremium:
               video.is_premium,
+            locked: !videoAccess.allowed,
           };
         }
       )
@@ -199,6 +225,38 @@ export default async function DashboardPage() {
             </Link>
           </div>
         </div>
+      </section>
+
+      {/* MEMBERSHIP */}
+
+      <section className="flex flex-col items-start justify-between gap-3 rounded-[24px] border border-[#dfe5dc] bg-[#fffdfa] px-6 py-4 shadow-[0_8px_24px_rgba(18,55,47,0.05)] sm:flex-row sm:items-center">
+        <p className="text-sm text-[#5a6d66]">
+          {membership.isPaid ? (
+            <>
+              You&apos;re on{" "}
+              <span className="font-semibold text-[#163d34]">
+                {membership.plan?.name ?? "Premium"}
+              </span>
+              .
+            </>
+          ) : (
+            <>
+              You&apos;re on{" "}
+              <span className="font-semibold text-[#163d34]">MindSettle Free</span> —{" "}
+              {membership.freeViewsRemaining}{" "}
+              {membership.freeViewsRemaining === 1 ? "free video" : "free videos"} left.
+            </>
+          )}
+        </p>
+
+        {!membership.isPaid && (
+          <Link
+            href="/plans"
+            className="shrink-0 rounded-full bg-[#163d34] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#12372f]"
+          >
+            Upgrade
+          </Link>
+        )}
       </section>
 
       {/* QUICK DISCOVERY */}

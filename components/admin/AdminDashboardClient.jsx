@@ -8,6 +8,9 @@ import MediaUploader from "@/components/admin/MediaUploader";
 import UserManagement from "@/components/admin/UserManagement";
 import SubscriptionManagement from "@/components/admin/SubscriptionManagement";
 import InvoiceManagement from "@/components/admin/InvoiceManagement";
+import SeatManagement from "@/components/admin/SeatManagement";
+import BillingManagement from "@/components/admin/BillingManagement";
+import PlanManagement from "@/components/admin/PlanManagement";
 
 import {
   updateMedia,
@@ -48,10 +51,13 @@ export default function AdminDashboardClient({
   users = [],
   subscriptions = [],
   invoices = [],
+  organisationSeats = [],
+  plans = [],
   adminApiConfigured = false,
   usersError = null,
   subscriptionsError = null,
   invoicesError = null,
+  planError = null,
 }) {
   const [activeSection, setActiveSection] =
     useState(
@@ -124,7 +130,7 @@ export default function AdminDashboardClient({
     },
     {
       id: "users",
-      label: "Users",
+      label: "Accounts",
       icon: "◈",
     },
     {
@@ -133,9 +139,24 @@ export default function AdminDashboardClient({
       icon: "$",
     },
     {
+      id: "seats",
+      label: "Seat Management",
+      icon: "▥",
+    },
+    {
       id: "invoices",
       label: "Invoices",
       icon: "▤",
+    },
+    {
+      id: "billing",
+      label: "Billing Management",
+      icon: "◇",
+    },
+    {
+      id: "plans",
+      label: "Plan Management",
+      icon: "✦",
     },
   ];
 
@@ -1473,6 +1494,25 @@ export default function AdminDashboardClient({
               </section>
             )}
 
+            {/* SEAT MANAGEMENT */}
+
+            {activeSection ===
+              "seats" && (
+              <section>
+
+                <SectionHeader
+                  eyebrow="Billing"
+                  title="Organisation Seat Management"
+                  description="Seat usage per organisation, driven by each organisation's plan seat limit."
+                />
+
+                <SeatManagement
+                  organisationSeats={organisationSeats}
+                  configured={adminApiConfigured}
+                />
+              </section>
+            )}
+
             {/* INVOICES */}
 
             {activeSection ===
@@ -1494,6 +1534,45 @@ export default function AdminDashboardClient({
                 <InvoiceManagement
                   invoices={invoices}
                   configured={adminApiConfigured}
+                />
+              </section>
+            )}
+
+            {/* BILLING MANAGEMENT */}
+
+            {activeSection ===
+              "billing" && (
+              <section>
+
+                <SectionHeader
+                  eyebrow="Billing"
+                  title="Billing Management"
+                  description="Customer, plan, billing cycle and renewal across every subscription -- individual and organisation."
+                />
+
+                <BillingManagement
+                  subscriptions={subscriptions}
+                  configured={adminApiConfigured}
+                />
+              </section>
+            )}
+
+            {/* PLAN MANAGEMENT */}
+
+            {activeSection ===
+              "plans" && (
+              <section>
+
+                <SectionHeader
+                  eyebrow="Billing"
+                  title="Plan / Content Access Management"
+                  description="Create individual and organisation plans, set seat limits and pricing, and control which content tier each video requires."
+                />
+
+                <PlanManagement
+                  plans={plans}
+                  media={media}
+                  planError={planError}
                 />
               </section>
             )}

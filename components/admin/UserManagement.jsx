@@ -33,6 +33,7 @@ export default function UserManagement({ users, configured }) {
           <tr>
             <th className="px-5 py-3">Email</th>
             <th className="px-5 py-3">Role</th>
+            <th className="px-5 py-3">Subscription</th>
             <th className="px-5 py-3">Joined</th>
             <th className="px-5 py-3">Status</th>
             <th className="px-5 py-3">Actions</th>
@@ -102,6 +103,17 @@ function UserRow({ user }) {
           <option value="organisation">Organisation</option>
           <option value="admin">Admin</option>
         </select>
+      </td>
+      <td className="px-5 py-3">
+        <span
+          className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
+            user.subscriptionStatus === "active" || user.subscriptionStatus === "trialing"
+              ? "bg-sky-50 text-sky-700"
+              : "bg-slate-100 text-slate-500"
+          }`}
+        >
+          {user.subscriptionStatus === "none" ? "Free" : user.subscriptionStatus}
+        </span>
       </td>
       <td className="px-5 py-3 text-slate-500">
         {new Date(user.createdAt).toLocaleDateString()}

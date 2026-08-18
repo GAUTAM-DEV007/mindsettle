@@ -33,7 +33,7 @@ export default function InvoiceManagement({ invoices, configured }) {
     return (
       <div className="rounded-xl border border-sky-100 bg-white p-6 text-center shadow-md">
         <p className="text-sm text-slate-500">
-          No invoices yet -- they'll appear here once Stripe sends the
+          No invoices yet -- they&apos;ll appear here once Stripe sends the
           first invoice.paid / invoice.created event.
         </p>
       </div>

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 
 import MediaRow from "@/components/video/MediaRow";
 import FeaturedHero from "@/components/video/FeaturedHero";
+import { resolveCatalogueAccess } from "@/lib/access/entitlement";
 
 /* =========================================================
    WATCH PROGRESS
@@ -829,6 +830,8 @@ export default async function LibraryPage({
         duration_minutes,
         thumbnail_url,
         video_url,
+        min_tier,
+        is_premium,
         created_at,
         categories(
           id,
@@ -866,6 +869,18 @@ export default async function LibraryPage({
   }
 
   /* ======================================================
+     ENTITLEMENT
+     Browsing shouldn't burn free views -- only opening a
+     video (/library/[videoId]) records one.
+  ====================================================== */
+
+  const catalogueAccess = await resolveCatalogueAccess(
+    supabase,
+    user,
+    rawVideos || []
+  );
+
+  /* ======================================================
      SIGNED MEDIA
   ====================================================== */
 
@@ -873,6 +888,12 @@ export default async function LibraryPage({
     await Promise.all(
       (rawVideos || []).map(
         async (video) => {
+          const videoAccess =
+            catalogueAccess.get(video.id) ?? {
+              allowed: false,
+              requiresUpgrade: true,
+            };
+
           const [
             thumbnailUrl,
             previewUrl,
@@ -884,11 +905,13 @@ export default async function LibraryPage({
                 3600
               ),
 
-              createSignedStorageUrl(
-                supabase,
-                video.video_url,
-                1800
-              ),
+              videoAccess.allowed
+                ? createSignedStorageUrl(
+                    supabase,
+                    video.video_url,
+                    1800
+                  )
+                : Promise.resolve(null),
             ]);
 
           return {
@@ -917,6 +940,8 @@ export default async function LibraryPage({
             category:
               video.categories ??
               null,
+
+            locked: !videoAccess.allowed,
           };
         }
       )

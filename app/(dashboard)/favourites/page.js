@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { removeFavourite } from "@/lib/actions/favourites";
 import VideoCard from "@/components/video/VideoCard";
+import { resolveCatalogueAccess } from "@/lib/access/entitlement";
 
 async function createSignedStorageUrl(
   supabase,
@@ -58,6 +59,8 @@ export default async function FavouritesPage() {
         thumbnail_url,
         video_url,
         is_published,
+        is_premium,
+        min_tier,
         categories(
           id,
           name,
@@ -77,55 +80,66 @@ export default async function FavouritesPage() {
     );
   }
 
+  const publishedFavourites =
+    (favourites || [])
+      .map(({ videos }) => videos)
+      .filter((video) => video?.is_published);
+
+  const favouritesAccess = await resolveCatalogueAccess(
+    supabase,
+    user,
+    publishedFavourites
+  );
+
   const favouriteVideos =
     await Promise.all(
-      (favourites || [])
-        .map(
-          ({ videos }) =>
-            videos
-        )
-        .filter(
-          (video) =>
-            video?.is_published
-        )
-        .map(
-          async (video) => {
-            const [
-              thumbnailUrl,
-              previewUrl,
-            ] =
-              await Promise.all([
-                createSignedStorageUrl(
-                  supabase,
-                  video.thumbnail_url,
-                  3600
-                ),
-
-                createSignedStorageUrl(
-                  supabase,
-                  video.video_url,
-                  1800
-                ),
-              ]);
-
-            return {
-              id: video.id,
-              title:
-                video.title,
-              description:
-                video.description,
-              instructor:
-                video.instructor,
-              durationMinutes:
-                video.duration_minutes,
-              thumbnailUrl,
-              previewUrl,
-              category:
-                video.categories ??
-                null,
+      publishedFavourites.map(
+        async (video) => {
+          const videoAccess =
+            favouritesAccess.get(video.id) ?? {
+              allowed: false,
+              requiresUpgrade: true,
             };
-          }
-        )
+
+          const [
+            thumbnailUrl,
+            previewUrl,
+          ] =
+            await Promise.all([
+              createSignedStorageUrl(
+                supabase,
+                video.thumbnail_url,
+                3600
+              ),
+
+              videoAccess.allowed
+                ? createSignedStorageUrl(
+                    supabase,
+                    video.video_url,
+                    1800
+                  )
+                : Promise.resolve(null),
+            ]);
+
+          return {
+            id: video.id,
+            title:
+              video.title,
+            description:
+              video.description,
+            instructor:
+              video.instructor,
+            durationMinutes:
+              video.duration_minutes,
+            thumbnailUrl,
+            previewUrl,
+            category:
+              video.categories ??
+              null,
+            locked: !videoAccess.allowed,
+          };
+        }
+      )
     );
 
   return (

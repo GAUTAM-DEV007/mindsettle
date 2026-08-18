@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
 import MediaRow from "@/components/video/MediaRow";
+import { resolveCatalogueAccess } from "@/lib/access/entitlement";
 
 /* =========================================================
    VISUAL MOOD STYLES
@@ -230,6 +231,8 @@ export default async function MoodPage({
           category_id,
           created_at,
           is_published,
+          is_premium,
+          min_tier,
           categories(
             id,
             name,
@@ -287,6 +290,12 @@ export default async function MoodPage({
      SIGNED MEDIA
   ====================================================== */
 
+  const moodPageAccess = await resolveCatalogueAccess(
+    supabase,
+    user,
+    rawVideos || []
+  );
+
   const videos =
     await Promise.all(
       (
@@ -295,6 +304,12 @@ export default async function MoodPage({
         async (
           video
         ) => {
+          const videoAccess =
+            moodPageAccess.get(video.id) ?? {
+              allowed: false,
+              requiresUpgrade: true,
+            };
+
           const [
             thumbnailUrl,
             previewUrl,
@@ -306,16 +321,20 @@ export default async function MoodPage({
                 3600
               ),
 
-              createSignedUrl(
-                supabase,
-                video.video_url,
-                1800
-              ),
+              videoAccess.allowed
+                ? createSignedUrl(
+                    supabase,
+                    video.video_url,
+                    1800
+                  )
+                : Promise.resolve(null),
             ]);
 
           return {
             id:
               video.id,
+
+            locked: !videoAccess.allowed,
 
             title:
               video.title,

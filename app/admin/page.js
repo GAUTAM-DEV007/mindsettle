@@ -22,6 +22,7 @@ export default async function AdminDashboardPage({
     usersError,
     subscriptionsError,
     invoicesError,
+    planError,
   } = await searchParams;
 
   const supabase = await createClient();
@@ -100,6 +101,8 @@ export default async function AdminDashboardPage({
     },
 
     mediaResult,
+
+    plansResult,
   ] = await Promise.all([
     supabase.rpc(
       "admin_dashboard_analytics"
@@ -197,7 +200,30 @@ export default async function AdminDashboardPage({
       ),
 
     getMedia(),
+
+    supabase
+      .from("plans")
+      .select(
+        `
+        id,
+        type,
+        name,
+        slug,
+        description,
+        price_cents,
+        currency,
+        billing_cycle,
+        stripe_price_id,
+        seat_limit,
+        tier,
+        is_active,
+        sort_order
+        `
+      )
+      .order("sort_order", { ascending: true }),
   ]);
+
+  const plans = plansResult?.data || [];
 
   // --------------------------------------------------
   // ERROR HANDLING
@@ -421,23 +447,26 @@ export default async function AdminDashboardPage({
   let users = [];
   let subscriptions = [];
   let invoices = [];
+  let organisationSeats = [];
 
   if (adminApiConfigured) {
     try {
       const adminSupabase = createAdminClient();
+      const planById = new Map(plans.map((p) => [p.id, p]));
 
       const [
         authUsers,
         { data: roleRows },
         { data: subscriptionRows },
         { data: invoiceRows },
+        { data: orgMemberRows },
       ] = await Promise.all([
         listAllAuthUsers(adminSupabase),
         adminSupabase.from("user_roles").select("user_id, role"),
         adminSupabase
           .from("subscriptions")
           .select(
-            "id, user_id, status, plan, stripe_subscription_id, current_period_end"
+            "id, user_id, status, plan, plan_id, stripe_subscription_id, current_period_end"
           )
           .order("created_at", { ascending: false }),
         adminSupabase
@@ -446,11 +475,19 @@ export default async function AdminDashboardPage({
             "id, user_id, amount_due, currency, status, hosted_invoice_url, invoice_pdf, email_sent_at, created_at"
           )
           .order("created_at", { ascending: false }),
+        adminSupabase
+          .from("organisation_members")
+          .select("organisation_id, status"),
       ]);
 
       const emailByUserId = new Map(authUsers.map((u) => [u.id, u.email]));
       const roleByUserId = new Map(
         (roleRows ?? []).map((r) => [r.user_id, r.role])
+      );
+      const subscriptionByUserId = new Map(
+        (subscriptionRows ?? [])
+          .filter((s) => ["active", "trialing"].includes(s.status))
+          .map((s) => [s.user_id, s])
       );
 
       users = authUsers
@@ -461,17 +498,24 @@ export default async function AdminDashboardPage({
           createdAt: u.created_at,
           suspended:
             Boolean(u.banned_until) && new Date(u.banned_until) > new Date(),
+          subscriptionStatus: subscriptionByUserId.get(u.id)?.status ?? "none",
         }))
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-      subscriptions = (subscriptionRows ?? []).map((s) => ({
-        id: s.id,
-        email: emailByUserId.get(s.user_id) ?? "Unknown",
-        status: s.status,
-        plan: s.plan,
-        stripeSubscriptionId: s.stripe_subscription_id,
-        currentPeriodEnd: s.current_period_end,
-      }));
+      subscriptions = (subscriptionRows ?? []).map((s) => {
+        const plan = s.plan_id ? planById.get(s.plan_id) : null;
+
+        return {
+          id: s.id,
+          email: emailByUserId.get(s.user_id) ?? "Unknown",
+          status: s.status,
+          plan: plan?.name ?? s.plan,
+          planType: plan?.type ?? (roleByUserId.get(s.user_id) === "organisation" ? "organisation" : "individual"),
+          billingCycle: plan?.billing_cycle ?? null,
+          stripeSubscriptionId: s.stripe_subscription_id,
+          currentPeriodEnd: s.current_period_end,
+        };
+      });
 
       invoices = (invoiceRows ?? []).map((i) => ({
         id: i.id,
@@ -484,6 +528,34 @@ export default async function AdminDashboardPage({
         emailSentAt: i.email_sent_at,
         createdAt: i.created_at,
       }));
+
+      const seatsUsedByOrgId = new Map();
+      for (const row of orgMemberRows ?? []) {
+        if (row.status !== "active") continue;
+        seatsUsedByOrgId.set(
+          row.organisation_id,
+          (seatsUsedByOrgId.get(row.organisation_id) ?? 0) + 1
+        );
+      }
+
+      organisationSeats = authUsers
+        .filter((u) => roleByUserId.get(u.id) === "organisation")
+        .map((org) => {
+          const subscription = subscriptionByUserId.get(org.id) ?? null;
+          const plan = subscription?.plan_id ? planById.get(subscription.plan_id) : null;
+          const seatLimit = plan?.seat_limit ?? null;
+          const seatsUsed = seatsUsedByOrgId.get(org.id) ?? 0;
+
+          return {
+            id: org.id,
+            email: org.email,
+            planName: plan?.name ?? subscription?.plan ?? "No plan",
+            seatLimit,
+            seatsUsed,
+            seatsRemaining: seatLimit !== null ? Math.max(seatLimit - seatsUsed, 0) : null,
+            status: subscription?.status ?? "none",
+          };
+        });
     } catch (err) {
       // e.g. the invoices migration hasn't been run yet -- don't take the
       // whole admin dashboard down over it, just show empty sections.
@@ -528,10 +600,13 @@ export default async function AdminDashboardPage({
       users={users}
       subscriptions={subscriptions}
       invoices={invoices}
+      organisationSeats={organisationSeats}
+      plans={plans}
       adminApiConfigured={adminApiConfigured}
       usersError={usersError || null}
       subscriptionsError={subscriptionsError || null}
       invoicesError={invoicesError || null}
+      planError={planError || null}
     />
   );
 }

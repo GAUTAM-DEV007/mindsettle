@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
 import VideoCard from "@/components/video/VideoCard";
+import { resolveCatalogueAccess } from "@/lib/access/entitlement";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,10 @@ export default async function DashboardPage() {
     await createClient();
 
   const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const {
     data: rawVideos,
     error: videosError,
   } = await supabase
@@ -55,6 +60,7 @@ export default async function DashboardPage() {
       thumbnail_url,
       video_url,
       is_premium,
+      min_tier,
       is_published,
       created_at
       `
@@ -122,10 +128,22 @@ export default async function DashboardPage() {
     );
   }
 
+  const access = await resolveCatalogueAccess(
+    supabase,
+    user,
+    rawVideos || []
+  );
+
   const videos =
     await Promise.all(
       (rawVideos || []).map(
         async (video) => {
+          const videoAccess =
+            access.get(video.id) ?? {
+              allowed: false,
+              requiresUpgrade: true,
+            };
+
           const [
             thumbnailUrl,
             previewUrl,
@@ -137,11 +155,13 @@ export default async function DashboardPage() {
                 3600
               ),
 
-              createSignedUrl(
-                supabase,
-                video.video_url,
-                1800
-              ),
+              videoAccess.allowed
+                ? createSignedUrl(
+                    supabase,
+                    video.video_url,
+                    1800
+                  )
+                : Promise.resolve(null),
             ]);
 
           return {
@@ -166,6 +186,8 @@ export default async function DashboardPage() {
 
             isPremium:
               video.is_premium,
+
+            locked: !videoAccess.allowed,
           };
         }
       )

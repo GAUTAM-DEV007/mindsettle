@@ -32,14 +32,24 @@ export default async function OrganisationDashboardPage() {
     redirect("/");
   }
 
-  const { data: allMembers } = await supabase
-    .from("organisation_members")
-    .select("id, email, status, invited_at")
-    .eq("organisation_id", user.id)
-    .order("invited_at", { ascending: false });
+  const [{ data: allMembers }, { data: subscription }] = await Promise.all([
+    supabase
+      .from("organisation_members")
+      .select("id, email, status, invited_at")
+      .eq("organisation_id", user.id)
+      .order("invited_at", { ascending: false }),
+    supabase
+      .from("subscriptions")
+      .select("status, current_period_end, plans(name, seat_limit)")
+      .eq("user_id", user.id)
+      .in("status", ["active", "trialing"])
+      .maybeSingle(),
+  ]);
 
   const members = (allMembers ?? []).filter((m) => m.status === "active");
   const pending = (allMembers ?? []).filter((m) => m.status === "pending");
+  const hasActivePlan = Boolean(subscription);
+  const seatLimit = subscription?.plans?.seat_limit ?? null;
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
@@ -55,9 +65,38 @@ export default async function OrganisationDashboardPage() {
         </Link>
       </div>
 
-      <section className="grid gap-4 sm:grid-cols-2">
+      {hasActivePlan ? (
+        <section className="mb-8 flex flex-col items-start justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 sm:flex-row sm:items-center">
+          <p className="text-sm text-emerald-900">
+            Plan: <span className="font-semibold">{subscription.plans?.name ?? "Organisation"}</span>
+            {seatLimit && (
+              <>
+                {" "}· {members.length}/{seatLimit} seats used
+              </>
+            )}
+          </p>
+          <Link href="/plans" className="shrink-0 text-sm font-semibold text-emerald-800 underline">
+            Change plan
+          </Link>
+        </section>
+      ) : (
+        <section className="mb-8 flex flex-col items-start justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 sm:flex-row sm:items-center">
+          <p className="text-sm text-amber-900">
+            No active organisation plan. Members won&apos;t get organisation content access until you subscribe.
+          </p>
+          <Link
+            href="/plans"
+            className="shrink-0 rounded-full bg-[#163d34] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#12372f]"
+          >
+            View plans
+          </Link>
+        </section>
+      )}
+
+      <section className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Members" value={members.length} />
         <StatCard label="Pending members" value={pending.length} />
+        <StatCard label="Seat limit" value={seatLimit ?? "—"} />
       </section>
 
       <section className="mt-10 rounded-xl border border-neutral-200 p-6">

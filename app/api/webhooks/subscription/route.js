@@ -107,16 +107,41 @@ async function syncSubscription(supabase, stripe, subscription) {
   }
 
   const status = SUBSCRIPTION_STATUS_MAP[subscription.status] ?? "incomplete";
-  const plan = subscription.items?.data?.[0]?.price?.nickname ?? null;
+  const priceId = subscription.items?.data?.[0]?.price?.id ?? null;
   const periodEnd = subscription.current_period_end
     ? new Date(subscription.current_period_end * 1000).toISOString()
     : null;
+
+  // Resolve the internal plan row from the Stripe price id so entitlement
+  // checks (public.user_has_active_entitlement) have a tier to compare
+  // against. A plan's stripe_price_id is set from Admin -> Plan
+  // Management once the plan is created in Stripe.
+  let planId = null;
+  let planName = null;
+
+  if (priceId) {
+    const { data: planRow } = await supabase
+      .from("plans")
+      .select("id, name")
+      .eq("stripe_price_id", priceId)
+      .maybeSingle();
+
+    if (planRow) {
+      planId = planRow.id;
+      planName = planRow.name;
+    } else {
+      console.warn(
+        `No plan found with stripe_price_id ${priceId} -- subscription ${subscription.id} will sync without a plan/tier until Admin -> Plan Management is given this price id.`
+      );
+    }
+  }
 
   const { error } = await supabase.from("subscriptions").upsert(
     {
       user_id: userId,
       status,
-      plan,
+      plan: planName ?? subscription.items?.data?.[0]?.price?.nickname ?? null,
+      plan_id: planId,
       stripe_customer_id: subscription.customer,
       stripe_subscription_id: subscription.id,
       current_period_end: periodEnd,

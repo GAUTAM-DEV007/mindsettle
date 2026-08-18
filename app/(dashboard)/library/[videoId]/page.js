@@ -9,6 +9,7 @@ import {
 
 import VideoPlayer from "@/components/video/VideoPlayer";
 import HorizontalVideoRow from "@/components/video/HorizontalVideoRow";
+import { resolveVideoAccess } from "@/lib/access/entitlement";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -115,6 +116,8 @@ export default async function VideoPage({
           thumbnail_url,
           video_url,
           category_id,
+          min_tier,
+          is_premium,
           created_at,
           categories(
             id,
@@ -134,16 +137,25 @@ export default async function VideoPage({
     }
 
     if (data) {
+      // Check entitlement before ever asking storage for a signed URL --
+      // opening this page is the actual "watch" action, so this is also
+      // where a free view gets recorded against the 3-video allowance.
+      const access = await resolveVideoAccess(supabase, user, data, {
+        recordView: true,
+      });
+
       const [
         signedVideoUrl,
         signedThumbnailUrl,
       ] =
         await Promise.all([
-          createSignedStorageUrl(
-            supabase,
-            data.video_url,
-            "video"
-          ),
+          access.allowed
+            ? createSignedStorageUrl(
+                supabase,
+                data.video_url,
+                "video"
+              )
+            : Promise.resolve(null),
 
           createSignedStorageUrl(
             supabase,
@@ -172,6 +184,10 @@ export default async function VideoPage({
           null,
         createdAt:
           data.created_at,
+        locked: !access.allowed,
+        requiresLogin: access.requiresLogin,
+        requiresUpgrade: access.requiresUpgrade,
+        freeViewsRemaining: access.freeViewsRemaining,
       };
 
       let recommendationQuery =
@@ -392,6 +408,20 @@ export default async function VideoPage({
                 playerPlaylist
               }
             />
+          </div>
+        ) : video.locked ? (
+          <div className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-[28px] bg-[#12372f] px-6 text-center shadow-[0_18px_44px_rgba(18,55,47,0.16)]">
+            <p className="text-sm text-white/75">
+              {video.requiresUpgrade
+                ? "This session needs a MindSettle subscription."
+                : "Sign in to watch this session."}
+            </p>
+            <Link
+              href={video.requiresUpgrade ? "/plans" : "/login"}
+              className="rounded-full bg-[#d7f2ad] px-6 py-3 text-sm font-semibold text-[#12372f] shadow-[0_10px_28px_rgba(0,0,0,0.18)] transition-all hover:-translate-y-0.5 hover:bg-white"
+            >
+              {video.requiresUpgrade ? "View plans" : "Log in"}
+            </Link>
           </div>
         ) : (
           <div className="flex aspect-video w-full items-center justify-center rounded-[28px] bg-[#12372f] px-6 text-center text-sm text-white/75 shadow-[0_18px_44px_rgba(18,55,47,0.16)]">

@@ -32,14 +32,14 @@ html { scroll-behavior: smooth; }
   display: none;
 }
 
-.login-nature-image {
-  animation: login-nature-drift 20s ease-in-out infinite alternate;
-  transform: scale(1.035);
+.calming-scene-photo {
+  animation: calming-scene-drift 18s ease-in-out infinite alternate;
+  transform: scale(1.03);
 }
 
-@keyframes login-nature-drift {
-  from { transform: scale(1.035) translate3d(-.4%, -.2%, 0); }
-  to { transform: scale(1.085) translate3d(.7%, .35%, 0); }
+@keyframes calming-scene-drift {
+  from { transform: scale(1.03) translate3d(-.4%, -.2%, 0); }
+  to { transform: scale(1.085) translate3d(.8%, .5%, 0); }
 }
 
 .features-ambient-orb {

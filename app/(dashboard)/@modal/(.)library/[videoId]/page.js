@@ -8,6 +8,7 @@ import {
 } from "@/lib/actions/favourites";
 
 import CinematicMediaHero from "@/components/video/CinematicMediaHero";
+import MediaDetailModal from "@/components/video/MediaDetailModal";
 import HorizontalVideoRow from "@/components/video/HorizontalVideoRow";
 import { resolveVideoAccess } from "@/lib/access/entitlement";
 
@@ -369,12 +370,13 @@ export default async function VideoPage({
     `/library/${videoId}`;
 
   return (
-    <div className="relative space-y-12 pb-16">
+    <MediaDetailModal>
+      <div className="relative space-y-10 overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(213,228,202,0.72),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(206,223,203,0.58),transparent_34%),linear-gradient(180deg,#f5f5ed_0%,#edf3e8_48%,#e6eee4_100%)] px-0 pb-10 pt-0 text-[#29443c]">
       {/* BACKGROUND */}
 
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[#f5f5ed]" />
+      <div className="hidden" />
 
-      <div className="pointer-events-none fixed -right-24 top-32 -z-10 h-[320px] w-[320px] rounded-full bg-[#dce8ca]/35 blur-3xl" />
+      <div className="hidden" />
 
       {/* PLAYER + DETAILS */}
 
@@ -411,113 +413,6 @@ export default async function VideoPage({
           </div>
         )}
 
-        {/* VIDEO INFORMATION */}
-
-        <div className="mt-7 rounded-[28px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)] sm:p-8">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
-                MindSettle session
-              </p>
-
-              <h1 className="mt-2 text-3xl font-semibold tracking-[-0.035em] text-[#163d34] sm:text-4xl">
-                {
-                  video.title
-                }
-              </h1>
-
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-sm font-medium text-[#5a6d66]">
-                <span>
-                  {video.instructor ||
-                    "MindSettle"}
-                </span>
-
-                {video.durationMinutes && (
-                  <>
-                    <span className="text-[#9aa9a2]">
-                      •
-                    </span>
-
-                    <span>
-                      {
-                        video.durationMinutes
-                      }{" "}
-                      min
-                    </span>
-                  </>
-                )}
-
-                {video.category && (
-                  <>
-                    <span className="text-[#9aa9a2]">
-                      •
-                    </span>
-
-                    <span className="rounded-full bg-[#dce8ca] px-3 py-1 text-xs font-semibold text-[#163d34]">
-                      {
-                        video.category
-                      }
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {isRealVideo &&
-              user && (
-                <form
-                  action={
-                    isFavourited
-                      ? removeFavourite
-                      : addFavourite
-                  }
-                >
-                  <input
-                    type="hidden"
-                    name="videoId"
-                    value={
-                      video.id
-                    }
-                  />
-
-                  <input
-                    type="hidden"
-                    name="redirectPath"
-                    value={
-                      redirectPath
-                    }
-                  />
-
-                  <button
-                    type="submit"
-                    className={`shrink-0 rounded-full px-6 py-3 text-sm font-semibold transition-all ${
-                      isFavourited
-                        ? "bg-[#163d34] text-white shadow-[0_8px_20px_rgba(18,55,47,0.16)] hover:bg-[#12372f]"
-                        : "border border-[#9bb98a] bg-[#fffdfa] text-[#163d34] hover:bg-[#eef3e8]"
-                    }`}
-                  >
-                    {isFavourited
-                      ? "♥ Saved"
-                      : "♡ Save"}
-                  </button>
-                </form>
-              )}
-          </div>
-
-          {video.description && (
-            <div className="mt-7 border-t border-[#dfe5dc] pt-6">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
-                About this session
-              </h2>
-
-              <p className="mt-3 max-w-4xl whitespace-pre-wrap text-base leading-7 text-[#5a6d66]">
-                {
-                  video.description
-                }
-              </p>
-            </div>
-          )}
-        </div>
       </section>
 
       {/* MORE LIKE THIS */}
@@ -525,16 +420,16 @@ export default async function VideoPage({
       {recommendations.length >
         0 && (
         <section className="min-w-0">
-          <div className="mb-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
+          <div className="mb-5 px-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#355c50]">
               Keep exploring
             </p>
 
-            <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-[#163d34]">
+            <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-[#12372f]">
               More like this
             </h2>
 
-            <p className="mt-1 text-sm text-[#5a6d66]">
+            <p className="mt-1 text-sm text-[#6a8077]">
               More MindSettle sessions that
               may suit this moment.
             </p>
@@ -550,14 +445,7 @@ export default async function VideoPage({
 
       {/* BACK TO LIBRARY */}
 
-      <section>
-        <Link
-          href="/library"
-          className="inline-flex items-center gap-2 rounded-full border border-[#cfd8cb] bg-[#fffdfa] px-5 py-2.5 text-sm font-semibold text-[#163d34] shadow-[0_6px_18px_rgba(18,55,47,0.05)] transition-all hover:-translate-y-0.5 hover:border-[#9bb98a] hover:bg-[#eef3e8]"
-        >
-          ← Back to library
-        </Link>
-      </section>
-    </div>
+      </div>
+    </MediaDetailModal>
   );
 }

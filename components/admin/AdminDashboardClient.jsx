@@ -278,7 +278,7 @@ export default function AdminDashboardClient({
 
           {/* NAVIGATION */}
 
-          <nav className="flex-1 px-4 py-7">
+          <nav className="flex-1 overflow-y-auto px-4 py-7 pr-3 [scrollbar-width:thin] [scrollbar-color:#9bb98a_transparent]">
             <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#8a9992]">
               Dashboard
             </p>
@@ -299,17 +299,17 @@ export default function AdminDashboardClient({
                           item.id
                         )
                       }
-                      className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition ${
+                      className={`group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition-all duration-200 ${
                         active
                           ? "bg-[#163d34] text-white shadow-[0_8px_22px_rgba(18,55,47,0.18)]"
-                          : "text-[#5a6d66] hover:bg-[#eef3e8] hover:text-[#163d34]"
+                          : "text-[#5a6d66] hover:translate-x-1 hover:bg-[#eef3e8] hover:text-[#163d34] hover:shadow-[0_6px_18px_rgba(18,55,47,0.06)]"
                       }`}
                     >
                       <span
                         className={`flex h-9 w-9 items-center justify-center rounded-lg ${
                           active
                             ? "bg-white/15 text-white"
-                            : "bg-[#dfe8d6] text-[#344d5a]"
+                            : "bg-[#dfe8d6] text-[#344d5a] transition-all duration-200 group-hover:bg-[#d7e5cf] group-hover:text-[#163d34] group-hover:scale-105"
                         }`}
                       >
                         {item.icon}
@@ -1596,6 +1596,9 @@ function ProgramManagementCard({
   const [editing, setEditing] =
     useState(false);
 
+  const [playingPreview, setPlayingPreview] =
+    useState(false);
+
   const programVideos =
     Array.isArray(program.videos)
       ? program.videos
@@ -1952,6 +1955,9 @@ function MediaManagementCard({
   const [editing, setEditing] =
     useState(false);
 
+  const [playingPreview, setPlayingPreview] =
+    useState(false);
+
   const assignedProgramIds =
     Array.isArray(item.program_ids)
       ? item.program_ids
@@ -1987,22 +1993,46 @@ function MediaManagementCard({
   }
 
   return (
-    <article className="overflow-hidden rounded-xl border border-[#dfe5dc] bg-white shadow-sm transition hover:shadow-md">
+    <article className="overflow-hidden rounded-xl border border-[#dfe5dc] bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-[#9bb98a] hover:shadow-[0_14px_34px_rgba(18,55,47,0.10)]">
       {/* SUMMARY */}
 
       <div className="grid gap-0 lg:grid-cols-[220px_minmax(0,1fr)]">
         {/* THUMBNAIL */}
 
-        <div className="relative aspect-video bg-gradient-to-br from-sky-100 via-emerald-50 to-slate-100 lg:aspect-auto lg:min-h-[150px]">
-          {item.signed_thumbnail_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={
-                item.signed_thumbnail_url
-              }
-              alt={`${item.title} thumbnail`}
-              className="h-full w-full object-cover"
+        <div className="group relative aspect-video overflow-hidden bg-gradient-to-br from-sky-100 via-emerald-50 to-slate-100 lg:aspect-auto lg:min-h-[150px]">
+          {playingPreview && item.signed_video_url ? (
+            <video
+              src={item.signed_video_url}
+              poster={item.signed_thumbnail_url || undefined}
+              controls
+              autoPlay
+              playsInline
+              preload="metadata"
+              className="h-full w-full bg-black object-contain"
+              onEnded={() => setPlayingPreview(false)}
             />
+          ) : item.signed_thumbnail_url ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={item.signed_thumbnail_url}
+                alt={`${item.title} thumbnail`}
+                className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+              />
+
+              {item.signed_video_url && (
+                <button
+                  type="button"
+                  onClick={() => setPlayingPreview(true)}
+                  aria-label={`Play ${item.title}`}
+                  className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all duration-300 group-hover:bg-black/25"
+                >
+                  <span className="flex h-14 w-14 scale-90 items-center justify-center rounded-full bg-white/95 text-xl text-[#163d34] opacity-0 shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
+                    ▶
+                  </span>
+                </button>
+              )}
+            </>
           ) : (
             <div className="flex h-full min-h-[150px] flex-col items-center justify-center text-[#6c8178]">
               <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#163d34] shadow-sm">
@@ -2016,7 +2046,7 @@ function MediaManagementCard({
           )}
 
           {item.is_featured && (
-            <span className="absolute left-3 top-3 rounded-full bg-[#12372f]/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow backdrop-blur">
+            <span className="absolute left-3 top-3 z-10 rounded-full bg-[#12372f]/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow backdrop-blur">
               ★ Hero
             </span>
           )}
@@ -2141,18 +2171,7 @@ function MediaManagementCard({
                 : "Edit media"}
             </button>
 
-            {item.signed_video_url && (
-              <a
-                href={
-                  item.signed_video_url
-                }
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-lg border border-[#dfe5dc] bg-white px-4 py-2 text-sm font-semibold text-[#5a6d66] transition hover:bg-[#f5f5ed] hover:text-[#163d34]"
-              >
-                Preview
-              </a>
-            )}
+
           </div>
         </div>
       </div>

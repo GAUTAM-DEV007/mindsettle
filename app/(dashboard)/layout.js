@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardLayout({
   children,
+  modal,
 }) {
   const supabase =
     await createClient();
@@ -93,6 +94,8 @@ export default async function DashboardLayout({
       <main className="mx-auto w-full max-w-[1600px] flex-1 px-6 py-8 lg:px-10 lg:py-10">
         {children}
       </main>
+
+      {modal}
 
       <Footer
         socialLinks={

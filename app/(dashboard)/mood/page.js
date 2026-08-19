@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
 import MediaRow from "@/components/video/MediaRow";
+import MoodResetBreathing from "@/components/wellbeing/MoodResetBreathing";
 import { resolveCatalogueAccess } from "@/lib/access/entitlement";
 
 /* =========================================================
@@ -713,17 +714,23 @@ export default async function MoodPage({
           {/* INTRO */}
 
           <section className="rounded-[28px] border border-emerald-100 bg-gradient-to-r from-[#dfe8d6] via-[#f5f5ed] to-[#eef3e8] px-6 py-6 shadow-sm sm:px-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
-              A moment for you
-            </p>
+            <div className="grid gap-5 lg:grid-cols-[1fr_320px] lg:items-center">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
+                  A moment for you
+                </p>
 
-            <h1 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#163d34] sm:text-3xl">
-              What feels closest to you right now?
-            </h1>
+                <h1 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#163d34] sm:text-3xl">
+                  What feels closest to you right now?
+                </h1>
 
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#5a6d66]">
-              Choose the feeling that best matches this moment and explore sessions created to help you settle.
-            </p>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[#5a6d66]">
+                  Choose the feeling that best matches this moment and explore sessions created to help you settle.
+                </p>
+              </div>
+
+              <MoodResetBreathing />
+            </div>
           </section>
 
           {/* MOOD OPTIONS */}

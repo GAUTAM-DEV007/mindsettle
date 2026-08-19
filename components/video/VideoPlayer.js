@@ -6,9 +6,6 @@ import {
   useState,
 } from "react";
 
-const CONTROLS_HIDE_DELAY =
-  1000;
-
 const NEXT_VIDEO_DELAY =
   5;
 
@@ -440,6 +437,16 @@ export default function VideoPlayer({
   function scheduleControlsHide() {
     clearControlsTimer();
 
+    const isTouchDevice =
+      window.matchMedia(
+        "(hover: none), (pointer: coarse)"
+      ).matches;
+
+    const hideDelay =
+      isTouchDevice
+        ? 5000
+        : 2500;
+
     controlsTimerRef.current =
       window.setTimeout(
         () => {
@@ -450,7 +457,7 @@ export default function VideoPlayer({
           controlsTimerRef.current =
             null;
         },
-        CONTROLS_HIDE_DELAY
+        hideDelay
       );
   }
 
@@ -482,6 +489,17 @@ export default function VideoPlayer({
     if (
       !started
     ) {
+      return;
+    }
+
+    const isTouchDevice =
+      window.matchMedia(
+        "(hover: none), (pointer: coarse)"
+      ).matches;
+
+    // Touch users should never lose the controls simply
+    // because a pointer-leave event was generated.
+    if (isTouchDevice) {
       return;
     }
 

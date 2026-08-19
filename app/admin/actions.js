@@ -372,6 +372,9 @@ export async function updateMedia(
       is_premium:
         isPremium,
 
+      min_tier:
+        isPremium ? 1 : 0,
+
       is_featured:
         isFeatured,
 

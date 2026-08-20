@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 
 import DashboardNavbar from "@/components/layout/DashboardNavbar";
 import Footer from "@/components/layout/Footer";
+import { MediaSessionProvider } from "@/components/media/MediaSessionProvider";
+import GlobalMiniPlayer from "@/components/media/GlobalMiniPlayer";
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -80,7 +82,8 @@ export default async function DashboardLayout({
   ====================================================== */
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-[#f5f5ed] text-[#29383e]">
+    <MediaSessionProvider>
+      <div className="relative flex min-h-screen flex-col bg-[#f5f5ed] text-[#29383e]">
       {/* GLOBAL DASHBOARD BACKGROUND */}
 
       <div className="pointer-events-none fixed inset-0 -z-20 bg-[#f5f5ed]" />
@@ -97,11 +100,14 @@ export default async function DashboardLayout({
 
       {modal}
 
+      <GlobalMiniPlayer />
+
       <Footer
         socialLinks={
           socialLinks || []
         }
       />
-    </div>
+      </div>
+    </MediaSessionProvider>
   );
 }

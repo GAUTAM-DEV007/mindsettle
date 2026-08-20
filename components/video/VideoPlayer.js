@@ -6,6 +6,10 @@ import {
   useState,
 } from "react";
 
+import {
+  useMediaSession,
+} from "@/components/media/MediaSessionProvider";
+
 const NEXT_VIDEO_DELAY =
   5;
 
@@ -20,6 +24,18 @@ const SWIPE_DOWN_THRESHOLD =
 
 const TRACKPAD_SWIPE_THRESHOLD =
   120;
+
+const HOLD_DELAY =
+  450;
+
+const HOLD_STEP_SECONDS =
+  2;
+
+const HOLD_INTERVAL =
+  250;
+
+const VERTICAL_GESTURE_START =
+  14;
 
 /* =========================================================
    ORIENTATION
@@ -84,7 +100,12 @@ function getOrientation(
 export default function VideoPlayer({
   initialMedia,
   playlist = [],
+  onMinimize = null,
 }) {
+  const {
+    startMedia,
+  } = useMediaSession();
+
   const videoRef =
     useRef(null);
 
@@ -117,6 +138,21 @@ export default function VideoPlayer({
     useRef(0);
 
   const wheelResetRef =
+    useRef(null);
+
+  const singleTapTimerRef =
+    useRef(null);
+
+  const holdTimerRef =
+    useRef(null);
+
+  const holdIntervalRef =
+    useRef(null);
+
+  const holdActivatedRef =
+    useRef(false);
+
+  const gestureModeRef =
     useRef(null);
 
   const volumeRef =
@@ -197,6 +233,12 @@ export default function VideoPlayer({
   const [
     playbackRate,
     setPlaybackRate,
+  ] =
+    useState(1);
+
+  const [
+    brightness,
+    setBrightness,
   ] =
     useState(1);
 
@@ -285,6 +327,30 @@ export default function VideoPlayer({
       ) {
         window.clearTimeout(
           wheelResetRef.current
+        );
+      }
+
+      if (
+        singleTapTimerRef.current
+      ) {
+        window.clearTimeout(
+          singleTapTimerRef.current
+        );
+      }
+
+      if (
+        holdTimerRef.current
+      ) {
+        window.clearTimeout(
+          holdTimerRef.current
+        );
+      }
+
+      if (
+        holdIntervalRef.current
+      ) {
+        window.clearInterval(
+          holdIntervalRef.current
         );
       }
     };
@@ -656,6 +722,52 @@ export default function VideoPlayer({
   }
 
   /* ======================================================
+     SAFE PLAY
+
+     AbortError is expected when playback ownership changes
+     while a play request is still resolving.
+  ====================================================== */
+
+  async function safePlay(
+    video
+  ) {
+    if (!video) {
+      return false;
+    }
+
+    try {
+      await video.play();
+
+      return true;
+    } catch (error) {
+      if (
+        error?.name ===
+        "AbortError"
+      ) {
+        return false;
+      }
+
+      if (
+        error?.name ===
+        "NotAllowedError"
+      ) {
+        console.info(
+          "Playback needs user interaction."
+        );
+
+        return false;
+      }
+
+      console.error(
+        "Could not play video:",
+        error
+      );
+
+      return false;
+    }
+  }
+
+  /* ======================================================
      FIRST PLAY
 
      KEEP THIS:
@@ -680,16 +792,9 @@ export default function VideoPlayer({
 
     await enterFullscreen();
 
-    try {
-      await video.play();
-    } catch (
-      error
-    ) {
-      console.error(
-        "Could not play video:",
-        error
-      );
-    }
+    await safePlay(
+      video
+    );
 
     scheduleControlsHide();
   }
@@ -711,18 +816,14 @@ export default function VideoPlayer({
     if (
       video.paused
     ) {
-      try {
-        await video.play();
+      const played =
+        await safePlay(
+          video
+        );
 
+      if (played) {
         setStarted(
           true
-        );
-      } catch (
-        error
-      ) {
-        console.error(
-          "Could not play video:",
-          error
         );
       }
 
@@ -743,9 +844,29 @@ export default function VideoPlayer({
       return;
     }
 
-    /*
-     * Playback is NOT paused.
-     */
+    const video =
+      videoRef.current;
+
+    const transferTime =
+      video?.currentTime ??
+      currentTime;
+
+    const transferVolume =
+      video?.volume ??
+      volumeRef.current;
+
+    const transferMuted =
+      video?.muted ??
+      mutedRef.current;
+
+    const transferRate =
+      video?.playbackRate ??
+      playbackRate;
+
+    const wasPlaying =
+      video
+        ? !video.paused
+        : isPlaying;
 
     if (
       isFullscreen
@@ -753,15 +874,59 @@ export default function VideoPlayer({
       await exitFullscreen();
     }
 
+    /*
+     * Pause the local owner BEFORE the global
+     * mini-player mounts. This prevents two
+     * players competing for playback.
+     */
+    if (
+      video &&
+      !video.paused
+    ) {
+      video.pause();
+    }
+
+    startMedia(
+      {
+        ...currentMedia,
+
+        aspectRatio:
+          mediaAspectRatio,
+
+        orientation:
+          mediaOrientation,
+      },
+      {
+        mode:
+          "mini",
+
+        autoplay:
+          wasPlaying,
+
+        currentTime:
+          transferTime,
+
+        volume:
+          transferVolume,
+
+        muted:
+          transferMuted,
+
+        playbackRate:
+          transferRate,
+      }
+    );
+
     setIsMiniPlayer(
-      true
+      false
     );
 
-    setControlsVisible(
-      true
-    );
-
-    scheduleControlsHide();
+    if (
+      typeof onMinimize ===
+      "function"
+    ) {
+      onMinimize();
+    }
   }
 
   function returnToInlinePlayer() {
@@ -773,8 +938,126 @@ export default function VideoPlayer({
   }
 
   /* ======================================================
-     DOUBLE TAP + SWIPE
+     PLAYER GESTURES
+
+     LEFT:
+       vertical swipe -> brightness
+       hold -> rewind
+
+     CENTRE:
+       swipe down -> mini-player
+
+     RIGHT:
+       vertical swipe -> volume
+       hold -> forward
+
+     TAP:
+       play / pause
+
+     DOUBLE TAP:
+       fullscreen toggle
   ====================================================== */
+
+  function clearHoldGesture() {
+    if (
+      holdTimerRef.current
+    ) {
+      window.clearTimeout(
+        holdTimerRef.current
+      );
+
+      holdTimerRef.current =
+        null;
+    }
+
+    if (
+      holdIntervalRef.current
+    ) {
+      window.clearInterval(
+        holdIntervalRef.current
+      );
+
+      holdIntervalRef.current =
+        null;
+    }
+  }
+
+  function getGestureZone(
+    event
+  ) {
+    const wrapper =
+      wrapperRef.current;
+
+    if (!wrapper) {
+      return "center";
+    }
+
+    const rect =
+      wrapper.getBoundingClientRect();
+
+    const relativeX =
+      event.clientX -
+      rect.left;
+
+    const ratio =
+      relativeX /
+      rect.width;
+
+    if (
+      ratio <
+      0.35
+    ) {
+      return "left";
+    }
+
+    if (
+      ratio >
+      0.65
+    ) {
+      return "right";
+    }
+
+    return "center";
+  }
+
+  function beginHoldGesture(
+    zone
+  ) {
+    if (
+      zone !== "left" &&
+      zone !== "right"
+    ) {
+      return;
+    }
+
+    holdTimerRef.current =
+      window.setTimeout(
+        () => {
+          holdActivatedRef.current =
+            true;
+
+          const direction =
+            zone === "left"
+              ? -HOLD_STEP_SECONDS
+              : HOLD_STEP_SECONDS;
+
+          skip(
+            direction
+          );
+
+          holdIntervalRef.current =
+            window.setInterval(
+              () => {
+                skip(
+                  direction
+                );
+              },
+              HOLD_INTERVAL
+            );
+        },
+        HOLD_DELAY
+      );
+  }
 
   function handleGestureStart(
     event
@@ -790,6 +1073,19 @@ export default function VideoPlayer({
       return;
     }
 
+    clearHoldGesture();
+
+    holdActivatedRef.current =
+      false;
+
+    gestureModeRef.current =
+      null;
+
+    const zone =
+      getGestureZone(
+        event
+      );
+
     pointerStartRef.current =
       {
         x:
@@ -797,30 +1093,41 @@ export default function VideoPlayer({
 
         y:
           event.clientY,
+
+        zone,
+
+        startVolume:
+          videoRef.current
+            ?.volume ??
+          volumeRef.current,
+
+        startBrightness:
+          brightness,
       };
+
+    try {
+      event.currentTarget
+        .setPointerCapture(
+          event.pointerId
+        );
+    } catch {
+      // Pointer capture is optional.
+    }
+
+    beginHoldGesture(
+      zone
+    );
 
     handlePointerActivity();
   }
 
-  async function handleGestureEnd(
+  function handleGestureMove(
     event
   ) {
-    if (
-      event.target.closest(
-        "button, input"
-      )
-    ) {
-      pointerStartRef.current =
-        null;
-
-      return;
-    }
+    handlePointerActivity();
 
     const start =
       pointerStartRef.current;
-
-    pointerStartRef.current =
-      null;
 
     if (!start) {
       return;
@@ -840,12 +1147,198 @@ export default function VideoPlayer({
         deltaY
       );
 
-    /* ---------------------------------
-       SWIPE DOWN -> FLOATING
-    --------------------------------- */
+    if (
+      distance >
+      TAP_MOVEMENT_LIMIT
+    ) {
+      clearHoldGesture();
+    }
+
+    /*
+     * LEFT vertical swipe -> video brightness.
+     */
+    if (
+      start.zone ===
+        "left" &&
+      Math.abs(
+        deltaY
+      ) >
+        VERTICAL_GESTURE_START &&
+      Math.abs(
+        deltaY
+      ) >
+        Math.abs(
+          deltaX
+        )
+    ) {
+      gestureModeRef.current =
+        "brightness";
+
+      const wrapper =
+        wrapperRef.current;
+
+      const height =
+        wrapper?.clientHeight ||
+        400;
+
+      const nextBrightness =
+        Math.min(
+          1.6,
+          Math.max(
+            0.35,
+            start.startBrightness -
+              deltaY /
+                height
+          )
+        );
+
+      setBrightness(
+        nextBrightness
+      );
+
+      return;
+    }
+
+    /*
+     * RIGHT vertical swipe -> volume.
+     */
+    if (
+      start.zone ===
+        "right" &&
+      Math.abs(
+        deltaY
+      ) >
+        VERTICAL_GESTURE_START &&
+      Math.abs(
+        deltaY
+      ) >
+        Math.abs(
+          deltaX
+        )
+    ) {
+      gestureModeRef.current =
+        "volume";
+
+      const video =
+        videoRef.current;
+
+      const wrapper =
+        wrapperRef.current;
+
+      if (!video) {
+        return;
+      }
+
+      const height =
+        wrapper?.clientHeight ||
+        400;
+
+      const nextVolume =
+        Math.min(
+          1,
+          Math.max(
+            0,
+            start.startVolume -
+              deltaY /
+                height
+          )
+        );
+
+      video.volume =
+        nextVolume;
+
+      video.muted =
+        nextVolume ===
+        0;
+
+      volumeRef.current =
+        nextVolume;
+
+      mutedRef.current =
+        nextVolume ===
+        0;
+
+      setVolume(
+        nextVolume
+      );
+
+      setIsMuted(
+        nextVolume ===
+        0
+      );
+    }
+  }
+
+  async function handleGestureEnd(
+    event
+  ) {
+    clearHoldGesture();
+
+    const start =
+      pointerStartRef.current;
+
+    pointerStartRef.current =
+      null;
+
+    try {
+      event.currentTarget
+        .releasePointerCapture(
+          event.pointerId
+        );
+    } catch {
+      // Pointer capture may already be released.
+    }
+
+    if (!start) {
+      return;
+    }
 
     if (
+      holdActivatedRef.current
+    ) {
+      holdActivatedRef.current =
+        false;
+
+      gestureModeRef.current =
+        null;
+
+      return;
+    }
+
+    const deltaX =
+      event.clientX -
+      start.x;
+
+    const deltaY =
+      event.clientY -
+      start.y;
+
+    const distance =
+      Math.hypot(
+        deltaX,
+        deltaY
+      );
+
+    /*
+     * A brightness/volume drag has already
+     * consumed this pointer interaction.
+     */
+    if (
+      gestureModeRef.current
+    ) {
+      gestureModeRef.current =
+        null;
+
+      return;
+    }
+
+    /*
+     * CENTRE swipe down -> persistent mini-player.
+     */
+    if (
       started &&
+      start.zone ===
+        "center" &&
       deltaY >
         SWIPE_DOWN_THRESHOLD &&
       Math.abs(
@@ -884,16 +1377,26 @@ export default function VideoPlayer({
       ) <
       60;
 
-    /* ---------------------------------
-       DOUBLE TAP -> FULLSCREEN/MINIMISE
-    --------------------------------- */
-
+    /*
+     * DOUBLE TAP -> fullscreen.
+     */
     if (
       now -
         last.time <=
         DOUBLE_TAP_DELAY &&
       closeToPreviousTap
     ) {
+      if (
+        singleTapTimerRef.current
+      ) {
+        window.clearTimeout(
+          singleTapTimerRef.current
+        );
+
+        singleTapTimerRef.current =
+          null;
+      }
+
       lastTapRef.current =
         {
           time: 0,
@@ -917,6 +1420,34 @@ export default function VideoPlayer({
         y:
           event.clientY,
       };
+
+    /*
+     * Delay single tap very slightly so we can
+     * distinguish it from a double tap.
+     */
+    singleTapTimerRef.current =
+      window.setTimeout(
+        () => {
+          singleTapTimerRef.current =
+            null;
+
+          void togglePlay();
+        },
+        DOUBLE_TAP_DELAY
+      );
+  }
+
+  function handleGestureCancel() {
+    clearHoldGesture();
+
+    pointerStartRef.current =
+      null;
+
+    holdActivatedRef.current =
+      false;
+
+    gestureModeRef.current =
+      null;
   }
 
   /* ======================================================
@@ -1317,6 +1848,155 @@ export default function VideoPlayer({
   }
 
   /* ======================================================
+     KEYBOARD SHORTCUTS
+
+     Space / K  -> play/pause
+     Left / J   -> back 10 sec
+     Right / L  -> forward 10 sec
+     M          -> mute
+     F          -> fullscreen
+  ====================================================== */
+
+  useEffect(() => {
+    function handleKeyDown(
+      event
+    ) {
+      const target =
+        event.target;
+
+      if (
+        target instanceof
+          HTMLElement &&
+        (
+          target.tagName ===
+            "INPUT" ||
+          target.tagName ===
+            "TEXTAREA" ||
+          target.tagName ===
+            "SELECT" ||
+          target.isContentEditable
+        )
+      ) {
+        return;
+      }
+
+      const video =
+        videoRef.current;
+
+      if (!video) {
+        return;
+      }
+
+      const key =
+        event.key.toLowerCase();
+
+      if (
+        key === " " ||
+        key === "k"
+      ) {
+        event.preventDefault();
+
+        if (
+          video.paused
+        ) {
+          video.play().catch(
+            () => {}
+          );
+        } else {
+          video.pause();
+        }
+
+        return;
+      }
+
+      if (
+        key ===
+          "arrowleft" ||
+        key === "j"
+      ) {
+        event.preventDefault();
+
+        video.currentTime =
+          Math.max(
+            0,
+            video.currentTime -
+              10
+          );
+
+        return;
+      }
+
+      if (
+        key ===
+          "arrowright" ||
+        key === "l"
+      ) {
+        event.preventDefault();
+
+        video.currentTime =
+          Math.min(
+            Number.isFinite(
+              video.duration
+            )
+              ? video.duration
+              : video.currentTime +
+                  10,
+            video.currentTime +
+              10
+          );
+
+        return;
+      }
+
+      if (
+        key === "m"
+      ) {
+        video.muted =
+          !video.muted;
+
+        return;
+      }
+
+      if (
+        key === "f"
+      ) {
+        event.preventDefault();
+
+        const wrapper =
+          wrapperRef.current;
+
+        if (
+          document.fullscreenElement
+        ) {
+          document
+            .exitFullscreen?.()
+            .catch?.(
+              () => {}
+            );
+        } else {
+          wrapper
+            ?.requestFullscreen?.()
+            .catch?.(
+              () => {}
+            );
+        }
+      }
+    }
+
+    window.addEventListener(
+      "keydown",
+      handleKeyDown
+    );
+
+    return () => {
+      window.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
+    };
+  }, []);
+
+  /* ======================================================
      METADATA
   ====================================================== */
 
@@ -1487,7 +2167,7 @@ export default function VideoPlayer({
         handleContextMenu
       }
       onPointerMove={
-        handlePointerActivity
+        handleGestureMove
       }
       onPointerEnter={
         handlePointerActivity
@@ -1500,6 +2180,9 @@ export default function VideoPlayer({
       }
       onPointerUp={
         handleGestureEnd
+      }
+      onPointerCancel={
+        handleGestureCancel
       }
       onWheel={
         handleWheelGesture
@@ -1595,6 +2278,10 @@ export default function VideoPlayer({
         disableRemotePlayback
         playsInline
         preload="auto"
+        style={{
+          filter:
+            `brightness(${brightness})`,
+        }}
         className={`relative z-10 mx-auto block bg-transparent ${
           isFullscreen
             ? "h-full w-full object-contain"

@@ -12,21 +12,40 @@ import { resolveCatalogueAccess } from "@/lib/access/entitlement";
 
 function calculateProgress(
   progressSeconds,
+  durationSeconds,
   durationMinutes
 ) {
-  if (!progressSeconds || !durationMinutes) {
-    return 0;
-  }
+  const exactDuration =
+    Number(durationSeconds);
 
-  const totalSeconds =
+  const fallbackDuration =
     Number(durationMinutes) * 60;
 
-  if (!totalSeconds) {
+  const totalSeconds =
+    Number.isFinite(exactDuration) &&
+    exactDuration > 0
+      ? exactDuration
+      : fallbackDuration;
+
+  if (
+    !progressSeconds ||
+    !Number.isFinite(totalSeconds) ||
+    totalSeconds <= 0
+  ) {
     return 0;
   }
 
-  return Math.round(
-    (progressSeconds / totalSeconds) * 100
+  return Math.min(
+    100,
+    Math.max(
+      0,
+      Math.round(
+        (
+          Number(progressSeconds) /
+          totalSeconds
+        ) * 100
+      )
+    )
   );
 }
 
@@ -828,6 +847,7 @@ export default async function LibraryPage({
         description,
         instructor,
         duration_minutes,
+        duration_seconds,
         thumbnail_url,
         video_url,
         min_tier,
@@ -894,25 +914,12 @@ export default async function LibraryPage({
               requiresUpgrade: true,
             };
 
-          const [
-            thumbnailUrl,
-            previewUrl,
-          ] =
-            await Promise.all([
-              createSignedStorageUrl(
-                supabase,
-                video.thumbnail_url,
-                3600
-              ),
-
-              videoAccess.allowed
-                ? createSignedStorageUrl(
-                    supabase,
-                    video.video_url,
-                    1800
-                  )
-                : Promise.resolve(null),
-            ]);
+          const thumbnailUrl =
+            await createSignedStorageUrl(
+              supabase,
+              video.thumbnail_url,
+              3600
+            );
 
           return {
             id:
@@ -930,9 +937,16 @@ export default async function LibraryPage({
             durationMinutes:
               video.duration_minutes,
 
+            durationSeconds:
+              video.duration_seconds,
+
             thumbnailUrl,
 
-            previewUrl,
+            previewEndpoint:
+              videoAccess.allowed &&
+              video.video_url
+                ? `/api/media/preview/${video.id}`
+                : null,
 
             createdAt:
               video.created_at,
@@ -1043,6 +1057,7 @@ export default async function LibraryPage({
       ] =
         calculateProgress(
           history.progress_seconds,
+          video.durationSeconds,
           video.durationMinutes
         );
     }

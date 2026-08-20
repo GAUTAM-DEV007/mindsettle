@@ -56,6 +56,7 @@ export default async function FavouritesPage() {
         description,
         instructor,
         duration_minutes,
+        duration_seconds,
         thumbnail_url,
         video_url,
         is_published,
@@ -131,6 +132,8 @@ export default async function FavouritesPage() {
               video.instructor,
             durationMinutes:
               video.duration_minutes,
+            durationSeconds:
+              video.duration_seconds,
             thumbnailUrl,
             previewUrl,
             category:

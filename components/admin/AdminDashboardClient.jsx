@@ -1946,6 +1946,32 @@ function ProgramManagementCard({
    MEDIA MANAGEMENT CARD
 ========================================================== */
 
+function formatMediaDuration(item) {
+  const seconds = Number(item?.duration_seconds);
+
+  if (
+    Number.isFinite(seconds) &&
+    seconds > 0
+  ) {
+    const total = Math.round(seconds);
+    const minutes = Math.floor(total / 60);
+    const remaining = String(total % 60).padStart(2, "0");
+
+    return `${minutes}:${remaining}`;
+  }
+
+  const minutes = Number(item?.duration_minutes);
+
+  if (
+    Number.isFinite(minutes) &&
+    minutes > 0
+  ) {
+    return `${minutes} min`;
+  }
+
+  return "Unknown";
+}
+
 function MediaManagementCard({
   item,
   categories,
@@ -2065,8 +2091,8 @@ function MediaManagementCard({
                 {item.instructor ||
                   "MindSettle"}
 
-                {item.duration_minutes
-                  ? ` • ${item.duration_minutes} min`
+                {formatMediaDuration(item)
+                  ? ` • ${formatMediaDuration(item)}`
                   : ""}
               </p>
 
@@ -2267,21 +2293,15 @@ function MediaManagementCard({
               {/* DURATION */}
 
               <FormField
-                label="Duration (minutes)"
+                label="Duration"
                 htmlFor={`duration-${item.id}`}
               >
-                <input
+                <div
                   id={`duration-${item.id}`}
-                  name="durationMinutes"
-                  type="number"
-                  min="1"
-                  step="1"
-                  defaultValue={
-                    item.duration_minutes ||
-                    1
-                  }
-                  className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
-                />
+                  className="flex min-h-[48px] items-center rounded-lg border border-[#dfe5dc] bg-[#f5f5ed] px-4 py-3 text-sm font-semibold text-[#163d34]"
+                >
+                  {formatMediaDuration(item)}
+                </div>
               </FormField>
             </div>
 

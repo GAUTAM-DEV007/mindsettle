@@ -7,8 +7,38 @@ import {
   useState,
 } from "react";
 
+import {
+  useMediaSession,
+} from "@/components/media/MediaSessionProvider";
+
 const PREVIEW_DELAY_MS = 650;
 const MAX_PREVIEW_SECONDS = 60;
+
+function formatDuration(durationSeconds, durationMinutes) {
+  const exactSeconds = Number(durationSeconds);
+
+  if (
+    Number.isFinite(exactSeconds) &&
+    exactSeconds > 0
+  ) {
+    const totalSeconds = Math.round(exactSeconds);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = String(totalSeconds % 60).padStart(2, "0");
+
+    return `${minutes}:${seconds}`;
+  }
+
+  const fallbackMinutes = Number(durationMinutes);
+
+  if (
+    Number.isFinite(fallbackMinutes) &&
+    fallbackMinutes > 0
+  ) {
+    return `${fallbackMinutes} min`;
+  }
+
+  return null;
+}
 
 export default function VideoCard({
   video,
@@ -19,13 +49,30 @@ export default function VideoCard({
     title,
     instructor,
     durationMinutes,
+    durationSeconds,
     thumbnailUrl,
     previewUrl,
+    previewEndpoint,
     category,
   } = video;
 
   const videoRef = useRef(null);
   const hoverTimerRef = useRef(null);
+  const previewRequestRef = useRef(null);
+  const hoveredRef = useRef(false);
+
+  const {
+    beginPreview,
+    endPreview,
+  } = useMediaSession();
+
+  const [
+    resolvedPreviewUrl,
+    setResolvedPreviewUrl,
+  ] =
+    useState(
+      previewUrl || null
+    );
 
   const [previewActive, setPreviewActive] =
     useState(false);
@@ -55,7 +102,10 @@ export default function VideoCard({
       : 0;
 
   useEffect(() => {
-    if (!previewActive) {
+    if (
+      !previewActive ||
+      !resolvedPreviewUrl
+    ) {
       return;
     }
 
@@ -71,34 +121,126 @@ export default function VideoCard({
     preview.volume = 1;
 
     async function startPreview() {
+      beginPreview();
+
       try {
         await preview.play();
+
         setSoundBlocked(false);
       } catch (error) {
-        console.log(
-          "Browser blocked hover autoplay with sound:",
-          error
-        );
+        endPreview();
+
+        if (
+          error?.name !==
+          "AbortError"
+        ) {
+          console.info(
+            "Browser blocked hover autoplay with sound:",
+            error
+          );
+        }
 
         preview.pause();
+
         setPreviewLoading(false);
         setPreviewReady(true);
         setSoundBlocked(true);
       }
     }
 
-    startPreview();
-  }, [previewActive]);
+    void startPreview();
+  }, [
+    beginPreview,
+    endPreview,
+    previewActive,
+    resolvedPreviewUrl,
+  ]);
 
   useEffect(() => {
     return () => {
+      hoveredRef.current =
+        false;
+
       if (hoverTimerRef.current) {
         window.clearTimeout(
           hoverTimerRef.current
         );
       }
+
+      previewRequestRef.current =
+        null;
     };
   }, []);
+
+  async function getPreviewUrl() {
+    if (
+      resolvedPreviewUrl
+    ) {
+      return resolvedPreviewUrl;
+    }
+
+    if (!previewEndpoint) {
+      return null;
+    }
+
+    if (
+      previewRequestRef.current
+    ) {
+      return previewRequestRef.current;
+    }
+
+    const request =
+      fetch(
+        previewEndpoint,
+        {
+          method: "GET",
+          cache: "no-store",
+        }
+      )
+        .then(
+          async (response) => {
+            if (!response.ok) {
+              return null;
+            }
+
+            const data =
+              await response.json();
+
+            const url =
+              data?.previewUrl ||
+              null;
+
+            if (url) {
+              setResolvedPreviewUrl(
+                url
+              );
+            }
+
+            return url;
+          }
+        )
+        .catch(
+          (error) => {
+            console.error(
+              "Could not load preview URL:",
+              error
+            );
+
+            return null;
+          }
+        )
+        .finally(
+          () => {
+            previewRequestRef.current =
+              null;
+          }
+        );
+
+    previewRequestRef.current =
+      request;
+
+    return request;
+  }
 
   function handlePointerEnter(event) {
     if (
@@ -107,26 +249,74 @@ export default function VideoCard({
       return;
     }
 
-    if (!previewUrl) {
+    if (
+      !resolvedPreviewUrl &&
+      !previewEndpoint
+    ) {
       return;
     }
 
-    if (hoverTimerRef.current) {
+    hoveredRef.current =
+      true;
+
+    if (
+      hoverTimerRef.current
+    ) {
       window.clearTimeout(
         hoverTimerRef.current
       );
     }
 
     hoverTimerRef.current =
-      window.setTimeout(() => {
-        setPreviewLoading(true);
-        setPreviewReady(false);
-        setSoundBlocked(false);
-        setPreviewActive(true);
-      }, PREVIEW_DELAY_MS);
+      window.setTimeout(
+        async () => {
+          setPreviewLoading(
+            true
+          );
+
+          setPreviewReady(
+            false
+          );
+
+          setSoundBlocked(
+            false
+          );
+
+          const url =
+            await getPreviewUrl();
+
+          if (
+            !hoveredRef.current
+          ) {
+            setPreviewLoading(
+              false
+            );
+
+            return;
+          }
+
+          if (!url) {
+            setPreviewLoading(
+              false
+            );
+
+            return;
+          }
+
+          setPreviewActive(
+            true
+          );
+        },
+        PREVIEW_DELAY_MS
+      );
   }
 
   function stopPreview() {
+    hoveredRef.current =
+      false;
+
+    endPreview();
+
     if (hoverTimerRef.current) {
       window.clearTimeout(
         hoverTimerRef.current
@@ -188,6 +378,8 @@ export default function VideoCard({
       return;
     }
 
+    beginPreview();
+
     try {
       preview.muted = false;
       preview.volume = 1;
@@ -198,6 +390,8 @@ export default function VideoCard({
       setPreviewReady(true);
       setPreviewLoading(false);
     } catch (error) {
+      endPreview();
+
       console.error(
         "Could not start preview with sound:",
         error
@@ -341,10 +535,10 @@ export default function VideoCard({
           {/* PREVIEW */}
 
           {previewActive &&
-            previewUrl && (
+            resolvedPreviewUrl && (
               <video
                 ref={videoRef}
-                src={previewUrl}
+                src={resolvedPreviewUrl}
                 playsInline
                 preload="metadata"
                 controls={false}
@@ -428,9 +622,9 @@ export default function VideoCard({
 
           {/* DURATION */}
 
-          {durationMinutes && (
+          {formatDuration(durationSeconds, durationMinutes) && (
             <div className="absolute right-3 top-3 z-20 rounded-full bg-[#12372f]/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
-              {durationMinutes} min
+              {formatDuration(durationSeconds, durationMinutes)}
             </div>
           )}
 

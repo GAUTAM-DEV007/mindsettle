@@ -69,6 +69,8 @@ async function prepareRecommendation(
     instructor: recommendation.instructor,
     durationMinutes:
       recommendation.duration_minutes,
+    durationSeconds:
+      recommendation.duration_seconds,
     thumbnailUrl,
     src,
     categoryId:
@@ -113,6 +115,7 @@ export default async function VideoPage({
           description,
           instructor,
           duration_minutes,
+          duration_seconds,
           thumbnail_url,
           video_url,
           category_id,
@@ -173,6 +176,8 @@ export default async function VideoPage({
           data.instructor,
         durationMinutes:
           data.duration_minutes,
+        durationSeconds:
+          data.duration_seconds,
         thumbnailUrl:
           signedThumbnailUrl,
         src:
@@ -198,6 +203,7 @@ export default async function VideoPage({
             title,
             instructor,
             duration_minutes,
+            duration_seconds,
             thumbnail_url,
             video_url,
             category_id,
@@ -269,6 +275,7 @@ export default async function VideoPage({
               title,
               instructor,
               duration_minutes,
+              duration_seconds,
               thumbnail_url,
               video_url,
               category_id,
@@ -362,6 +369,8 @@ export default async function VideoPage({
             item.instructor,
           durationMinutes:
             item.durationMinutes,
+          durationSeconds:
+            item.durationSeconds,
         })
       );
 

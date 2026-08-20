@@ -286,16 +286,6 @@ export async function updateMedia(
       .get("categoryId")
       ?.toString() || "";
 
-  const durationRaw =
-    formData
-      .get("durationMinutes")
-      ?.toString();
-
-  const durationMinutes =
-    durationRaw
-      ? Number(durationRaw)
-      : null;
-
   const isPremium =
     checkboxValue(
       formData.get("isPremium")
@@ -338,20 +328,6 @@ export async function updateMedia(
     );
   }
 
-  if (
-    durationMinutes !== null &&
-    (
-      !Number.isFinite(
-        durationMinutes
-      ) ||
-      durationMinutes <= 0
-    )
-  ) {
-    redirectWithMediaError(
-      "Duration must be greater than zero."
-    );
-  }
-
   /* UPDATE VIDEO */
 
   const {
@@ -365,9 +341,6 @@ export async function updateMedia(
 
       category_id:
         categoryId || null,
-
-      duration_minutes:
-        durationMinutes,
 
       is_premium:
         isPremium,

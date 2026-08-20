@@ -70,6 +70,8 @@ async function prepareRecommendation(
     instructor: recommendation.instructor,
     durationMinutes:
       recommendation.duration_minutes,
+    durationSeconds:
+      recommendation.duration_seconds,
     thumbnailUrl,
     src,
     categoryId:
@@ -114,6 +116,7 @@ export default async function VideoPage({
           description,
           instructor,
           duration_minutes,
+          duration_seconds,
           thumbnail_url,
           video_url,
           category_id,
@@ -174,6 +177,8 @@ export default async function VideoPage({
           data.instructor,
         durationMinutes:
           data.duration_minutes,
+        durationSeconds:
+          data.duration_seconds,
         thumbnailUrl:
           signedThumbnailUrl,
         src:
@@ -199,6 +204,7 @@ export default async function VideoPage({
             title,
             instructor,
             duration_minutes,
+            duration_seconds,
             thumbnail_url,
             video_url,
             category_id,
@@ -270,6 +276,7 @@ export default async function VideoPage({
               title,
               instructor,
               duration_minutes,
+              duration_seconds,
               thumbnail_url,
               video_url,
               category_id,
@@ -363,6 +370,8 @@ export default async function VideoPage({
             item.instructor,
           durationMinutes:
             item.durationMinutes,
+          durationSeconds:
+            item.durationSeconds,
         })
       );
 
@@ -385,6 +394,10 @@ export default async function VideoPage({
           <CinematicMediaHero
             video={video}
             playlist={playerPlaylist}
+            isFavourited={isFavourited}
+            addFavouriteAction={addFavourite}
+            removeFavouriteAction={removeFavourite}
+            redirectPath={redirectPath}
           />
         ) : video.locked ? (
           <div className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-[28px] bg-[#12372f] px-6 text-center shadow-[0_18px_44px_rgba(18,55,47,0.16)]">

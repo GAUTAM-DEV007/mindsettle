@@ -1007,6 +1007,12 @@ export default function MediaUploader({
           showOnHomepage,
           isPublished,
           isPremium,
+
+          durationSeconds:
+            Math.max(
+              0,
+              Math.round(videoDuration)
+            ),
         }),
       }
     );

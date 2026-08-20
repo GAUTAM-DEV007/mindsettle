@@ -36,6 +36,8 @@ export async function POST(request) {
       showOnHomepage = false,
       isPublished = true,
       isPremium = true,
+
+      durationSeconds = 0,
     } = body;
 
     const safeBoolean = (value, fallback) =>
@@ -98,6 +100,18 @@ export async function POST(request) {
 
           isPremium:
             safeBoolean(isPremium, true),
+
+          durationSeconds:
+            Number.isFinite(
+              Number(durationSeconds)
+            )
+              ? Math.max(
+                  0,
+                  Math.round(
+                    Number(durationSeconds)
+                  )
+                )
+              : 0,
         });
 
       return Response.json({

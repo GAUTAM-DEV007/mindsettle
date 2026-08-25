@@ -37,6 +37,25 @@ export async function addMember(_prevState, formData) {
 
   if (email === user.email?.toLowerCase()) return { error: "Your organisation account is already included." };
 
+  const [{ data: subscription }, { count: memberCount }] = await Promise.all([
+    supabase
+      .from("subscriptions")
+      .select("plans:subscription_plans(seat_limit)")
+      .eq("user_id", user.id)
+      .in("status", ["active", "trialing"])
+      .maybeSingle(),
+    supabase
+      .from("organisation_members")
+      .select("id", { count: "exact", head: true })
+      .eq("organisation_id", user.id),
+  ]);
+
+  const seatLimit = subscription?.plans?.seat_limit ?? null;
+
+  if (seatLimit !== null && (memberCount ?? 0) >= seatLimit) {
+    return { error: `Seat limit reached (${seatLimit}). Upgrade your plan to add more members.` };
+  }
+
   const { error } = await supabase.from("organisation_members").insert({
     organisation_id: user.id,
     email,

@@ -137,10 +137,6 @@ export default async function FavouritesPage() {
               video.categories ??
               null,
             locked: !videoAccess.allowed,
-            minTier:
-              video.min_tier ??
-              (video.is_premium ? 1 : 0),
-            isAdminViewer: Boolean(videoAccess.isAdmin),
           };
         }
       )

@@ -11,26 +11,6 @@
 
 export const FREE_VIEW_LIMIT = 3;
 
-// Admins bypass entitlement entirely -- they must never need a
-// subscription. This is a separate check from the storage RLS policy's
-// own admin bypass (see 20260818000000_plans_and_entitlements.sql); that
-// one protects direct signed-URL fetches, this one is what decides
-// whether the app even attempts to create a signed URL in the first
-// place when an admin is just browsing via "Back to site".
-async function isAdminUser(supabase, userId) {
-  if (!userId) {
-    return false;
-  }
-
-  const { data } = await supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  return data?.role === "admin";
-}
-
 // Mirrors the `public.user_has_active_entitlement` Postgres function so
 // callers get one answer whether they ask the DB or ask this module -- the
 // RPC is still the source of truth (security definer, checks auth.uid()
@@ -106,11 +86,7 @@ export async function resolveVideoAccess(supabase, user, video, options = {}) {
   const { recordView = false } = options;
 
   if (!user) {
-    return { allowed: false, requiresLogin: true, requiresUpgrade: false, freeViewsRemaining: 0, isAdmin: false };
-  }
-
-  if (await isAdminUser(supabase, user.id)) {
-    return { allowed: true, requiresLogin: false, requiresUpgrade: false, freeViewsRemaining: null, isAdmin: true };
+    return { allowed: false, requiresLogin: true, requiresUpgrade: false, freeViewsRemaining: 0 };
   }
 
   const minTier = video.min_tier ?? (video.is_premium ? 1 : 0);
@@ -199,14 +175,7 @@ export async function resolveCatalogueAccess(supabase, user, videos) {
 
   if (!user) {
     for (const video of videos) {
-      results.set(video.id, { allowed: false, requiresUpgrade: false, requiresLogin: true, isAdmin: false });
-    }
-    return results;
-  }
-
-  if (await isAdminUser(supabase, user.id)) {
-    for (const video of videos) {
-      results.set(video.id, { allowed: true, requiresUpgrade: false, requiresLogin: false, isAdmin: true });
+      results.set(video.id, { allowed: false, requiresUpgrade: false, requiresLogin: true });
     }
     return results;
   }

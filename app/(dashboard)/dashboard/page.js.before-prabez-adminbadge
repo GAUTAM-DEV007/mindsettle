@@ -167,10 +167,6 @@ export default async function DashboardPage() {
             isPremium:
               video.is_premium,
             locked: !videoAccess.allowed,
-            minTier:
-              video.min_tier ??
-              (video.is_premium ? 1 : 0),
-            isAdminViewer: Boolean(videoAccess.isAdmin),
           };
         }
       )

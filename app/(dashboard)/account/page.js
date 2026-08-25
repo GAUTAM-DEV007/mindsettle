@@ -30,17 +30,22 @@ export default async function AccountPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Account</h1>
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#78906f]">
+          My MindSettle
+        </p>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#163d34]">Account</h1>
+      </div>
 
-      <div className="max-w-md rounded-xl border border-neutral-200 p-6">
+      <div className="max-w-md rounded-[24px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
         <dl className="flex flex-col gap-3 text-sm">
           <div className="flex justify-between">
-            <dt className="text-neutral-500">Email</dt>
-            <dd className="font-medium">{user?.email}</dd>
+            <dt className="text-[#5a6d66]">Email</dt>
+            <dd className="font-medium text-[#163d34]">{user?.email}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-neutral-500">Member since</dt>
-            <dd className="font-medium">
+            <dt className="text-[#5a6d66]">Member since</dt>
+            <dd className="font-medium text-[#163d34]">
               {profile?.created_at
                 ? new Date(profile.created_at).toLocaleDateString()
                 : "—"}
@@ -49,41 +54,41 @@ export default async function AccountPage() {
         </dl>
       </div>
 
-      <div className="max-w-md rounded-xl border border-neutral-200 p-6">
-        <h2 className="text-lg font-medium">Membership</h2>
+      <div className="max-w-md rounded-[24px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
+        <h2 className="text-lg font-bold text-[#163d34]">Membership</h2>
         <dl className="mt-4 flex flex-col gap-3 text-sm">
           <div className="flex justify-between">
-            <dt className="text-neutral-500">Membership type</dt>
-            <dd className="font-medium">{isPaid ? "Premium" : "Free"}</dd>
+            <dt className="text-[#5a6d66]">Membership type</dt>
+            <dd className="font-medium text-[#163d34]">{isPaid ? "Premium" : "Free"}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-neutral-500">Current plan</dt>
-            <dd className="font-medium">{subscription?.plans?.name ?? "MindSettle Free"}</dd>
+            <dt className="text-[#5a6d66]">Current plan</dt>
+            <dd className="font-medium text-[#163d34]">{subscription?.plans?.name ?? "MindSettle Free"}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-neutral-500">Subscription status</dt>
-            <dd className="font-medium capitalize">{subscription?.status ?? "None"}</dd>
+            <dt className="text-[#5a6d66]">Subscription status</dt>
+            <dd className="font-medium capitalize text-[#163d34]">{subscription?.status ?? "None"}</dd>
           </div>
         </dl>
 
-        {!isPaid && (
-          <div className="mt-5 flex items-center justify-between rounded-lg bg-emerald-50 px-4 py-3">
-            <p className="text-sm text-emerald-800">You&apos;re on a free account.</p>
-            <Link
-              href="/subscription"
-              className="rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-500"
-            >
-              Upgrade
-            </Link>
-          </div>
-        )}
+        <div className="mt-5 flex items-center justify-between gap-3 rounded-xl bg-[#dce8ca]/60 px-4 py-3">
+          <p className="text-sm text-[#163d34]">
+            {isPaid ? "Manage your plan and billing details." : "You're on a free account."}
+          </p>
+          <Link
+            href={isPaid ? "/account/billing" : "/subscription"}
+            className="shrink-0 rounded-full bg-[#163d34] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#12372f]"
+          >
+            {isPaid ? "Manage billing" : "Upgrade"}
+          </Link>
+        </div>
       </div>
 
-      <div className="max-w-md rounded-xl border border-neutral-200 p-6">
-        <h2 className="text-lg font-medium">Profile</h2>
+      <div className="max-w-md rounded-[24px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
+        <h2 className="text-lg font-bold text-[#163d34]">Profile</h2>
         <form action={updateProfile} className="mt-4 flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="fullName" className="text-sm font-medium text-neutral-700">
+            <label htmlFor="fullName" className="text-sm font-semibold text-[#163d34]">
               Full name
             </label>
             <input
@@ -92,12 +97,12 @@ export default async function AccountPage() {
               maxLength={100}
               defaultValue={profile?.full_name ?? ""}
               placeholder="Your name"
-              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-500"
+              className="rounded-lg border border-[#dfe5dc] px-3 py-2 text-sm text-[#29383e] outline-none focus:border-[#163d34]"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="avatarUrl" className="text-sm font-medium text-neutral-700">
+            <label htmlFor="avatarUrl" className="text-sm font-semibold text-[#163d34]">
               Avatar URL
             </label>
             <input
@@ -107,13 +112,13 @@ export default async function AccountPage() {
               maxLength={2048}
               defaultValue={profile?.avatar_url ?? ""}
               placeholder="https://..."
-              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-emerald-500"
+              className="rounded-lg border border-[#dfe5dc] px-3 py-2 text-sm text-[#29383e] outline-none focus:border-[#163d34]"
             />
           </div>
 
           <button
             type="submit"
-            className="self-start rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+            className="self-start rounded-full bg-[#163d34] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#12372f]"
           >
             Save changes
           </button>

@@ -108,20 +108,8 @@ async function syncSubscription(supabase, stripe, subscription) {
 
   const status = SUBSCRIPTION_STATUS_MAP[subscription.status] ?? "incomplete";
   const priceId = subscription.items?.data?.[0]?.price?.id ?? null;
-
-  // Stripe moved current_period_end from the subscription object onto each
-  // subscription item (a subscription can have items with different
-  // billing periods since API version 2025-03-31). Fall back to the
-  // top-level field for older API versions, and to trial_end so a
-  // trialing subscription still gets a real date even if the item-level
-  // field is ever missing.
-  const periodEndSeconds =
-    subscription.items?.data?.[0]?.current_period_end ??
-    subscription.current_period_end ??
-    subscription.trial_end ??
-    null;
-  const periodEnd = periodEndSeconds
-    ? new Date(periodEndSeconds * 1000).toISOString()
+  const periodEnd = subscription.current_period_end
+    ? new Date(subscription.current_period_end * 1000).toISOString()
     : null;
 
   // Resolve the internal plan row from the Stripe price id so entitlement

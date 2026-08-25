@@ -36,21 +36,11 @@ export default async function PostLoginPage() {
         redirect("/login?error=role-not-found");
     }
 
-    // Admins always land in /admin -- only end users and organisations
-    // are gated on having an active subscription.
-    if (roleRecord.role === "user" || roleRecord.role === "organisation") {
-        const { data: subscription } = await supabase
-            .from("subscriptions")
-            .select("status")
-            .eq("user_id", user.id)
-            .in("status", ["active", "trialing"])
-            .maybeSingle();
-
-        if (!subscription) {
-            redirect("/subscription");
-        }
-    }
-
-    // Send the user to the correct dashboard.
+    // Every role lands on its own overview page, subscribed or not --
+    // /library, /organisation-dashboard and /dashboard all resolve
+    // per-video/per-plan access themselves (locked previews, "no active
+    // plan" banners) via lib/access/entitlement.js, and the persistent
+    // "Upgrade" nav link plus in-context "View plans" CTAs keep
+    // /subscription reachable without gating login on it.
     redirect(getDashboardForRole(roleRecord.role));
 }

@@ -22,8 +22,7 @@ export default function VideoCard({
     thumbnailUrl,
     previewUrl,
     category,
-    minTier,
-    isAdminViewer,
+    locked,
   } = video;
 
   const videoRef = useRef(null);
@@ -436,15 +435,13 @@ export default function VideoCard({
             </div>
           )}
 
-          {/* ADMIN-ONLY FREE/PREMIUM LABEL
-              Normal users never see this -- premium content otherwise
-              looks identical to free content in the catalogue. The
-              subscription prompt only appears when the video is actually
-              opened (see library/[videoId]/page.js). */}
+          {/* LOCKED */}
 
-          {isAdminViewer && (
-            <div className="absolute left-3 top-3 z-20 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/90 backdrop-blur">
-              {minTier > 0 ? "Premium" : "Free"}
+          {locked && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#12372f]/45">
+              <div className="flex items-center gap-1.5 rounded-full bg-[#fffdfa]/95 px-3 py-1.5 text-[11px] font-semibold text-[#163d34] shadow">
+                🔒 Subscribers only
+              </div>
             </div>
           )}
 

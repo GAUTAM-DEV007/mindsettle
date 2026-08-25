@@ -362,12 +362,6 @@ export default async function MoodPage({
 
             createdAt:
               video.created_at,
-
-            minTier:
-              video.min_tier ??
-              (video.is_premium ? 1 : 0),
-
-            isAdminViewer: Boolean(videoAccess.isAdmin),
           };
         }
       )

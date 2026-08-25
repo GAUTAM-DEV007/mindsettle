@@ -29,6 +29,19 @@ create table if not exists videos (
   created_at timestamptz not null default now()
 );
 
+-- Added by 20260815000000_platform_hardening.sql (is_featured,
+-- show_on_homepage, is_published) and 20260818000000_plans_and_entitlements.sql
+-- (min_tier). `alter table ... add column if not exists` so this stays
+-- idempotent against a table that may already have these columns.
+-- Note: is_published's live default is `true`, not the `false` the
+-- migration files declare -- it was flipped by hand directly on the
+-- live DB at some point, so newly inserted videos are public by default
+-- unless an admin explicitly unpublishes them.
+alter table videos add column if not exists is_featured boolean not null default false;
+alter table videos add column if not exists show_on_homepage boolean not null default false;
+alter table videos add column if not exists is_published boolean not null default true;
+alter table videos add column if not exists min_tier integer not null default 0;
+
 -- Extends auth.users with app-facing profile data. Row is created
 -- automatically by the handle_new_user trigger below.
 create table if not exists profiles (
@@ -100,6 +113,35 @@ create table if not exists subscriptions (
   updated_at timestamptz not null default now()
 );
 
+-- Added by 20260818000000_plans_and_entitlements.sql and
+-- 20260819000000_rename_subscription_plans.sql. `plan_id` points at
+-- `subscription_plans`, a table owned by that plan/entitlement system
+-- rather than this core schema, so it isn't redefined here -- only the
+-- FK column that lives on `subscriptions`. The FK itself is added via a
+-- guarded DO block rather than inline, since this file is meant to run
+-- before subscription_plans exists (it's created by a later migration);
+-- an inline `references subscription_plans (id)` would fail on a fresh
+-- database. `organisation_id`, when set, must equal the row's own
+-- `user_id` (see the check constraint below): MindSettle has no separate
+-- organisations table, an organisation is a profiles/auth.users row with
+-- user_roles.role = 'organisation', so this documents "this
+-- subscription's owner is an organisation account" rather than pointing
+-- at a second entity.
+alter table subscriptions add column if not exists plan_id uuid;
+alter table subscriptions add column if not exists organisation_id uuid references profiles (id);
+
+do $$
+begin
+  if exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'subscription_plans')
+    and not exists (select 1 from pg_constraint where conname = 'subscriptions_plan_id_fkey')
+  then
+    alter table subscriptions add constraint subscriptions_plan_id_fkey foreign key (plan_id) references subscription_plans (id);
+  end if;
+end $$;
+alter table subscriptions drop constraint if exists subscriptions_organisation_id_matches_user_id;
+alter table subscriptions add constraint subscriptions_organisation_id_matches_user_id
+  check (organisation_id is null or organisation_id = user_id);
+
 -- ---------------------------------------------------------------------------
 -- Indexes
 -- ---------------------------------------------------------------------------
@@ -111,6 +153,9 @@ create index if not exists favourites_video_id_idx on favourites (video_id);
 create index if not exists watch_history_user_id_idx on watch_history (user_id);
 create index if not exists watch_history_video_id_idx on watch_history (video_id);
 create index if not exists subscriptions_user_id_idx on subscriptions (user_id);
+create index if not exists subscriptions_plan_id_idx on subscriptions (plan_id);
+create index if not exists subscriptions_organisation_id_idx on subscriptions (organisation_id);
+create index if not exists videos_published_created_idx on videos (is_published, created_at desc);
 
 -- ---------------------------------------------------------------------------
 -- Triggers
@@ -255,18 +300,52 @@ create policy "Admins can delete categories"
     )
   );
 
--- videos: catalog metadata is readable by any signed-in user; the app's
--- proxy/layout already gates the /library routes behind auth. Writes are
--- done by admins using the service role key.
-create policy "Videos are viewable by authenticated users"
+-- videos: catalog metadata is readable by any signed-in user for
+-- published videos; admins can also see unpublished/draft rows so they
+-- can preview before publishing. Writes are gated to admins so the
+-- /admin videos manager can insert/update/delete directly under RLS.
+drop policy if exists "Videos are viewable by authenticated users" on videos;
+create policy "Published videos and admin catalogue"
   on videos for select
   to authenticated
-  using (true);
+  using (
+    is_published
+    or exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  );
 
 create policy "Admins can insert videos"
   on videos for insert
   to authenticated
   with check (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  );
+
+create policy "Admins can update videos"
+  on videos for update
+  to authenticated
+  using (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  )
+  with check (
+    exists (
+      select 1 from user_roles
+      where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
+    )
+  );
+
+create policy "Admins can delete videos"
+  on videos for delete
+  to authenticated
+  using (
     exists (
       select 1 from user_roles
       where user_roles.user_id = auth.uid() and user_roles.role = 'admin'
@@ -334,11 +413,15 @@ create policy "Users can delete their own watch history"
   on watch_history for delete
   using (auth.uid() = user_id);
 
--- subscriptions: users can read their own subscription status only. All
--- writes happen server-side via the billing webhook using the service
--- role key, so no insert/update/delete policies are defined here.
+-- subscriptions: users can read their own subscription status only, and
+-- an organisation account can read it via either column since
+-- organisation_id (when set) always equals its own user_id. All writes
+-- happen server-side via the billing webhook using the service role
+-- key, so no insert/update/delete policies are defined here.
+drop policy if exists "Users can view their own subscription" on subscriptions;
 create policy "Users can view their own subscription"
   on subscriptions for select
-  using (auth.uid() = user_id);
+  to authenticated
+  using (auth.uid() = user_id or auth.uid() = organisation_id);
 
 commit;

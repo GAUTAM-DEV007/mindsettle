@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
@@ -10,6 +10,7 @@ import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
 export default function LoginPage() {
   const router = useRouter();
   const [supabase] = useState(() => createClient());
+  const backgroundVideoRef = useRef(null);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -18,6 +19,25 @@ export default function LoginPage() {
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [backgroundPaused, setBackgroundPaused] = useState(false);
+
+  async function toggleBackgroundMotion() {
+    const video = backgroundVideoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      try {
+        await video.play();
+        setBackgroundPaused(false);
+      } catch {
+        setBackgroundPaused(true);
+      }
+      return;
+    }
+
+    video.pause();
+    setBackgroundPaused(true);
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -60,100 +80,86 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="login-experience grid min-h-dvh overflow-hidden bg-[#eef0e9] lg:grid-cols-[minmax(0,1.05fr)_minmax(31rem,.95fr)]">
-      <section className="relative hidden min-h-dvh overflow-hidden text-white lg:flex lg:flex-col lg:justify-between">
-        <Image
-          src="/hero-forest-stream.jpg"
-          alt="Water flowing through a quiet forest stream"
-          fill
-          priority
-          sizes="(min-width: 1024px) 55vw, 0vw"
-          className="login-nature-image object-cover"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,38,35,.34)_0%,rgba(8,39,34,.12)_36%,rgba(7,31,29,.88)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(222,241,189,.18),transparent_32%)]" />
+    <div className="login-experience relative min-h-dvh overflow-x-hidden bg-[#172f37]">
+      <Image
+        src="/login-misty-lake.jpg"
+        alt=""
+        fill
+        preload
+        sizes="100vw"
+        className="object-cover object-center"
+      />
+      <video
+        ref={backgroundVideoRef}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        poster="/login-misty-lake.jpg"
+        aria-hidden="true"
+        tabIndex={-1}
+        onPlay={() => setBackgroundPaused(false)}
+        onPause={() => setBackgroundPaused(true)}
+        className="absolute inset-0 hidden h-full w-full object-cover sm:block motion-reduce:hidden"
+      >
+        <source src="/media/login-misty-lake.mp4" type="video/mp4" />
+      </video>
 
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(18,43,51,.64)_0%,rgba(26,48,56,.38)_48%,rgba(24,42,49,.68)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(238,226,204,.24),transparent_36%)]" />
+
+      <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-5 py-5 sm:px-8 sm:py-7">
         <Link
           href="/"
           aria-label="Mindsettle home"
-          className="relative z-10 m-10 flex w-fit items-center rounded-2xl border border-white/30 bg-[#f8f7f0]/90 px-5 py-3 shadow-xl shadow-black/10 backdrop-blur-md transition hover:bg-white"
+          className="flex items-center rounded-2xl border border-white/45 bg-[#f8f7f0]/90 px-4 py-2.5 shadow-[0_12px_35px_rgba(7,26,31,.18)] backdrop-blur-xl transition hover:bg-white"
         >
           <Image
             src="/logo-full.png"
             alt="Mindsettle"
-            width={138}
-            height={84}
-            className="h-auto w-[7.25rem] object-contain"
+            width={122}
+            height={74}
+            className="h-auto w-[6.6rem] object-contain"
           />
         </Link>
-
-        <div className="relative z-10 max-w-2xl px-10 pb-12 xl:px-16 xl:pb-16">
-          <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[.24em] text-[#d9f3aa]">
-            <span className="h-2 w-2 rounded-full bg-[#d9f3aa]" />
-            Your calm space
-          </p>
-          <h1 className="mt-5 max-w-xl text-5xl font-semibold leading-[1.02] tracking-[-.04em] xl:text-6xl">
-            Return to a quieter state of mind.
-          </h1>
-          <p className="mt-5 max-w-lg text-lg leading-8 text-white/78">
-            Nature-led moments, mindful tools and gentle routines—ready when
-            you are.
-          </p>
-
-          <div className="mt-9 flex flex-wrap gap-3 text-sm font-medium text-white/90">
-            <span className="rounded-full border border-white/25 bg-white/10 px-4 py-2 backdrop-blur-md">
-              Curated calm
-            </span>
-            <span className="rounded-full border border-white/25 bg-white/10 px-4 py-2 backdrop-blur-md">
-              Personal library
-            </span>
-            <span className="rounded-full border border-white/25 bg-white/10 px-4 py-2 backdrop-blur-md">
-              Mindful moments
-            </span>
-          </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={toggleBackgroundMotion}
+            className="hidden rounded-full border border-white/30 bg-[#17343d]/45 px-4 py-2.5 text-sm font-semibold text-white shadow-lg backdrop-blur-xl transition hover:border-white/50 hover:bg-[#17343d]/70 sm:inline-flex motion-reduce:hidden"
+            aria-label={backgroundPaused ? "Play background nature video" : "Pause background nature video"}
+          >
+            {backgroundPaused ? "Play motion" : "Pause motion"}
+          </button>
+          <Link
+            href="/"
+            className="rounded-full border border-white/30 bg-[#17343d]/45 px-4 py-2.5 text-sm font-semibold text-white shadow-lg backdrop-blur-xl transition hover:border-white/50 hover:bg-[#17343d]/70"
+          >
+            Back home
+          </Link>
         </div>
-      </section>
+      </div>
 
-      <section className="relative flex min-h-dvh items-center justify-center overflow-hidden px-5 py-8 sm:px-10 lg:px-12 xl:px-16">
-        <div className="pointer-events-none absolute -right-28 -top-28 h-80 w-80 rounded-full bg-[#d9e8cf]/70 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 left-4 h-80 w-80 rounded-full bg-[#e9d8c5]/55 blur-3xl" />
-
-        <div className="relative z-10 w-full max-w-[33rem]">
-          <div className="mb-7 flex items-center justify-between lg:hidden">
-            <Link href="/" aria-label="Mindsettle home">
-              <Image
-                src="/logo-full.png"
-                alt="Mindsettle"
-                width={126}
-                height={76}
-                priority
-                className="h-auto w-24 object-contain"
-              />
-            </Link>
-            <Link
-              href="/"
-              className="text-sm font-semibold text-[#52645e] transition hover:text-[#163d34]"
-            >
-              Back home
-            </Link>
-          </div>
-
-          <div className="rounded-[2rem] border border-white/80 bg-[#fbfbf7]/90 p-6 shadow-[0_28px_80px_rgba(32,59,51,.12)] backdrop-blur-xl sm:p-9 xl:p-11">
-            <p className="text-xs font-bold uppercase tracking-[.22em] text-[#75856d]">
+      <section className="relative z-10 flex min-h-dvh items-center justify-center px-4 py-28 sm:px-6 sm:py-32">
+        <div className="w-full max-w-[33rem] rounded-[2.25rem] border border-white/65 bg-[#faf9f4]/94 p-6 shadow-[0_32px_100px_rgba(7,26,31,.32)] backdrop-blur-2xl sm:p-9 lg:p-10">
+          <div className="text-center">
+            <p className="text-xs font-bold uppercase tracking-[.22em] text-[#a35f4e]">
               Member access
             </p>
-            <h2 className="mt-4 text-[2.65rem] font-semibold leading-none tracking-[-.045em] text-[#153b33] sm:text-5xl">
+            <h1 className="mt-4 text-[2.65rem] font-semibold leading-none tracking-[-.045em] text-[#173c45] sm:text-5xl">
               Welcome back.
-            </h2>
-            <p className="mt-4 max-w-md text-[1.02rem] leading-7 text-[#61706a]">
+            </h1>
+            <p className="mx-auto mt-4 max-w-md text-[1.02rem] leading-7 text-[#647277]">
               Take one steady breath, then continue where you left off.
             </p>
+          </div>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            <form onSubmit={handleSubmit} className="mt-7 space-y-[1.125rem]">
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-2 block text-sm font-semibold text-[#2d4a42]"
+                  className="mb-2 block text-sm font-semibold text-[#294952]"
                 >
                   Email address
                 </label>
@@ -170,7 +176,7 @@ export default function LoginPage() {
                   onChange={handleChange}
                   placeholder="you@example.com"
                   required
-                  className="w-full rounded-2xl border border-[#ced8d2] bg-white/85 px-4 py-3.5 text-[#173e35] shadow-sm outline-none transition placeholder:text-[#9aa6a1] hover:border-[#aebfb7] focus:border-[#58796d] focus:bg-white focus:ring-4 focus:ring-[#dce8e1]"
+                  className="w-full rounded-2xl border border-[#ccd7d8] bg-white/88 px-4 py-3.5 text-[#173c45] shadow-sm outline-none transition placeholder:text-[#9aa6a8] hover:border-[#9fb4b7] focus:border-[#587b83] focus:bg-white focus:ring-4 focus:ring-[#dce8e9]"
                 />
               </div>
 
@@ -178,13 +184,13 @@ export default function LoginPage() {
                 <div className="mb-2 flex items-center justify-between gap-4">
                   <label
                     htmlFor="password"
-                    className="block text-sm font-semibold text-[#2d4a42]"
+                    className="block text-sm font-semibold text-[#294952]"
                   >
                     Password
                   </label>
                   <Link
                     href="/forgot-password"
-                    className="text-sm font-semibold text-[#567368] underline-offset-4 transition hover:text-[#163d34] hover:underline"
+                    className="text-sm font-semibold text-[#58757c] underline-offset-4 transition hover:text-[#173c45] hover:underline"
                   >
                     Forgot password?
                   </Link>
@@ -201,12 +207,12 @@ export default function LoginPage() {
                     onChange={handleChange}
                     placeholder="Enter your password"
                     required
-                    className="w-full rounded-2xl border border-[#ced8d2] bg-white/85 px-4 py-3.5 pr-20 text-[#173e35] shadow-sm outline-none transition placeholder:text-[#9aa6a1] hover:border-[#aebfb7] focus:border-[#58796d] focus:bg-white focus:ring-4 focus:ring-[#dce8e1]"
+                    className="w-full rounded-2xl border border-[#ccd7d8] bg-white/88 px-4 py-3.5 pr-20 text-[#173c45] shadow-sm outline-none transition placeholder:text-[#9aa6a8] hover:border-[#9fb4b7] focus:border-[#587b83] focus:bg-white focus:ring-4 focus:ring-[#dce8e9]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((current) => !current)}
-                    className="absolute inset-y-1 right-1 rounded-xl px-4 text-xs font-bold uppercase tracking-[.08em] text-[#60756c] transition hover:bg-[#eef2ed] hover:text-[#163d34] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6e8e82]"
+                    className="absolute inset-y-1 right-1 rounded-xl px-4 text-xs font-bold uppercase tracking-[.08em] text-[#63777c] transition hover:bg-[#eef2f1] hover:text-[#173c45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6e8e91]"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? "Hide" : "Show"}
@@ -226,13 +232,13 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-[#163d34] px-5 py-4 font-semibold text-white shadow-[0_14px_30px_rgba(22,61,52,.22)] transition hover:-translate-y-0.5 hover:bg-[#214d43] hover:shadow-[0_18px_34px_rgba(22,61,52,.26)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#bbcf9a] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+                className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-[#173c45] px-5 py-4 font-semibold text-white shadow-[0_14px_30px_rgba(23,60,69,.24)] transition hover:-translate-y-0.5 hover:bg-[#244f59] hover:shadow-[0_18px_34px_rgba(23,60,69,.28)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#bfd5d5] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 <span>{isSubmitting ? "Signing you in…" : "Sign in"}</span>
                 {!isSubmitting && (
                   <span
                     aria-hidden="true"
-                    className="text-[#d6f2a7] transition-transform group-hover:translate-x-1"
+                    className="text-[#f3c5ad] transition-transform group-hover:translate-x-1"
                   >
                     →
                   </span>
@@ -250,7 +256,7 @@ export default function LoginPage() {
 
             <SocialAuthButtons />
 
-            <div className="my-7 h-px bg-[#dfe5df]" />
+            <div className="my-6 h-px bg-[#dfe5df]" />
 
             <div className="grid gap-3 sm:grid-cols-2">
               <Link
@@ -277,7 +283,7 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <p className="mt-6 text-center text-xs leading-5 text-[#839089]">
+            <p className="mt-5 text-center text-xs leading-5 text-[#839089]">
               By continuing, you agree to our{" "}
               <Link href="/terms" className="underline underline-offset-2 hover:text-[#163d34]">
                 Terms of Use
@@ -288,7 +294,6 @@ export default function LoginPage() {
               </Link>
               .
             </p>
-          </div>
         </div>
       </section>
     </div>

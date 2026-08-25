@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import faqSunlitForest from "@/public/faq-sunlit-forest.jpg";
+import faqLakeHume from "@/public/faq-lake-hume.jpg";
 
 const FAQS = [
   {
@@ -107,8 +107,8 @@ export default function FAQPage() {
 
           <div className="relative lg:pl-6">
             <div className="relative aspect-[4/3] overflow-hidden rounded-[2.5rem] border-[8px] border-white/10 shadow-[0_32px_90px_rgba(0,0,0,.25)]">
-              <Image src={faqSunlitForest} alt="Sunlight filtering through a quiet eucalyptus forest in Brisbane" fill preload placeholder="blur" sizes="(min-width: 1024px) 43vw, 100vw" className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#082720]/70 via-transparent to-transparent" />
+              <Image src={faqLakeHume} alt="Golden sunrise reflected over Lake Hume in New South Wales" fill preload placeholder="blur" sizes="(min-width: 1024px) 43vw, 100vw" className="object-cover object-center" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#24343b]/75 via-transparent to-transparent" />
               <div className="absolute inset-x-5 bottom-5 flex items-center gap-4 rounded-2xl border border-white/20 bg-[#082720]/70 p-4 text-white shadow-lg backdrop-blur-md sm:inset-x-6 sm:bottom-6">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#d7f2ad] text-[#163d34]" aria-hidden="true">✦</span>
                 <div><p className="font-semibold">A quieter place to look.</p><p className="mt-1 text-xs text-[#d9e6de]">Clear guidance, at your pace.</p></div>

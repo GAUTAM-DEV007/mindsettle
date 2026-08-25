@@ -1,7 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import { getSupabaseUrl } from "@/lib/supabase/url";
-import { getDashboardForRole } from "@/lib/auth/roles";
 
 const PROTECTED_PATHS = [
   "/dashboard",
@@ -12,7 +11,7 @@ const PROTECTED_PATHS = [
   "/favourites",
   "/subscription",
 ];
-const ADMIN_PATHS = ["/admin", "/admin-dashboard"];
+const ADMIN_PATHS = ["/admin"];
 const ORGANISATION_PATHS = ["/organisation-dashboard"];
 
 // Every response proxy.js returns touches the session (it reads/refreshes
@@ -101,17 +100,7 @@ export default async function proxy(request) {
     }
 
     if (isAdminRoute && role !== "admin") {
-      // /admin-dashboard/* (the dedicated subscriptions page) sends a
-      // signed-in non-admin back to their own dashboard, per spec; the
-      // original /admin single-page app keeps its existing behavior of
-      // sending everyone non-admin to "/" rather than changing that.
-      const target = matchesPath(pathname, "/admin-dashboard")
-        ? role
-          ? getDashboardForRole(role)
-          : "/login"
-        : "/";
-
-      return withNoStore(NextResponse.redirect(new URL(target, request.url)));
+      return withNoStore(NextResponse.redirect(new URL("/", request.url)));
     }
 
     if (isOrganisationRoute && role !== "organisation") {

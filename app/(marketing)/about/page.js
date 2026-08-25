@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import aboutBlueMountains from "@/public/about-blue-mountains.jpg";
 
 export const metadata = {
   title: "Meet the minds",
@@ -51,13 +52,13 @@ const TEAM = [
 export default function AboutPage() {
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-[#163d34] px-6 pb-24 pt-44 text-white sm:pb-32">
-        <Image src="/Background.jpg" alt="" fill priority sizes="100vw" className="object-cover opacity-20" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0b2d26] via-[#163d34]/90 to-[#163d34]/50" />
+      <section className="relative isolate overflow-hidden bg-[#243b43] px-6 pb-24 pt-44 text-white sm:pb-32">
+        <Image src={aboutBlueMountains} alt="" fill preload placeholder="blur" sizes="100vw" className="object-cover object-center" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#102f38]/95 via-[#173841]/82 to-[#203f49]/35" />
         <div className="relative mx-auto max-w-7xl lg:px-4">
-          <p className="eyebrow !text-[#b7d889]">Our story</p>
+          <p className="eyebrow !text-[#f3c5ad]">Our story</p>
           <h1 className="mt-6 max-w-4xl text-balance text-5xl font-semibold leading-[1.05] tracking-[-0.045em] sm:text-7xl">Art, science and technology—brought together for calm.</h1>
-          <p className="mt-8 max-w-2xl text-lg leading-8 text-emerald-50/80">Mindsettle is an Australian profit-for-purpose enterprise creating evidence-based solutions that improve wellbeing and build mental resilience.</p>
+          <p className="mt-8 max-w-2xl text-lg leading-8 text-white/80">Mindsettle is an Australian profit-for-purpose enterprise creating evidence-based solutions that improve wellbeing and build mental resilience.</p>
         </div>
       </section>
 

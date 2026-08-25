@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import heroForestStream from "@/public/hero-forest-stream.jpg";
+import exploreGreatBarrierReef from "@/public/explore-great-barrier-reef.jpg";
 
 export const metadata = {
   title: "Explore",
@@ -83,11 +83,11 @@ export default function ExplorePage() {
 
           <div className="relative">
             <div className="relative aspect-[4/3] overflow-hidden rounded-[2.5rem] border-[10px] border-white/70 shadow-[0_28px_80px_rgba(41,56,62,.16)]">
-              <Image src={heroForestStream} alt="Water flowing gently over mossy rocks in a forest" fill preload placeholder="blur" sizes="(min-width: 1024px) 44vw, 100vw" className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#12372f]/65 via-transparent to-transparent" />
-              <p className="absolute bottom-6 left-6 rounded-full border border-white/30 bg-[#12372f]/65 px-4 py-2 text-xs font-semibold uppercase tracking-[.16em] text-white backdrop-blur-md">Nature · Sound · Stillness</p>
+              <Image src={exploreGreatBarrierReef} alt="Aerial view of turquoise water and coral formations in the Great Barrier Reef" fill preload placeholder="blur" sizes="(min-width: 1024px) 44vw, 100vw" className="object-cover object-[center_68%]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#173845]/70 via-transparent to-transparent" />
+              <p className="absolute bottom-6 left-6 rounded-full border border-white/30 bg-[#173845]/70 px-4 py-2 text-xs font-semibold uppercase tracking-[.16em] text-white backdrop-blur-md">Ocean · Sound · Stillness</p>
             </div>
-            <div className="absolute -bottom-5 -left-5 hidden rounded-2xl bg-[#dce8ca] px-5 py-4 text-sm font-semibold text-[#29383e] shadow-xl sm:block">A quieter view of the world.</div>
+            <div className="absolute -bottom-5 -left-5 hidden rounded-2xl bg-[#dce8ed] px-5 py-4 text-sm font-semibold text-[#29383e] shadow-xl sm:block">A quieter view of the world.</div>
           </div>
         </div>
       </section>

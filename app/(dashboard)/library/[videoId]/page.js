@@ -2,12 +2,64 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
+
+function formatDuration(
+  durationSeconds,
+  durationMinutes
+) {
+  const exactSeconds =
+    Number(durationSeconds);
+
+  if (
+    Number.isFinite(
+      exactSeconds
+    ) &&
+    exactSeconds > 0
+  ) {
+    const totalSeconds =
+      Math.round(
+        exactSeconds
+      );
+
+    const minutes =
+      Math.floor(
+        totalSeconds / 60
+      );
+
+    const seconds =
+      String(
+        totalSeconds % 60
+      ).padStart(
+        2,
+        "0"
+      );
+
+    return `${minutes}:${seconds}`;
+  }
+
+  const fallbackMinutes =
+    Number(
+      durationMinutes
+    );
+
+  if (
+    Number.isFinite(
+      fallbackMinutes
+    ) &&
+    fallbackMinutes > 0
+  ) {
+    return `${fallbackMinutes} min`;
+  }
+
+  return null;
+}
+
 import {
   addFavourite,
   removeFavourite,
 } from "@/lib/actions/favourites";
 
-import VideoPlayer from "@/components/video/VideoPlayer";
+import CinematicMediaHero from "@/components/video/CinematicMediaHero";
 import HorizontalVideoRow from "@/components/video/HorizontalVideoRow";
 import { resolveVideoAccess } from "@/lib/access/entitlement";
 
@@ -69,6 +121,8 @@ async function prepareRecommendation(
     instructor: recommendation.instructor,
     durationMinutes:
       recommendation.duration_minutes,
+    durationSeconds:
+      recommendation.duration_seconds,
     thumbnailUrl,
     src,
     categoryId:
@@ -113,6 +167,7 @@ export default async function VideoPage({
           description,
           instructor,
           duration_minutes,
+          duration_seconds,
           thumbnail_url,
           video_url,
           category_id,
@@ -173,6 +228,8 @@ export default async function VideoPage({
           data.instructor,
         durationMinutes:
           data.duration_minutes,
+        durationSeconds:
+          data.duration_seconds,
         thumbnailUrl:
           signedThumbnailUrl,
         src:
@@ -198,6 +255,7 @@ export default async function VideoPage({
             title,
             instructor,
             duration_minutes,
+            duration_seconds,
             thumbnail_url,
             video_url,
             category_id,
@@ -269,6 +327,7 @@ export default async function VideoPage({
               title,
               instructor,
               duration_minutes,
+              duration_seconds,
               thumbnail_url,
               video_url,
               category_id,
@@ -362,6 +421,8 @@ export default async function VideoPage({
             item.instructor,
           durationMinutes:
             item.durationMinutes,
+          durationSeconds:
+            item.durationSeconds,
         })
       );
 
@@ -380,35 +441,10 @@ export default async function VideoPage({
 
       <section className="mx-auto w-full max-w-6xl">
         {video.src ? (
-          <div className="overflow-hidden rounded-[28px] shadow-[0_18px_44px_rgba(18,55,47,0.14)]">
-            <VideoPlayer
-              key={
-                video.id
-              }
-              initialMedia={{
-                id:
-                  video.id,
-
-                src:
-                  video.src,
-
-                poster:
-                  video.thumbnailUrl,
-
-                title:
-                  video.title,
-
-                instructor:
-                  video.instructor,
-
-                durationMinutes:
-                  video.durationMinutes,
-              }}
-              playlist={
-                playerPlaylist
-              }
-            />
-          </div>
+          <CinematicMediaHero
+            video={video}
+            playlist={playerPlaylist}
+          />
         ) : video.locked ? (
           <div className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-[28px] bg-[#12372f] px-6 text-center shadow-[0_18px_44px_rgba(18,55,47,0.16)]">
             <p className="text-sm text-white/75">
@@ -416,17 +452,23 @@ export default async function VideoPage({
                 ? "This session needs a MindSettle subscription."
                 : "Sign in to watch this session."}
             </p>
+
             <Link
-              href={video.requiresUpgrade ? "/subscription" : "/login"}
+              href={
+                video.requiresUpgrade
+                  ? "/subscription"
+                  : "/login"
+              }
               className="rounded-full bg-[#d7f2ad] px-6 py-3 text-sm font-semibold text-[#12372f] shadow-[0_10px_28px_rgba(0,0,0,0.18)] transition-all hover:-translate-y-0.5 hover:bg-white"
             >
-              {video.requiresUpgrade ? "View plans" : "Log in"}
+              {video.requiresUpgrade
+                ? "View plans"
+                : "Log in"}
             </Link>
           </div>
         ) : (
           <div className="flex aspect-video w-full items-center justify-center rounded-[28px] bg-[#12372f] px-6 text-center text-sm text-white/75 shadow-[0_18px_44px_rgba(18,55,47,0.16)]">
-            This session does not currently
-            have a playable media file.
+            This session does not currently have a playable media file.
           </div>
         )}
 
@@ -451,17 +493,20 @@ export default async function VideoPage({
                     "MindSettle"}
                 </span>
 
-                {video.durationMinutes && (
+                {formatDuration(
+                  video.durationSeconds,
+                  video.durationMinutes
+                ) && (
                   <>
                     <span className="text-[#9aa9a2]">
                       •
                     </span>
 
                     <span>
-                      {
+                      {formatDuration(
+                        video.durationSeconds,
                         video.durationMinutes
-                      }{" "}
-                      min
+                      )}
                     </span>
                   </>
                 )}

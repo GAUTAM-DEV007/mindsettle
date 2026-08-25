@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import heroForestStream from "@/public/hero-forest-stream.jpg";
+import homeGoldCoastSunrise from "@/public/home-gold-coast-sunrise.jpg";
 
 export default function HeroWaterBackground() {
   const videoRef = useRef(null);
@@ -45,7 +45,7 @@ export default function HeroWaterBackground() {
   return (
     <>
       <Image
-        src={heroForestStream}
+        src={homeGoldCoastSunrise}
         alt=""
         fill
         preload
@@ -60,22 +60,22 @@ export default function HeroWaterBackground() {
         muted
         playsInline
         preload="metadata"
-        poster="/hero-forest-stream.jpg"
+        poster={homeGoldCoastSunrise.src}
         aria-hidden="true"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         className="absolute inset-0 h-full w-full object-cover object-center motion-reduce:hidden"
       >
-        <source src="/media/hero-water-hd.mp4" type="video/mp4" />
+        <source src="/media/pexels-ocean-sunrise.mp4" type="video/mp4" />
       </video>
       <button
         type="button"
         onClick={togglePlayback}
-        aria-label={isPlaying ? "Pause moving water background" : "Play moving water background"}
-        className="absolute right-5 top-28 z-20 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/25 bg-[#082720]/65 px-4 text-xs font-semibold text-white shadow-lg backdrop-blur-md transition hover:bg-[#082720]/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:hidden sm:right-8 lg:right-10"
+        aria-label={isPlaying ? "Pause ocean background" : "Play ocean background"}
+        className="absolute right-5 top-28 z-20 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-[#183c48]/65 px-4 text-xs font-semibold text-white shadow-lg backdrop-blur-md transition hover:bg-[#183c48]/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:hidden sm:right-8 lg:right-10"
       >
         <span aria-hidden="true">{isPlaying ? "Ⅱ" : "▶"}</span>
-        <span>{isPlaying ? "Pause water" : "Play water"}</span>
+        <span>{isPlaying ? "Pause scene" : "Play scene"}</span>
       </button>
     </>
   );

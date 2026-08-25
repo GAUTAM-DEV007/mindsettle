@@ -175,6 +175,19 @@ set user_id = u.id, status = 'active'
 from auth.users u
 where m.user_id is null and lower(m.email) = lower(u.email);
 
+-- ---------------------------------------------------------------------------
+-- NOTE (2026-08-21): the policies below were never actually applied to the
+-- live database as originally written in this file. Someone set up
+-- categories/videos/moods/video_moods/programs/program_videos/social_links
+-- RLS through a separate, undocumented process (direct SQL editor use,
+-- outside any tracked migration) with different policy names, and in a few
+-- cases different logic, than what's written here. This section has been
+-- rewritten to describe what is actually live, verified against
+-- pg_policies -- it is no longer a faithful record of what running this
+-- file would originally have produced. Re-running it now is safe: every
+-- statement targets the real, current policy names and is idempotent.
+-- ---------------------------------------------------------------------------
+
 alter table public.profiles enable row level security;
 alter table public.categories enable row level security;
 alter table public.videos enable row level security;
@@ -187,13 +200,12 @@ alter table public.favourites enable row level security;
 alter table public.watch_history enable row level security;
 alter table public.subscriptions enable row level security;
 
-drop policy if exists "Organisations manage their own members" on public.organisation_members;
+-- Live as a single combined policy (not split by command).
 drop policy if exists "Organisations view their own members" on public.organisation_members;
-create policy "Organisations view their own members" on public.organisation_members for select to authenticated using (auth.uid() = organisation_id);
 drop policy if exists "Organisations add their own members" on public.organisation_members;
-create policy "Organisations add their own members" on public.organisation_members for insert to authenticated with check (auth.uid() = organisation_id);
 drop policy if exists "Organisations remove their own members" on public.organisation_members;
-create policy "Organisations remove their own members" on public.organisation_members for delete to authenticated using (auth.uid() = organisation_id);
+drop policy if exists "Organisations manage their own members" on public.organisation_members;
+create policy "Organisations manage their own members" on public.organisation_members for all to authenticated using (auth.uid() = organisation_id) with check (auth.uid() = organisation_id);
 
 drop policy if exists "Users can view their own profile" on public.profiles;
 create policy "Users can view their own profile" on public.profiles for select to authenticated using (auth.uid() = id);
@@ -202,61 +214,124 @@ create policy "Users can insert their own profile" on public.profiles for insert
 drop policy if exists "Users can update their own profile" on public.profiles;
 create policy "Users can update their own profile" on public.profiles for update to authenticated using (auth.uid() = id) with check (auth.uid() = id);
 
-drop policy if exists "Categories are viewable by everyone" on public.categories;
-create policy "Categories are viewable by signed in users" on public.categories for select to authenticated using (true);
+-- Live keeps the original open-to-everyone select policy (role "public",
+-- not just authenticated) and separate per-command admin policies rather
+-- than a combined "for all" one.
+drop policy if exists "Categories are viewable by signed in users" on public.categories;
 drop policy if exists "Admins manage categories" on public.categories;
-create policy "Admins manage categories" on public.categories for all to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Categories are viewable by everyone" on public.categories;
+create policy "Categories are viewable by everyone" on public.categories for select using (true);
+drop policy if exists "Admins can insert categories" on public.categories;
+create policy "Admins can insert categories" on public.categories for insert to authenticated with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can update categories" on public.categories;
+create policy "Admins can update categories" on public.categories for update to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can delete categories" on public.categories;
+create policy "Admins can delete categories" on public.categories for delete to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
 
 drop policy if exists "Videos are viewable by authenticated users" on public.videos;
 drop policy if exists "Published videos and admin catalogue" on public.videos;
 create policy "Published videos and admin catalogue" on public.videos for select to authenticated using (is_published or exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+-- Live has separate per-command admin policies rather than "Admins manage videos" (for all).
 drop policy if exists "Admins manage videos" on public.videos;
-create policy "Admins manage videos" on public.videos for all to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can insert videos" on public.videos;
+create policy "Admins can insert videos" on public.videos for insert to authenticated with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can update videos" on public.videos;
+create policy "Admins can update videos" on public.videos for update to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can delete videos" on public.videos;
+create policy "Admins can delete videos" on public.videos for delete to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
 
 drop policy if exists "Moods are viewable by signed in users" on public.moods;
-create policy "Moods are viewable by signed in users" on public.moods for select to authenticated using (true);
 drop policy if exists "Admins manage moods" on public.moods;
-create policy "Admins manage moods" on public.moods for all to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Authenticated users can view moods" on public.moods;
+create policy "Authenticated users can view moods" on public.moods for select to authenticated using (true);
+drop policy if exists "Admins can insert moods" on public.moods;
+create policy "Admins can insert moods" on public.moods for insert to authenticated with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can update moods" on public.moods;
+create policy "Admins can update moods" on public.moods for update to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can delete moods" on public.moods;
+create policy "Admins can delete moods" on public.moods for delete to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
 
+-- Live is unconditional (true), not gated on the linked video's
+-- is_published, and has no update policy (the join table is only ever
+-- inserted/deleted wholesale, never updated in place).
 drop policy if exists "Published video moods are viewable" on public.video_moods;
-create policy "Published video moods are viewable" on public.video_moods for select to authenticated using (exists (select 1 from public.videos v where v.id = video_id and v.is_published) or exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
 drop policy if exists "Admins manage video moods" on public.video_moods;
-create policy "Admins manage video moods" on public.video_moods for all to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Authenticated users can view video moods" on public.video_moods;
+create policy "Authenticated users can view video moods" on public.video_moods for select to authenticated using (true);
+drop policy if exists "Admins can insert video moods" on public.video_moods;
+create policy "Admins can insert video moods" on public.video_moods for insert to authenticated with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can delete video moods" on public.video_moods;
+create policy "Admins can delete video moods" on public.video_moods for delete to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
 
+-- Same logic live, different name ("Authenticated users can read published
+-- programs"), and per-command admin policies rather than "for all".
 drop policy if exists "Published programs and admin catalogue" on public.programs;
-create policy "Published programs and admin catalogue" on public.programs for select to authenticated using (is_published or exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
 drop policy if exists "Admins manage programs" on public.programs;
-create policy "Admins manage programs" on public.programs for all to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Authenticated users can read published programs" on public.programs;
+create policy "Authenticated users can read published programs" on public.programs for select to authenticated using (is_published or exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can insert programs" on public.programs;
+create policy "Admins can insert programs" on public.programs for insert to authenticated with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can update programs" on public.programs;
+create policy "Admins can update programs" on public.programs for update to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can delete programs" on public.programs;
+create policy "Admins can delete programs" on public.programs for delete to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
 
+-- Live is unconditional (true), not gated on the linked program/video's
+-- is_published, and has separate per-command admin policies.
 drop policy if exists "Published program videos and admin catalogue" on public.program_videos;
-create policy "Published program videos and admin catalogue" on public.program_videos for select to authenticated using (
-  (
-    exists (select 1 from public.programs p where p.id = program_videos.program_id and p.is_published)
-    and exists (select 1 from public.videos v where v.id = program_videos.video_id and v.is_published)
-  )
-  or exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')
-);
 drop policy if exists "Admins manage program videos" on public.program_videos;
-create policy "Admins manage program videos" on public.program_videos for all to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Authenticated users can read program videos" on public.program_videos;
+create policy "Authenticated users can read program videos" on public.program_videos for select to authenticated using (true);
+drop policy if exists "Admins can insert program videos" on public.program_videos;
+create policy "Admins can insert program videos" on public.program_videos for insert to authenticated with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can update program videos" on public.program_videos;
+create policy "Admins can update program videos" on public.program_videos for update to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can delete program videos" on public.program_videos;
+create policy "Admins can delete program videos" on public.program_videos for delete to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
 
+-- Live splits this into two SELECT policies (a public one gated on
+-- is_enabled AND having a url, plus a separate admin-only one that can
+-- also see disabled/url-less rows for the admin management screen)
+-- rather than one combined policy, and has per-command admin policies.
 drop policy if exists "Enabled social links are public" on public.social_links;
-create policy "Enabled social links are public" on public.social_links for select to anon, authenticated using (is_enabled or exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
 drop policy if exists "Admins manage social links" on public.social_links;
-create policy "Admins manage social links" on public.social_links for all to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Users can read enabled social links" on public.social_links;
+create policy "Users can read enabled social links" on public.social_links for select to anon, authenticated using (is_enabled = true and url is not null);
+drop policy if exists "Admins can read all social links" on public.social_links;
+create policy "Admins can read all social links" on public.social_links for select to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can insert social links" on public.social_links;
+create policy "Admins can insert social links" on public.social_links for insert to authenticated with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can update social links" on public.social_links;
+create policy "Admins can update social links" on public.social_links for update to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')) with check (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
+drop policy if exists "Admins can delete social links" on public.social_links;
+create policy "Admins can delete social links" on public.social_links for delete to authenticated using (exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin'));
 
-drop policy if exists "Users can view their own favourites" on public.favourites;
-drop policy if exists "Users can add their own favourites" on public.favourites;
-drop policy if exists "Users can remove their own favourites" on public.favourites;
+-- Live keeps database-schema.sql's original separate per-command
+-- policies for favourites and watch_history (no combined "for all"
+-- policy, and no is_published check baked into the write side -- that
+-- check happens at the app layer instead).
 drop policy if exists "Users manage their own favourites" on public.favourites;
-create policy "Users manage their own favourites" on public.favourites for all to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id and exists (select 1 from public.videos v where v.id = video_id and v.is_published));
-drop policy if exists "Users can view their own watch history" on public.watch_history;
-drop policy if exists "Users can insert their own watch history" on public.watch_history;
-drop policy if exists "Users can update their own watch history" on public.watch_history;
-drop policy if exists "Users can delete their own watch history" on public.watch_history;
+drop policy if exists "Users can view their own favourites" on public.favourites;
+create policy "Users can view their own favourites" on public.favourites for select using (auth.uid() = user_id);
+drop policy if exists "Users can add their own favourites" on public.favourites;
+create policy "Users can add their own favourites" on public.favourites for insert with check (auth.uid() = user_id);
+drop policy if exists "Users can remove their own favourites" on public.favourites;
+create policy "Users can remove their own favourites" on public.favourites for delete using (auth.uid() = user_id);
+
 drop policy if exists "Users manage their own watch history" on public.watch_history;
-create policy "Users manage their own watch history" on public.watch_history for all to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id and exists (select 1 from public.videos v where v.id = video_id and v.is_published));
+drop policy if exists "Users can view their own watch history" on public.watch_history;
+create policy "Users can view their own watch history" on public.watch_history for select using (auth.uid() = user_id);
+drop policy if exists "Users can insert their own watch history" on public.watch_history;
+create policy "Users can insert their own watch history" on public.watch_history for insert with check (auth.uid() = user_id);
+drop policy if exists "Users can update their own watch history" on public.watch_history;
+create policy "Users can update their own watch history" on public.watch_history for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists "Users can delete their own watch history" on public.watch_history;
+create policy "Users can delete their own watch history" on public.watch_history for delete using (auth.uid() = user_id);
+
+-- Extended by 20260819000000_rename_subscription_plans.sql to also let an
+-- organisation account read its own subscription via organisation_id.
 drop policy if exists "Users can view their own subscription" on public.subscriptions;
-create policy "Users can view their own subscription" on public.subscriptions for select to authenticated using (auth.uid() = user_id);
+create policy "Users can view their own subscription" on public.subscriptions for select to authenticated using (auth.uid() = user_id or auth.uid() = organisation_id);
 
 -- Admin analytics are exposed only through this role-checked RPC. Keeping
 -- the aggregation in Postgres avoids granting administrators broad profile,
@@ -337,11 +412,25 @@ insert into storage.buckets (id, name, public, file_size_limit)
 values ('videos', 'videos', false, 5368709120)
 on conflict (id) do update set public = false, file_size_limit = excluded.file_size_limit;
 
+-- Superseded by 20260818000000_plans_and_entitlements.sql, which adds a
+-- min_tier/entitlement check on top of is_published -- reproduced here so
+-- this file matches what's actually live rather than the pre-entitlement
+-- version. The insert/update/delete policies below are unchanged from
+-- what this file originally specified, and (as of
+-- 20260821010000_secure_video_storage_uploads.sql) are now actually live
+-- too -- they used to coexist with leftover dashboard-generated policies
+-- that granted any authenticated user unconditional bucket access, which
+-- have since been dropped.
 drop policy if exists "Mindsettle published media read" on storage.objects;
 create policy "Mindsettle published media read" on storage.objects for select to authenticated using (
   bucket_id = 'videos' and (
-    exists (select 1 from public.videos v where v.is_published and (v.video_url = name or v.thumbnail_url = name))
-    or exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')
+    exists (select 1 from public.user_roles r where r.user_id = auth.uid() and r.role = 'admin')
+    or exists (
+      select 1 from public.videos v
+      where v.is_published
+        and (v.video_url = name or v.thumbnail_url = name)
+        and (v.min_tier = 0 or public.user_has_active_entitlement(v.min_tier))
+    )
   )
 );
 drop policy if exists "Mindsettle admin media insert" on storage.objects;

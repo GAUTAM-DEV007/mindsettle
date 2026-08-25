@@ -92,6 +92,7 @@ export default async function ProgramPage({
         description,
         instructor,
         duration_minutes,
+        duration_seconds,
         thumbnail_url,
         video_url,
         is_premium,
@@ -141,24 +142,12 @@ export default async function ProgramPage({
               requiresUpgrade: true,
             };
 
-          const [
-            thumbnailUrl,
-            previewUrl,
-          ] = await Promise.all([
-            createSignedUrl(
+          const thumbnailUrl =
+            await createSignedUrl(
               supabase,
               video.thumbnail_url,
               3600
-            ),
-
-            videoAccess.allowed
-              ? createSignedUrl(
-                  supabase,
-                  video.video_url,
-                  1800
-                )
-              : Promise.resolve(null),
-          ]);
+            );
 
           return {
             id: video.id,
@@ -171,8 +160,14 @@ export default async function ProgramPage({
               video.instructor,
             durationMinutes:
               video.duration_minutes,
+            durationSeconds:
+              video.duration_seconds,
             thumbnailUrl,
-            previewUrl,
+            previewEndpoint:
+              videoAccess.allowed &&
+              video.video_url
+                ? `/api/media/preview/${video.id}`
+                : null,
             isPremium:
               video.is_premium,
             position:

@@ -3,6 +3,8 @@ import {
   deleteMedia,
 } from "@/lib/media/media-service";
 
+import { archiveMediaToMega } from "@/lib/media/archive-media";
+
 import { getApiRoleContext, roleErrorResponse } from "@/lib/auth/api-role";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -114,9 +116,49 @@ export async function POST(request) {
               : 0,
         });
 
+      /*
+       * Archive a secondary copy to MEGA.
+       *
+       * This must never make an otherwise
+       * successful Supabase upload fail.
+       */
+      let archive = {
+        skipped: true,
+        reason:
+          "Archive was not attempted.",
+      };
+
+      if (media?.id) {
+        try {
+          archive =
+            await archiveMediaToMega({
+              mediaId:
+                media.id,
+
+              storagePath,
+            });
+        } catch (
+          archiveError
+        ) {
+          console.error(
+            `Non-blocking MEGA archive error for media ${media.id}:`,
+            archiveError
+          );
+
+          archive = {
+            success: false,
+
+            error:
+              archiveError?.message ||
+              "MEGA archive failed.",
+          };
+        }
+      }
+
       return Response.json({
         success: true,
         data: media,
+        archive,
       });
     } catch (dbError) {
       /*

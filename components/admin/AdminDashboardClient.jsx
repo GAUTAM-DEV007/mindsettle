@@ -2114,6 +2114,27 @@ function MediaManagementCard({
                 inactiveLabel="Hidden"
               />
 
+              <span
+                className={[
+                  "rounded-full px-3 py-1 text-xs font-semibold",
+                  item.archive_status === "archived"
+                    ? "bg-[#dce8ca] text-[#163d34]"
+                    : item.archive_status === "pending"
+                      ? "bg-[#fff3cd] text-[#6b5a00]"
+                      : item.archive_status === "failed"
+                        ? "bg-[#fde7e7] text-[#8a2e2e]"
+                        : "bg-[#eef1ed] text-[#5a6d66]",
+                ].join(" ")}
+              >
+                {item.archive_status === "archived"
+                  ? "MEGA: Archived"
+                  : item.archive_status === "pending"
+                    ? "MEGA: Pending"
+                    : item.archive_status === "failed"
+                      ? "MEGA: Failed"
+                      : "MEGA: Not archived"}
+              </span>
+
               {item.is_featured && (
                 <SmallBadge>
                   Hero

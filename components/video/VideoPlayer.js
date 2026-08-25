@@ -2277,7 +2277,7 @@ export default function VideoPlayer({
         disablePictureInPicture
         disableRemotePlayback
         playsInline
-        preload="auto"
+        preload="metadata"
         style={{
           filter:
             `brightness(${brightness})`,

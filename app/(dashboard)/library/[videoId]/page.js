@@ -2,6 +2,58 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
+
+function formatDuration(
+  durationSeconds,
+  durationMinutes
+) {
+  const exactSeconds =
+    Number(durationSeconds);
+
+  if (
+    Number.isFinite(
+      exactSeconds
+    ) &&
+    exactSeconds > 0
+  ) {
+    const totalSeconds =
+      Math.round(
+        exactSeconds
+      );
+
+    const minutes =
+      Math.floor(
+        totalSeconds / 60
+      );
+
+    const seconds =
+      String(
+        totalSeconds % 60
+      ).padStart(
+        2,
+        "0"
+      );
+
+    return `${minutes}:${seconds}`;
+  }
+
+  const fallbackMinutes =
+    Number(
+      durationMinutes
+    );
+
+  if (
+    Number.isFinite(
+      fallbackMinutes
+    ) &&
+    fallbackMinutes > 0
+  ) {
+    return `${fallbackMinutes} min`;
+  }
+
+  return null;
+}
+
 import {
   addFavourite,
   removeFavourite,
@@ -441,17 +493,20 @@ export default async function VideoPage({
                     "MindSettle"}
                 </span>
 
-                {video.durationMinutes && (
+                {formatDuration(
+                  video.durationSeconds,
+                  video.durationMinutes
+                ) && (
                   <>
                     <span className="text-[#9aa9a2]">
                       •
                     </span>
 
                     <span>
-                      {
+                      {formatDuration(
+                        video.durationSeconds,
                         video.durationMinutes
-                      }{" "}
-                      min
+                      )}
                     </span>
                   </>
                 )}

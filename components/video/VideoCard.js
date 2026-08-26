@@ -54,11 +54,8 @@ export default function VideoCard({
     previewUrl,
     previewEndpoint,
     category,
-<<<<<<< HEAD
     minTier,
     isAdminViewer,
-=======
->>>>>>> 993f37cf77fafc5ca0dfafb7534c09628bba58ec
   } = video;
 
   const videoRef = useRef(null);
@@ -629,8 +626,7 @@ export default function VideoCard({
 
           {formatDuration(durationSeconds, durationMinutes) && (
             <div className="absolute right-3 top-3 z-20 rounded-full bg-[#12372f]/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
-<<<<<<< HEAD
-              {durationMinutes} min
+              {formatDuration(durationSeconds, durationMinutes)}
             </div>
           )}
 
@@ -643,9 +639,6 @@ export default function VideoCard({
           {isAdminViewer && (
             <div className="absolute left-3 top-3 z-20 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/90 backdrop-blur">
               {minTier > 0 ? "Premium" : "Free"}
-=======
-              {formatDuration(durationSeconds, durationMinutes)}
->>>>>>> 993f37cf77fafc5ca0dfafb7534c09628bba58ec
             </div>
           )}
 

@@ -16,9 +16,7 @@ export default async function BillingPage({ searchParams }) {
 
   const { data: subscription, error } = await supabase
     .from("subscriptions")
-    .select(
-      "plan, status, current_period_end, cancel_at_period_end, updated_at, plans:subscription_plans(name, billing_cycle)"
-    )
+    .select("plan, status, current_period_end, updated_at, plans:subscription_plans(name, billing_cycle)")
     .eq("user_id", user.id)
     .order("updated_at", { ascending: false })
     .limit(1)
@@ -63,13 +61,11 @@ export default async function BillingPage({ searchParams }) {
                 <p className="mt-1 text-xl font-bold text-[#163d34]">{planName}</p>
               </div>
               <span className="rounded-full bg-[#dce8ca] px-3 py-1 text-xs font-bold text-[#163d34]">
-                {subscription.cancel_at_period_end
-                  ? "Cancelling"
-                  : STATUS_LABELS[subscription.status] || subscription.status}
+                {STATUS_LABELS[subscription.status] || subscription.status}
               </span>
             </div>
 
-            {subscription.plans?.billing_cycle && !subscription.cancel_at_period_end && (
+            {subscription.plans?.billing_cycle && (
               <p className="mt-3 text-sm capitalize text-[#5a6d66]">
                 Billed {subscription.plans.billing_cycle}
               </p>
@@ -77,15 +73,13 @@ export default async function BillingPage({ searchParams }) {
 
             {subscription.current_period_end && (
               <p className="mt-1 text-sm text-[#5a6d66]">
-                {subscription.cancel_at_period_end
-                  ? "Your subscription ends and won't renew on"
-                  : "Current period ends"}{" "}
+                Current period ends{" "}
                 {new Date(subscription.current_period_end).toLocaleDateString("en-AU", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
                 })}
-                . {subscription.cancel_at_period_end && "You'll keep full access until then."}
+                .
               </p>
             )}
 
@@ -97,7 +91,7 @@ export default async function BillingPage({ searchParams }) {
                 {isActive ? "Change plan" : "View plans"}
               </Link>
 
-              {isActive && !subscription.cancel_at_period_end && (
+              {isActive && (
                 <form action={cancelMySubscription}>
                   <button
                     type="submit"

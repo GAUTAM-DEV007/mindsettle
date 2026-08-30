@@ -140,9 +140,26 @@ export async function resolveVideoAccess(
   const hasAnyPlan = await hasActiveEntitlement(supabase, 1);
 
   if (hasAnyPlan) {
+<<<<<<< Updated upstream
+=======
     return { allowed: true, requiresLogin: false, requiresUpgrade: false, freeViewsRemaining: null };
   }
 
+  const { recordView = false } = options;
+  const alreadyViewed = await hasWatchHistoryRow(supabase, user.id, video.id);
+
+  if (alreadyViewed) {
+    const used = await countDistinctFreeViews(supabase, user.id);
+>>>>>>> Stashed changes
+    return {
+      allowed: true,
+      requiresLogin: false,
+      requiresUpgrade: false,
+      freeViewsRemaining: Math.max(FREE_VIEW_LIMIT - used, 0),
+    };
+  }
+
+<<<<<<< Updated upstream
   const alreadyViewed = await hasWatchHistoryRow(supabase, user.id, video.id);
 
   if (alreadyViewed) {
@@ -161,6 +178,14 @@ export async function resolveVideoAccess(
     return { allowed: false, requiresLogin: false, requiresUpgrade: true, freeViewsRemaining: 0 };
   }
 
+=======
+  const used = await countDistinctFreeViews(supabase, user.id);
+
+  if (used >= FREE_VIEW_LIMIT) {
+    return { allowed: false, requiresLogin: false, requiresUpgrade: true, freeViewsRemaining: 0 };
+  }
+
+>>>>>>> Stashed changes
   if (recordView) {
     await recordFreeView(supabase, user.id, video.id);
   }
@@ -199,8 +224,12 @@ export async function getMembershipSummary(supabase, user, options = {}) {
     return {
       isPaid: false,
       plan: null,
+<<<<<<< Updated upstream
+      freeViewsRemaining: 0,
+=======
       freeViewsRemaining: Math.max(FREE_VIEW_LIMIT - used, 0),
       hasAnyPlan: false,
+>>>>>>> Stashed changes
     };
   }
 
@@ -215,11 +244,19 @@ export async function getMembershipSummary(supabase, user, options = {}) {
     .in("status", ["active", "trialing"])
     .maybeSingle();
 
+  const used = await countDistinctFreeViews(supabase, user.id);
+
   return {
+<<<<<<< Updated upstream
+    isPaid: false,
+    plan: null,
+    freeViewsRemaining: Math.max(FREE_VIEW_LIMIT - used, 0),
+=======
     isPaid: true,
     plan: subscription?.plans ?? null,
     freeViewsRemaining: null,
     hasAnyPlan: true,
+>>>>>>> Stashed changes
   };
 }
 

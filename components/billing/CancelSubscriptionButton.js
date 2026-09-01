@@ -9,7 +9,7 @@ export default function CancelSubscriptionButton() {
       type="submit"
       disabled={pending}
       onClick={(event) => {
-        if (!window.confirm("Cancel your subscription now? Paid access, including any organisation member access, will end immediately.")) {
+        if (!window.confirm("Stop this subscription from renewing? Paid access, including organisation member access, will continue until the current billing period ends.")) {
           event.preventDefault();
         }
       }}

@@ -52,6 +52,13 @@ export async function openBillingPortal() {
 // regular session client can only read the row to confirm ownership; the
 // actual cancellation (Stripe + DB update) runs through the service role,
 // same as the admin cancel action.
+//
+// Cancels at the end of the current billing period rather than
+// immediately, so the subscriber keeps access through what they already
+// paid for. `status` is deliberately left as-is here -- it stays
+// active/trialing (and access stays granted) until Stripe actually ends
+// the subscription at period end, at which point the existing webhook
+// handler transitions status to "canceled" on its own.
 export async function cancelMySubscription() {
   const supabase = await createClient();
 
@@ -66,16 +73,18 @@ export async function cancelMySubscription() {
 
   const { data: subscription, error: subscriptionError } = await supabase
     .from("subscriptions")
-    .select("id, stripe_subscription_id, status")
+    .select("id, stripe_subscription_id, status, cancel_at_period_end")
     .eq("user_id", user.id)
     .in("status", ["active", "trialing"])
     .order("updated_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  if (subscriptionError) redirectWithError("Could not load your subscription. Please try again.");
+  if (subscriptionError) {
+    redirectWithError("Could not load your subscription. Please try again.");
+  }
 
-  if (!subscription) {
+  if (!subscription || subscription.cancel_at_period_end) {
     redirect("/account/billing");
   }
 
@@ -88,16 +97,18 @@ export async function cancelMySubscription() {
   if (subscription.stripe_subscription_id) {
     try {
       const stripe = getStripeClient();
-      await stripe.subscriptions.cancel(subscription.stripe_subscription_id);
+      await stripe.subscriptions.update(subscription.stripe_subscription_id, {
+        cancel_at_period_end: true,
+      });
     } catch (err) {
-      console.error("Failed to cancel subscription in Stripe:", err);
+      console.error("Failed to schedule cancellation in Stripe:", err);
       redirectWithError("Could not cancel your subscription. Please try again or contact support.");
     }
   }
 
   const { error } = await adminSupabase
     .from("subscriptions")
-    .update({ status: "canceled" })
+    .update({ cancel_at_period_end: true })
     .eq("id", subscription.id);
 
   if (error) {

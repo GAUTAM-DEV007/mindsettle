@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { cancelMySubscription, openBillingPortal } from "./actions";
-import CancelSubscriptionButton from "@/components/billing/CancelSubscriptionButton";
+import { cancelMySubscription } from "./actions";
 
 const STATUS_LABELS = { trialing: "Trial", active: "Active", past_due: "Payment due", canceled: "Cancelled", incomplete: "Incomplete" };
 
@@ -17,9 +16,7 @@ export default async function BillingPage({ searchParams }) {
 
   const { data: subscription, error } = await supabase
     .from("subscriptions")
-    .select(
-      "plan, status, seat_quantity, stripe_customer_id, current_period_end, cancel_at_period_end, updated_at, plans:subscription_plans(name, type, billing_cycle)"
-    )
+    .select("plan, status, current_period_end, updated_at, plans:subscription_plans(name, billing_cycle)")
     .eq("user_id", user.id)
     .order("updated_at", { ascending: false })
     .limit(1)
@@ -39,13 +36,13 @@ export default async function BillingPage({ searchParams }) {
 
       {checkout === "success" && (
         <div className="max-w-xl rounded-xl bg-[#dce8ca]/60 px-4 py-3 text-sm text-[#163d34]">
-          Checkout returned successfully. Your plan will appear below once payment confirmation has been received.
+          Subscription confirmed. Welcome to MindSettle Premium.
         </div>
       )}
 
       {checkout === "trial-started" && (
         <div className="max-w-xl rounded-xl bg-[#dce8ca]/60 px-4 py-3 text-sm text-[#163d34]">
-          Trial checkout returned successfully. Access starts once confirmation has been received; check your plan status below.
+          Your free trial has started. Enjoy full access to MindSettle.
         </div>
       )}
 
@@ -64,35 +61,25 @@ export default async function BillingPage({ searchParams }) {
                 <p className="mt-1 text-xl font-bold text-[#163d34]">{planName}</p>
               </div>
               <span className="rounded-full bg-[#dce8ca] px-3 py-1 text-xs font-bold text-[#163d34]">
-                {subscription.cancel_at_period_end
-                  ? "Cancelling"
-                  : STATUS_LABELS[subscription.status] || subscription.status}
+                {STATUS_LABELS[subscription.status] || subscription.status}
               </span>
             </div>
 
-            {subscription.plans?.billing_cycle && !subscription.cancel_at_period_end && (
+            {subscription.plans?.billing_cycle && (
               <p className="mt-3 text-sm capitalize text-[#5a6d66]">
                 Billed {subscription.plans.billing_cycle}
               </p>
             )}
 
-            {subscription.plans?.type === "organisation" && (
-              <p className="mt-1 text-sm text-[#5a6d66]">
-                {subscription.seat_quantity} purchased member seats. The organisation-admin account is included.
-              </p>
-            )}
-
             {subscription.current_period_end && (
               <p className="mt-1 text-sm text-[#5a6d66]">
-                {subscription.cancel_at_period_end
-                  ? "Your subscription ends and won't renew on"
-                  : "Current period ends"}{" "}
+                Current period ends{" "}
                 {new Date(subscription.current_period_end).toLocaleDateString("en-AU", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
                 })}
-                . {subscription.cancel_at_period_end && "You'll keep full access until then."}
+                .
               </p>
             )}
 
@@ -101,28 +88,20 @@ export default async function BillingPage({ searchParams }) {
                 href="/subscription"
                 className="inline-flex rounded-full border border-[#163d34] px-5 py-2.5 text-sm font-semibold text-[#163d34] transition hover:bg-[#163d34] hover:text-white"
               >
-                View plans
+                {isActive ? "Change plan" : "View plans"}
               </Link>
 
-              {subscription.stripe_customer_id && (
-                <form action={openBillingPortal}>
-                  <button type="submit" className="inline-flex rounded-full bg-[#163d34] px-5 py-2.5 text-sm font-semibold text-white">
-                    Payment details and invoices
+              {isActive && (
+                <form action={cancelMySubscription}>
+                  <button
+                    type="submit"
+                    className="inline-flex rounded-full border border-red-200 px-5 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                  >
+                    Cancel subscription
                   </button>
                 </form>
               )}
-
-              {isActive && !subscription.cancel_at_period_end && (
-                <form action={cancelMySubscription}>
-                  <CancelSubscriptionButton />
-                </form>
-              )}
             </div>
-            {isActive && !subscription.cancel_at_period_end && (
-              <p className="mt-3 text-xs leading-5 text-[#5a6d66]">
-                Cancelling stops renewal at the end of the current paid period. For plan or organisation seat changes, contact billing support.
-              </p>
-            )}
           </>
         ) : (
           <>

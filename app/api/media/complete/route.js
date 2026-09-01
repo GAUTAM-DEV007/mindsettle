@@ -155,9 +155,43 @@ export async function POST(request) {
         }
       }
 
+      let responseMedia = media;
+
+      if (media?.id) {
+        try {
+          const {
+            data: archiveState,
+            error: archiveStateError,
+          } = await auth.supabase
+            .from("videos")
+            .select(
+              "archive_provider, archive_status, archive_path, archive_error, archived_at"
+            )
+            .eq("id", media.id)
+            .single();
+
+          if (archiveStateError) {
+            console.error(
+              `Could not refresh archive state for media ${media.id}:`,
+              archiveStateError
+            );
+          } else if (archiveState) {
+            responseMedia = {
+              ...media,
+              ...archiveState,
+            };
+          }
+        } catch (archiveStateError) {
+          console.error(
+            `Could not refresh archive state for media ${media.id}:`,
+            archiveStateError
+          );
+        }
+      }
+
       return Response.json({
         success: true,
-        data: media,
+        data: responseMedia,
         archive,
       });
     } catch (dbError) {

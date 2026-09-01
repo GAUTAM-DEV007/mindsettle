@@ -466,7 +466,7 @@ export default async function AdminDashboardPage({
         adminSupabase
           .from("subscriptions")
           .select(
-            "id, user_id, status, plan, plan_id, stripe_subscription_id, current_period_end, created_at"
+            "id, user_id, status, plan, plan_id, seat_quantity, stripe_subscription_id, current_period_end, created_at"
           )
           .order("created_at", { ascending: false }),
         adminSupabase
@@ -544,12 +544,12 @@ export default async function AdminDashboardPage({
         .map((org) => {
           const subscription = subscriptionByUserId.get(org.id) ?? null;
           const plan = subscription?.plan_id ? planById.get(subscription.plan_id) : null;
-          const seatLimit = plan?.seat_limit ?? null;
+          const seatLimit = subscription?.seat_quantity ?? plan?.seat_limit ?? null;
           const seatsUsed = seatsUsedByOrgId.get(org.id) ?? 0;
 
           return {
             id: org.id,
-            email: org.email,
+            email: org.user_metadata?.organisation_name || org.email,
             planName: plan?.name ?? subscription?.plan ?? "No plan",
             seatLimit,
             seatsUsed,

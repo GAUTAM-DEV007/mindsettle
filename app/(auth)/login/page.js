@@ -2,13 +2,22 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
+import { getSafeRedirectPath } from "@/lib/auth/redirects";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-dvh bg-[#172f37]" />}>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
+
+function LoginPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [supabase] = useState(() => createClient());
   const backgroundVideoRef = useRef(null);
 
@@ -17,9 +26,21 @@ export default function LoginPage() {
     password: "",
   });
   const [error, setError] = useState(null);
+  const [authErrorDismissed, setAuthErrorDismissed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [backgroundPaused, setBackgroundPaused] = useState(false);
+
+  const authError = searchParams.get("error");
+  const callbackError =
+    authError === "auth-code-error"
+      ? "Social sign-in could not be completed. Please try again."
+      : authError === "oauth-cancelled"
+        ? "Social sign-in was cancelled. You can try again whenever you are ready."
+      : authError === "role-not-found"
+        ? "Your account was created, but access is still being prepared. Please try again shortly."
+        : null;
+  const displayedError = error || (authErrorDismissed ? null : callbackError);
 
   async function toggleBackgroundMotion() {
     const video = backgroundVideoRef.current;
@@ -43,6 +64,7 @@ export default function LoginPage() {
     const { name, value } = event.target;
 
     if (error) setError(null);
+    setAuthErrorDismissed(true);
 
     setFormData((current) => ({
       ...current,
@@ -55,28 +77,24 @@ export default function LoginPage() {
     setError(null);
     setIsSubmitting(true);
 
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email: formData.email.trim(),
-      password: formData.password,
-    });
-
-    setIsSubmitting(false);
-
-    if (authError) {
-      setError("The email or password is incorrect. Please try again.");
-      return;
+    try {
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: formData.email.trim(),
+        password: formData.password,
+      });
+      if (authError) {
+        setError(authError.code === "email_not_confirmed"
+          ? "Please confirm your email using the link in your inbox before signing in."
+          : "Sign-in failed. Check your email and password, or try again shortly.");
+        return;
+      }
+      router.replace(getSafeRedirectPath(searchParams.get("redirectTo")));
+      router.refresh();
+    } catch {
+      setError("We could not reach the sign-in service. Please check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const requestedPath = new URLSearchParams(window.location.search).get(
-      "redirectTo"
-    );
-    const redirectTo =
-      requestedPath?.startsWith("/") && !requestedPath.startsWith("//")
-        ? requestedPath
-        : "/post-login";
-
-    router.push(redirectTo);
-    router.refresh();
   };
 
   return (
@@ -220,12 +238,12 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {error && (
+              {displayedError && (
                 <p
                   role="alert"
                   className="rounded-2xl border border-[#efccc5] bg-[#fff1ed] px-4 py-3 text-sm leading-6 text-[#8a3d32]"
                 >
-                  {error}
+                  {displayedError}
                 </p>
               )}
 
@@ -245,16 +263,6 @@ export default function LoginPage() {
                 )}
               </button>
             </form>
-
-            <div className="my-6 flex items-center gap-4">
-              <div className="h-px flex-1 bg-[#dfe5df]" />
-              <span className="text-[.68rem] font-bold uppercase tracking-[.16em] text-[#86918b]">
-                Or continue with
-              </span>
-              <div className="h-px flex-1 bg-[#dfe5df]" />
-            </div>
-
-            <SocialAuthButtons />
 
             <div className="my-6 h-px bg-[#dfe5df]" />
 

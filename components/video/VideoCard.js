@@ -480,6 +480,7 @@ export default function VideoCard({
     >
       <Link
         href={`/library/${id}`}
+        prefetch={false}
         className="block rounded-[18px] outline-none focus-visible:ring-2 focus-visible:ring-[#9bb98a]"
       >
         {/* MEDIA */}

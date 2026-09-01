@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/organisation-dashboard/members", label: "Members" },
   { href: "/organisation-dashboard/programs", label: "Programs" },
   { href: "/organisation-dashboard/reports", label: "Reports" },
+  { href: "/dashboard", label: "My wellbeing" },
   { href: "/subscription", label: "Subscription" },
   { href: "/account", label: "Settings" },
 ];

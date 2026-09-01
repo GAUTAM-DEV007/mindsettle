@@ -1,6 +1,6 @@
 import {
   createMediaRecord,
-  deleteMedia,
+  deleteUnreferencedMedia,
 } from "@/lib/media/media-service";
 
 import { archiveMediaToMega } from "@/lib/media/archive-media";
@@ -167,7 +167,7 @@ export async function POST(request) {
        * be created.
        */
       try {
-        await deleteMedia({
+        await deleteUnreferencedMedia({
           path: storagePath,
         });
       } catch (
@@ -185,7 +185,7 @@ export async function POST(request) {
        */
       if (thumbnailPath) {
         try {
-          await deleteMedia({
+          await deleteUnreferencedMedia({
             path:
               thumbnailPath,
           });

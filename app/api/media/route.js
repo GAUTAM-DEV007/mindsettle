@@ -1,6 +1,6 @@
 import {
   createMediaRecord,
-  deleteMedia,
+  deleteUnreferencedMedia,
   getMedia,
   uploadMedia,
 } from "@/lib/media/media-service";
@@ -125,7 +125,7 @@ export async function POST(request) {
 
     if (uploadedPath) {
       try {
-        await deleteMedia({
+        await deleteUnreferencedMedia({
           path: uploadedPath,
         });
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 
 const BOX_PHASES = [
   {
@@ -341,51 +341,55 @@ export default function BreathingExercise() {
     };
   }
 
+  const advanceBreathingTimer = useEffectEvent(() => {
+    if (remaining > 1) {
+      setRemaining((value) => value - 1);
+      return;
+    }
+
+    const isLastPhase = phaseIndex === BOX_PHASES.length - 1;
+
+    if (isLastPhase && round >= TOTAL_ROUNDS) {
+      setComplete(true);
+      setActive(false);
+      setPhaseIndex(-1);
+      setRemaining(0);
+      playGuidanceTone(COMPLETION_TONE, COMPLETION_TONE.seconds);
+      return;
+    }
+
+    const nextPhaseIndex = isLastPhase ? 0 : phaseIndex + 1;
+    if (isLastPhase) setRound((value) => value + 1);
+    setPhaseIndex(nextPhaseIndex);
+    setRemaining(BOX_PHASES[nextPhaseIndex].seconds);
+    playPhaseSound(
+      BOX_PHASES[nextPhaseIndex],
+      BOX_PHASES[nextPhaseIndex].seconds
+    );
+  });
+
   useEffect(() => {
     if (!active || !phase) return;
 
-    const timer = window.setTimeout(() => {
-      if (remaining > 1) {
-        setRemaining((value) => value - 1);
-        return;
-      }
-
-      const isLastPhase = phaseIndex === BOX_PHASES.length - 1;
-
-      if (isLastPhase && round >= TOTAL_ROUNDS) {
-        setComplete(true);
-        setActive(false);
-        setPhaseIndex(-1);
-        setRemaining(0);
-        playGuidanceTone(COMPLETION_TONE, COMPLETION_TONE.seconds);
-        return;
-      }
-
-      const nextPhaseIndex = isLastPhase ? 0 : phaseIndex + 1;
-      if (isLastPhase) setRound((value) => value + 1);
-      setPhaseIndex(nextPhaseIndex);
-      setRemaining(BOX_PHASES[nextPhaseIndex].seconds);
-      playPhaseSound(
-        BOX_PHASES[nextPhaseIndex],
-        BOX_PHASES[nextPhaseIndex].seconds
-      );
-    }, 1000);
+    const timer = window.setTimeout(advanceBreathingTimer, 1000);
 
     return () => window.clearTimeout(timer);
   }, [active, phase, phaseIndex, remaining, round, soundEnabled]);
 
+  const cleanUpAudio = useEffectEvent(() => {
+    stopPhaseSound();
+    if (audioGraphRef.current) {
+      Object.values(audioGraphRef.current).forEach((node) => {
+        try {
+          node.disconnect();
+        } catch {}
+      });
+    }
+    audioContextRef.current?.close().catch(() => {});
+  });
+
   useEffect(() => {
-    return () => {
-      stopPhaseSound();
-      if (audioGraphRef.current) {
-        Object.values(audioGraphRef.current).forEach((node) => {
-          try {
-            node.disconnect();
-          } catch {}
-        });
-      }
-      audioContextRef.current?.close().catch(() => {});
-    };
+    return cleanUpAudio;
   }, []);
 
   function startOrPause() {

@@ -96,7 +96,8 @@ async function createSignedStorageUrl(
 
 async function prepareRecommendation(
   supabase,
-  recommendation
+  recommendation,
+  allowPlaylistPlayback
 ) {
   const [
     thumbnailUrl,
@@ -108,11 +109,13 @@ async function prepareRecommendation(
       "recommendation thumbnail"
     ),
 
-    createSignedStorageUrl(
-      supabase,
-      recommendation.video_url,
-      "recommendation video"
-    ),
+    allowPlaylistPlayback
+      ? createSignedStorageUrl(
+          supabase,
+          recommendation.video_url,
+          "recommendation video"
+        )
+      : Promise.resolve(null),
   ]);
 
   return {
@@ -199,6 +202,13 @@ export default async function VideoPage({
         recordView: true,
       });
 
+      // Free accounts must open each recommendation separately so each
+      // distinct video is counted. Only unlimited accounts receive a
+      // pre-signed autoplay playlist.
+      const allowPlaylistPlayback =
+        access.allowed &&
+        (access.isAdmin || access.freeViewsRemaining === null);
+
       const [
         signedVideoUrl,
         signedThumbnailUrl,
@@ -242,6 +252,7 @@ export default async function VideoPage({
         createdAt:
           data.created_at,
         locked: !access.allowed,
+        accessUnavailable: access.unavailable === true,
         requiresLogin: access.requiresLogin,
         requiresUpgrade: access.requiresUpgrade,
         freeViewsRemaining: access.freeViewsRemaining,
@@ -304,7 +315,8 @@ export default async function VideoPage({
               ) =>
                 prepareRecommendation(
                   supabase,
-                  recommendation
+                  recommendation,
+                  allowPlaylistPlayback
                 )
             )
           );
@@ -360,7 +372,8 @@ export default async function VideoPage({
                 ) =>
                   prepareRecommendation(
                     supabase,
-                    recommendation
+                    recommendation,
+                    allowPlaylistPlayback
                   )
               )
             );
@@ -448,20 +461,26 @@ export default async function VideoPage({
         ) : video.locked ? (
           <div className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-[28px] bg-[#12372f] px-6 text-center shadow-[0_18px_44px_rgba(18,55,47,0.16)]">
             <p className="text-sm text-white/75">
-              {video.requiresUpgrade
+              {video.accessUnavailable
+                ? "Playback access could not be verified. Please try again shortly."
+                : video.requiresUpgrade
                 ? "This session needs a MindSettle subscription."
                 : "Sign in to watch this session."}
             </p>
 
             <Link
               href={
-                video.requiresUpgrade
+                video.accessUnavailable
+                  ? "/library"
+                  : video.requiresUpgrade
                   ? "/subscription"
                   : "/login"
               }
               className="rounded-full bg-[#d7f2ad] px-6 py-3 text-sm font-semibold text-[#12372f] shadow-[0_10px_28px_rgba(0,0,0,0.18)] transition-all hover:-translate-y-0.5 hover:bg-white"
             >
-              {video.requiresUpgrade
+              {video.accessUnavailable
+                ? "Back to library"
+                : video.requiresUpgrade
                 ? "View plans"
                 : "Log in"}
             </Link>

@@ -25,7 +25,7 @@ export default function SeatManagement({ organisationSeats, configured }) {
           <tr>
             <th className="px-5 py-3">Organisation</th>
             <th className="px-5 py-3">Plan</th>
-            <th className="px-5 py-3">Seat limit</th>
+            <th className="px-5 py-3">Seats purchased</th>
             <th className="px-5 py-3">Seats used</th>
             <th className="px-5 py-3">Seats remaining</th>
             <th className="px-5 py-3">Status</th>

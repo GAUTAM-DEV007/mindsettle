@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getStripeClient } from "@/lib/stripe/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminClient, isAdminApiConfigured } from "@/lib/supabase/admin";
+import { getInvoiceSubscriptionId, getPurchasedSeatQuantity, getStripeObjectId } from "@/lib/billing/stripe-shapes";
 
 // Receives subscription/invoice lifecycle events from Stripe and syncs
 // them into the Supabase `subscriptions` and `invoices` tables using the
@@ -23,7 +24,7 @@ export async function POST(request) {
   // configured. Returning success here would silently discard real
   // subscription changes; letting getStripeClient() throw instead would
   // produce an opaque 500 rather than this explicit response.
-  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET || !isAdminApiConfigured()) {
     return NextResponse.json(
       { error: "Subscription webhooks are not configured." },
       { status: 503 }
@@ -44,21 +45,26 @@ export async function POST(request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  const supabase = createAdminClient();
-
   try {
+    const supabase = createAdminClient();
     switch (event.type) {
       case "customer.subscription.created":
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
-        await syncSubscription(supabase, stripe, event.data.object);
+        // Webhook deliveries can be delayed or reordered. Read Stripe's
+        // current subscription rather than replaying stale active status.
+        await syncSubscription(
+          supabase,
+          stripe,
+          await stripe.subscriptions.retrieve(event.data.object.id)
+        );
         break;
 
       case "invoice.created":
       case "invoice.finalized":
       case "invoice.paid":
       case "invoice.payment_failed":
-        await syncInvoice(supabase, stripe, event.data.object);
+        await syncInvoice(supabase, stripe, await stripe.invoices.retrieve(event.data.object.id));
         break;
 
       default:
@@ -78,7 +84,9 @@ async function resolveUserId(stripe, { customerId, metadata }) {
     return metadata.user_id;
   }
 
-  const customer = await stripe.customers.retrieve(customerId);
+  const id = getStripeObjectId(customerId);
+  if (!id) return null;
+  const customer = await stripe.customers.retrieve(id);
   return customer?.metadata?.user_id ?? null;
 }
 
@@ -107,7 +115,8 @@ async function syncSubscription(supabase, stripe, subscription) {
   }
 
   const status = SUBSCRIPTION_STATUS_MAP[subscription.status] ?? "incomplete";
-  const priceId = subscription.items?.data?.[0]?.price?.id ?? null;
+  const subscriptionItem = subscription.items?.data?.[0] ?? null;
+  const priceId = subscriptionItem?.price?.id ?? null;
 
   // Stripe moved current_period_end from the subscription object onto each
   // subscription item (a subscription can have items with different
@@ -130,15 +139,32 @@ async function syncSubscription(supabase, stripe, subscription) {
   // Management once the plan is created in Stripe.
   let planId = null;
   let planName = null;
+  let resolvedPlan = null;
+  const metadataPlanId = subscription.metadata?.plan_id ?? null;
 
-  if (priceId) {
+  if (metadataPlanId) {
     const { data: planRow } = await supabase
       .from("subscription_plans")
-      .select("id, name")
+      .select("id, name, type, slug, seat_limit")
+      .eq("id", metadataPlanId)
+      .maybeSingle();
+
+    if (planRow) {
+      resolvedPlan = planRow;
+      planId = planRow.id;
+      planName = planRow.name;
+    }
+  }
+
+  if (!planId && priceId) {
+    const { data: planRow } = await supabase
+      .from("subscription_plans")
+      .select("id, name, type, slug, seat_limit")
       .eq("stripe_price_id", priceId)
       .maybeSingle();
 
     if (planRow) {
+      resolvedPlan = planRow;
       planId = planRow.id;
       planName = planRow.name;
     } else {
@@ -148,13 +174,22 @@ async function syncSubscription(supabase, stripe, subscription) {
     }
   }
 
+  const { data: roleRecord } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .maybeSingle();
+  const organisationId = roleRecord?.role === "organisation" ? userId : null;
+
   const { error } = await supabase.from("subscriptions").upsert(
     {
       user_id: userId,
       status,
       plan: planName ?? subscription.items?.data?.[0]?.price?.nickname ?? null,
       plan_id: planId,
-      stripe_customer_id: subscription.customer,
+      organisation_id: organisationId,
+      seat_quantity: getPurchasedSeatQuantity(resolvedPlan, subscriptionItem),
+      stripe_customer_id: getStripeObjectId(subscription.customer),
       stripe_subscription_id: subscription.id,
       current_period_end: periodEnd,
     },
@@ -181,11 +216,12 @@ async function syncInvoice(supabase, stripe, invoice) {
 
   let subscriptionRowId = null;
 
-  if (invoice.subscription) {
+  const invoiceSubscriptionId = getInvoiceSubscriptionId(invoice);
+  if (invoiceSubscriptionId) {
     const { data: subRow } = await supabase
       .from("subscriptions")
       .select("id")
-      .eq("stripe_subscription_id", invoice.subscription)
+      .eq("stripe_subscription_id", invoiceSubscriptionId)
       .single();
 
     subscriptionRowId = subRow?.id ?? null;
@@ -196,7 +232,7 @@ async function syncInvoice(supabase, stripe, invoice) {
       user_id: userId,
       subscription_id: subscriptionRowId,
       stripe_invoice_id: invoice.id,
-      stripe_customer_id: invoice.customer,
+      stripe_customer_id: getStripeObjectId(invoice.customer),
       amount_due: invoice.amount_due,
       amount_paid: invoice.amount_paid,
       currency: invoice.currency,

@@ -31,6 +31,10 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
+  if (user.app_metadata?.must_change_password === true) {
+    redirect("/set-password");
+  }
+
   /* ======================================================
      SOCIAL LINKS
 

@@ -2,6 +2,12 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { startCheckout, continueWithFreeAccess, startFreeTrial } from "./actions";
+import OrganisationSeatCheckout from "@/components/billing/OrganisationSeatCheckout";
+import ServiceUnavailable from "@/components/ui/ServiceUnavailable";
+import {
+  DEFAULT_ORGANISATION_SEATS,
+  clampOrganisationSeats,
+} from "@/lib/billing/organisation-pricing";
 
 // Short, honest "what you get" bullets per plan -- keyed by slug so both
 // PlanCard and FreeCard can share the same list without duplicating copy.
@@ -60,7 +66,7 @@ const COPY = {
 };
 
 export default async function PlansPage({ searchParams }) {
-  const { error } = searchParams ? await searchParams : {};
+  const { error, checkout, seats } = searchParams ? await searchParams : {};
 
   const supabase = await createClient();
 
@@ -83,24 +89,31 @@ export default async function PlansPage({ searchParams }) {
   // Only the audience's own plan type is fetched -- this is a first-run,
   // paywall-style decision screen, not a general pricing directory, so an
   // individual account never sees organisation seat tiers and vice versa.
-  const { data: plans } = await supabase
+  const { data: plans, error: plansError } = await supabase
     .from("subscription_plans")
-    .select("id, slug, name, description, price_cents, billing_cycle, seat_limit, tier, is_active")
+    .select("id, slug, name, description, price_cents, currency, billing_cycle, seat_limit, tier, is_active")
     .eq("is_active", true)
     .eq("type", isOrganisation ? "organisation" : "individual")
     .order("sort_order", { ascending: true });
 
-  const { data: subscription } = await supabase
+  const { data: subscription, error: subscriptionError } = await supabase
     .from("subscriptions")
-    .select("status, plan_id")
+    .select("status, plan_id, seat_quantity")
     .eq("user_id", user.id)
     .in("status", ["active", "trialing"])
+    .order("updated_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
 
   const copy = isOrganisation ? COPY.organisation : COPY.individual;
+  if (plansError || subscriptionError) return <ServiceUnavailable subject="subscription options" />;
+  const initialOrganisationSeats = clampOrganisationSeats(
+    seats ?? user.user_metadata?.requested_seats ?? DEFAULT_ORGANISATION_SEATS
+  );
+  const organisationPlan = (plans || []).find((plan) => plan.slug === "organisation-flex");
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-6xl">
       <div className="text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78906f]">
           {copy.eyebrow}
@@ -117,7 +130,13 @@ export default async function PlansPage({ searchParams }) {
         </div>
       )}
 
-      {subscription && (
+      {checkout === "cancelled" && !error && (
+        <div className="mx-auto mt-8 max-w-xl rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-center text-sm font-medium text-amber-800">
+          Checkout was cancelled. Your seat selection is still here when you&apos;re ready.
+        </div>
+      )}
+
+      {subscription && !isOrganisation && (
         <div className="mx-auto mt-8 max-w-xl rounded-xl border border-[#9bb98a] bg-[#dce8ca]/60 px-5 py-4 text-center text-sm font-semibold text-[#163d34]">
           {subscription.status === "trialing"
             ? "You're currently on a free trial."
@@ -129,17 +148,34 @@ export default async function PlansPage({ searchParams }) {
       )}
 
       <section className="mt-12">
-        <div className="mx-auto grid max-w-4xl gap-5 sm:grid-cols-3">
-          {!isOrganisation && <FreeCard hasSubscription={Boolean(subscription)} />}
+        {isOrganisation ? (
+          organisationPlan ? (
+            <OrganisationSeatCheckout
+              plan={organisationPlan}
+              initialSeats={initialOrganisationSeats}
+              subscription={subscription}
+            />
+          ) : (
+            <div className="mx-auto max-w-xl rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center">
+              <p className="font-semibold text-amber-900">Organisation seat pricing is not configured yet.</p>
+              <p className="mt-2 text-sm leading-6 text-amber-800">
+                Ask a MindSettle administrator to enable the flexible organisation plan.
+              </p>
+            </div>
+          )
+        ) : (
+          <div className="mx-auto grid max-w-4xl gap-5 sm:grid-cols-3">
+            <FreeCard hasSubscription={Boolean(subscription)} />
 
-          {(plans || []).length === 0 && (
-            <p className="text-center text-sm text-[#6c8178]">Plans aren&apos;t available yet.</p>
-          )}
+            {(plans || []).length === 0 && (
+              <p className="text-center text-sm text-[#6c8178]">Plans aren&apos;t available yet.</p>
+            )}
 
-          {(plans || []).map((plan) => (
-            <PlanCard key={plan.id} plan={plan} isCurrent={subscription?.plan_id === plan.id} />
-          ))}
-        </div>
+            {(plans || []).map((plan) => (
+              <PlanCard key={plan.id} plan={plan} isCurrent={subscription?.plan_id === plan.id} />
+            ))}
+          </div>
+        )}
 
         {!isOrganisation && !subscription && (
           <div className="mt-8 text-center">

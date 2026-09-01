@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function AuthForm({ mode }) {
-  const isOrganisation = mode === "organisation-signup";
   const router = useRouter();
+  const isOrganisation = mode === "organisation-signup";
   const [supabase] = useState(() => createClient());
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,17 +20,22 @@ export default function AuthForm({ mode }) {
     setError(null);
     setNotice(null);
     setIsSubmitting(true);
-    const callbackUrl = `${window.location.origin}/auth/callback?redirectTo=/post-login`;
-    const { data, error: authError } = await supabase.auth.signUp({
-      email: email.trim().toLowerCase(),
-      password,
-      options: { emailRedirectTo: callbackUrl, data: { full_name: fullName.trim(), ...(isOrganisation ? { requested_role: "organisation" } : {}) } },
-    });
-    setIsSubmitting(false);
-    if (authError) { setError(authError.message || "We could not create your account. Please try again."); return; }
-    if (!data.session) { setNotice("Check your email to confirm your account, then return here to sign in."); return; }
-    router.push("/post-login");
-    router.refresh();
+    try {
+      const callbackUrl = `${window.location.origin}/auth/callback?redirectTo=/post-login`;
+      const { data, error: authError } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password,
+        options: { emailRedirectTo: callbackUrl, data: { full_name: fullName.trim(), ...(isOrganisation ? { requested_role: "organisation" } : {}) } },
+      });
+      if (authError) { setError(authError.message || "We could not create your account. Please try again."); return; }
+      if (!data.session) { setNotice("Check your email to confirm your account, then return here to sign in."); return; }
+      router.replace("/post-login");
+      router.refresh();
+    } catch {
+      setError("We could not reach the sign-up service. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (notice) return <div className="w-full max-w-md rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center"><p className="font-semibold text-emerald-900">Account created</p><p className="mt-2 text-sm leading-6 text-emerald-800">{notice}</p></div>;

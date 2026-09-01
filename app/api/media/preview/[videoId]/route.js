@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { resolveVideoAccess } from "@/lib/access/entitlement";
 
 const PREVIEW_URL_TTL_SECONDS = 300;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function GET(
   request,
@@ -12,11 +13,11 @@ export async function GET(
       videoId,
     } = await params;
 
-    if (!videoId) {
+    if (!UUID_RE.test(videoId || "")) {
       return Response.json(
         {
           success: false,
-          error: "Video ID is required.",
+          error: "A valid video ID is required.",
         },
         {
           status: 400,
@@ -42,6 +43,19 @@ export async function GET(
         },
         {
           status: 401,
+        }
+      );
+    }
+
+    if (user.app_metadata?.must_change_password === true) {
+      return Response.json(
+        {
+          success: false,
+          requiresPasswordChange: true,
+          error: "Choose a private password before playing media.",
+        },
+        {
+          status: 403,
         }
       );
     }
@@ -89,7 +103,10 @@ export async function GET(
         user,
         video,
         {
+          // Browsing must not consume free views. Only previously claimed
+          // free videos (or entitled paid videos) may supply a hover preview.
           recordView: false,
+          allowUnclaimedFree: false,
         }
       );
 
@@ -160,7 +177,7 @@ export async function GET(
         signedData.signedUrl,
       expiresIn:
         PREVIEW_URL_TTL_SECONDS,
-    });
+    }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     console.error(
       "GET media preview error:",

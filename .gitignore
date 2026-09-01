@@ -13,6 +13,9 @@
 # testing
 /coverage
 
+# Local database recovery copies can contain private project metadata.
+/.local-backups/
+
 # next.js
 /.next/
 /out/

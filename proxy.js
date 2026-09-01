@@ -10,6 +10,7 @@ const PROTECTED_PATHS = [
   "/account",
   "/favourites",
   "/subscription",
+  "/set-password",
 ];
 const ADMIN_PATHS = ["/admin"];
 const ORGANISATION_PATHS = ["/organisation-dashboard"];
@@ -70,6 +71,30 @@ export default async function proxy(request) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
+  const isPasswordChangeRoute = matchesPath(pathname, "/set-password");
+
+  // The auth refresh may have rotated cookies. Redirect responses must carry
+  // those cookies too, otherwise the browser keeps the expired session.
+  function redirectWithSession(destination) {
+    const response = NextResponse.redirect(destination);
+    for (const cookie of supabaseResponse.cookies.getAll()) {
+      response.cookies.set(cookie);
+    }
+    return withNoStore(response);
+  }
+
+  if (
+    user?.app_metadata?.must_change_password === true &&
+    !isPasswordChangeRoute &&
+    !pathname.startsWith("/api/") &&
+    !pathname.startsWith("/auth/")
+  ) {
+    return redirectWithSession(new URL("/set-password", request.url));
+  }
+
+  if (user && isPasswordChangeRoute && user.app_metadata?.must_change_password !== true) {
+    return redirectWithSession(new URL("/post-login", request.url));
+  }
 
   const isProtectedRoute = PROTECTED_PATHS.some((path) =>
     matchesPath(pathname, path)
@@ -78,7 +103,7 @@ export default async function proxy(request) {
   if (isProtectedRoute && !user) {
     const redirectUrl = new URL("/login", request.url);
     redirectUrl.searchParams.set("redirectTo", pathname);
-    return withNoStore(NextResponse.redirect(redirectUrl));
+    return redirectWithSession(redirectUrl);
   }
 
   const isAdminRoute = ADMIN_PATHS.some((path) => matchesPath(pathname, path));
@@ -100,11 +125,11 @@ export default async function proxy(request) {
     }
 
     if (isAdminRoute && role !== "admin") {
-      return withNoStore(NextResponse.redirect(new URL("/", request.url)));
+      return redirectWithSession(new URL("/", request.url));
     }
 
     if (isOrganisationRoute && role !== "organisation") {
-      return withNoStore(NextResponse.redirect(new URL("/", request.url)));
+      return redirectWithSession(new URL("/", request.url));
     }
   }
 

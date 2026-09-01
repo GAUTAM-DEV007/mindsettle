@@ -665,6 +665,7 @@ export default function FeaturedHero({
         <div className="mt-5 flex flex-wrap gap-2.5">
           <Link
             href={`/library/${featured.id}`}
+            prefetch={false}
             className="
               inline-flex
               min-h-11
@@ -693,6 +694,7 @@ export default function FeaturedHero({
 
           <Link
             href={`/library/${featured.id}`}
+            prefetch={false}
             className="
               inline-flex
               min-h-11

@@ -2,29 +2,18 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { getOAuthCallbackUrl } from "@/lib/auth/oauth";
 
 const PROVIDERS = [
-  {
-    id: "google",
-    label: "Google",
-    mark: "G",
-    markClassName: "bg-white text-[#4285f4] ring-1 ring-[#d8e0e8]",
-  },
   {
     id: "apple",
     label: "Apple",
     mark: "A",
     markClassName: "bg-[#171918] text-white",
   },
-  {
-    id: "facebook",
-    label: "Facebook",
-    mark: "f",
-    markClassName: "bg-[#1877f2] text-white",
-  },
 ];
 
-export default function SocialAuthButtons({ intent = "signin" }) {
+export default function SocialAuthButtons({ intent = "signin", redirectTo = "/post-login" }) {
   const [supabase] = useState(() => createClient());
   const [pendingProvider, setPendingProvider] = useState(null);
   const [error, setError] = useState(null);
@@ -33,28 +22,36 @@ export default function SocialAuthButtons({ intent = "signin" }) {
     setError(null);
     setPendingProvider(provider.id);
 
-    const redirectTo = `${window.location.origin}/auth/callback?redirectTo=/post-login`;
-    const { error: authError } = await supabase.auth.signInWithOAuth({
-      provider: provider.id,
-      options: { redirectTo },
-    });
+    try {
+      const response = await fetch("/api/auth/providers", {
+        cache: "no-store",
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!response.ok) throw new Error("Could not check sign-in availability");
+      const providers = await response.json();
+      if (providers[provider.id] !== true) {
+        setError(`${provider.label} access is not configured yet. Please use email for now.`);
+        return;
+      }
 
-    if (authError) {
+      const callbackUrl = getOAuthCallbackUrl(window.location.origin, redirectTo);
+      const { data, error: authError } = await supabase.auth.signInWithOAuth({
+        provider: provider.id,
+        options: { redirectTo: callbackUrl, skipBrowserRedirect: true },
+      });
+      if (authError || !data?.url) throw new Error("Could not start sign-in");
+      window.location.assign(data.url);
+    } catch {
+      setError(`We could not continue with ${provider.label}. Please try again or use email.`);
+    } finally {
+      // Also recover the controls when returning with the browser's Back button.
       setPendingProvider(null);
-      const providerDisabled = /provider.*not.*enabled/i.test(
-        authError.message || ""
-      );
-      setError(
-        providerDisabled
-          ? `${provider.label} access is being prepared. Please use email for now.`
-          : `We could not continue with ${provider.label}. Please try again.`
-      );
     }
   }
 
   return (
     <div>
-      <div className="grid gap-2.5 sm:grid-cols-3">
+      <div className="grid gap-2.5">
         {PROVIDERS.map((provider) => {
           const isPending = pendingProvider === provider.id;
 

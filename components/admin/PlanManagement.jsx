@@ -21,9 +21,9 @@ export default function PlanManagement({ plans, media, planError }) {
       <article className="rounded-[22px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
         <h3 className="text-lg font-bold text-[#163d34]">Add plan</h3>
         <p className="mt-1 text-sm leading-6 text-[#5a6d66]">
-          Individual plans have no seat limit. Organisation plans should set a seat
-          limit -- that&apos;s what drives the seat allowance in the admin Seat
-          Management section.
+          Individual plans have no seat limit. The Organisation Flexible plan
+          uses the quantity purchased in Stripe; legacy fixed packages can still
+          use a plan-level seat limit.
         </p>
 
         <form action={addPlan} className="mt-6 grid gap-4 border-b border-[#e4e8df] pb-8 lg:grid-cols-3">
@@ -38,7 +38,7 @@ export default function PlanManagement({ plans, media, planError }) {
             </select>
           </PlanField>
 
-          <PlanField label="Price (USD)">
+          <PlanField label="Price or base seat rate (USD)">
             <input name="price" type="number" min="0" step="0.01" defaultValue="0" className={inputClass} />
           </PlanField>
 
@@ -49,7 +49,7 @@ export default function PlanManagement({ plans, media, planError }) {
             </select>
           </PlanField>
 
-          <PlanField label="Seat limit (organisation only)">
+          <PlanField label="Seat limit (blank for flexible seats)">
             <input name="seatLimit" type="number" min="1" placeholder="e.g. 20" className={inputClass} />
           </PlanField>
 
@@ -182,7 +182,7 @@ function PlanGroup({ title, plans }) {
                       <option value="organisation">Organisation</option>
                     </select>
                   </PlanField>
-                  <PlanField label="Price (USD)">
+                  <PlanField label="Price or base seat rate (USD)">
                     <input name="price" type="number" min="0" step="0.01" defaultValue={formatDollars(plan.price_cents)} className={inputClass} />
                   </PlanField>
                   <PlanField label="Billing cycle">
@@ -191,7 +191,7 @@ function PlanGroup({ title, plans }) {
                       <option value="yearly">Yearly</option>
                     </select>
                   </PlanField>
-                  <PlanField label="Seat limit">
+                  <PlanField label="Seat limit (blank for flexible seats)">
                     <input name="seatLimit" type="number" min="1" defaultValue={plan.seat_limit ?? ""} className={inputClass} />
                   </PlanField>
                   <PlanField label="Content tier">

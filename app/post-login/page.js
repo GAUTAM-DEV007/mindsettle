@@ -2,6 +2,10 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { getDashboardForRole } from "@/lib/auth/roles";
+import {
+    DEFAULT_ORGANISATION_SEATS,
+    clampOrganisationSeats,
+} from "@/lib/billing/organisation-pricing";
 
 // Never statically render/cache this route -- it exists solely to read
 // the just-created session and redirect, so the result must always be
@@ -23,6 +27,10 @@ export default async function PostLoginPage() {
         redirect("/login");
     }
 
+    if (user.app_metadata?.must_change_password === true) {
+        redirect("/set-password");
+    }
+
     // Read this user's role from the user_roles table.
     const { data: roleRecord, error: roleError } = await supabase
         .from("user_roles")
@@ -34,6 +42,37 @@ export default async function PostLoginPage() {
     if (roleError || !roleRecord) {
         console.error("Role was not found:", roleError);
         redirect("/login?error=role-not-found");
+    }
+
+    if (roleRecord.role === "organisation") {
+        const { data: subscription } = await supabase
+            .from("subscriptions")
+            .select("id")
+            .eq("user_id", user.id)
+            .in("status", ["active", "trialing"])
+            .limit(1)
+            .maybeSingle();
+
+        if (!subscription) {
+            const requestedSeats = clampOrganisationSeats(
+                user.user_metadata?.requested_seats ?? DEFAULT_ORGANISATION_SEATS
+            );
+            redirect(`/subscription?seats=${requestedSeats}`);
+        }
+    }
+
+    if (roleRecord.role === "user") {
+        const { data: organisationMembership } = await supabase
+            .from("organisation_members")
+            .select("id")
+            .eq("user_id", user.id)
+            .eq("status", "active")
+            .limit(1)
+            .maybeSingle();
+
+        if (organisationMembership) {
+            redirect("/dashboard");
+        }
     }
 
     // Every role lands on its own overview page, subscribed or not --

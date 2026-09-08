@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import exploreGreatBarrierReef from "@/public/explore-great-barrier-reef.jpg";
+import ExploreVideoGallery from "@/components/marketing/ExploreVideoGallery";
 
 export const metadata = {
   title: "Explore",
@@ -88,6 +89,31 @@ export default function ExplorePage() {
               <p className="absolute bottom-6 left-6 rounded-full border border-white/30 bg-[#173845]/70 px-4 py-2 text-xs font-semibold uppercase tracking-[.16em] text-white backdrop-blur-md">Ocean · Sound · Stillness</p>
             </div>
             <div className="absolute -bottom-5 -left-5 hidden rounded-2xl bg-[#dce8ed] px-5 py-4 text-sm font-semibold text-[#29383e] shadow-xl sm:block">A quieter view of the world.</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#173c45] py-24 text-white sm:py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <div className="mb-12 grid gap-7 lg:grid-cols-[.9fr_1.1fr] lg:items-end">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[.2em] text-[#f3c5ad]">Watch a little calm</p>
+              <h2 className="mt-5 max-w-xl text-balance text-4xl font-semibold leading-tight tracking-[-0.04em] sm:text-6xl">See what waits inside.</h2>
+            </div>
+            <div className="lg:pb-2">
+              <p className="max-w-2xl text-lg leading-8 text-[#cfddda]">Try three quiet nature previews. Play one at a time, pause whenever you like, and discover the pace of the full Mindsettle library.</p>
+              <p className="mt-3 text-sm leading-6 text-[#9fb6b3]">Previews play silently so they remain comfortable in shared spaces.</p>
+            </div>
+          </div>
+
+          <ExploreVideoGallery />
+
+          <div className="mt-10 flex flex-col gap-5 rounded-[2rem] border border-white/15 bg-white/[.07] p-7 backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:p-9">
+            <div>
+              <h3 className="text-2xl font-semibold">Want the full experience?</h3>
+              <p className="mt-2 text-[#cfddda]">Members can browse longer sessions, original soundscapes and curated programs.</p>
+            </div>
+            <Link href="/login" className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#f6eee1] px-6 py-3.5 text-sm font-semibold text-[#173c45] transition hover:-translate-y-0.5 hover:bg-white">Open the library <span className="ml-2" aria-hidden="true">→</span></Link>
           </div>
         </div>
       </section>

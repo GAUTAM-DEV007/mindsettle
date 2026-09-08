@@ -38,22 +38,40 @@ export default async function OrganisationDashboardPage({ searchParams }) {
   const organisationName = user.user_metadata?.organisation_name || "Your organisation";
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
-      <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#78906f]">Organisation admin</p>
-        <h1 className="mt-1 text-2xl font-semibold">{organisationName}</h1>
-        <p className="mt-1 text-neutral-600">Signed in as {user.email}</p>
-      </div>
+    <div className="mx-auto max-w-6xl px-5 py-7 sm:px-8 sm:py-10 lg:px-10">
+      <section className="relative overflow-hidden rounded-[2rem] bg-[#163d34] px-6 py-8 text-white shadow-[0_24px_60px_rgba(22,61,52,0.16)] sm:px-9 sm:py-10">
+        <div className="pointer-events-none absolute -right-12 -top-20 h-64 w-64 rounded-full border-[42px] border-white/[0.04]" />
+        <div className="pointer-events-none absolute -bottom-28 right-28 h-52 w-52 rounded-full bg-[#d7f2ad]/10 blur-2xl" />
+        <div className="relative flex flex-col justify-between gap-7 md:flex-row md:items-end">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7f2ad] ring-1 ring-white/10">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#d7f2ad]" />
+              Organisation workspace
+            </div>
+            <h1 className="mt-5 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
+              Welcome, {organisationName}
+            </h1>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-white/65">
+              Manage your people, seats and wellbeing access from one calm, secure place.
+            </p>
+          </div>
+          <div className="w-fit rounded-2xl bg-white/[0.08] px-4 py-3 ring-1 ring-white/10">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/45">Signed in as</p>
+            <p className="mt-1 max-w-64 truncate text-sm font-semibold text-white/90">{user.email}</p>
+          </div>
+        </div>
+      </section>
 
       {checkout === "success" && (
-        <section className="mb-8 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-900">
+        <section className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-900">
           Checkout returned successfully. Your seat allowance will appear after payment confirmation has been received.
         </section>
       )}
 
       {hasActivePlan ? (
-        <section className="mb-8 flex flex-col items-start justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 sm:flex-row sm:items-center">
+        <section className="mt-6 flex flex-col items-start justify-between gap-3 rounded-2xl border border-[#cadcb9] bg-[#eef5e7] px-5 py-4 sm:flex-row sm:items-center">
           <p className="text-sm text-emerald-900">
+            <span className="mr-2 inline-flex rounded-full bg-[#163d34] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#d7f2ad]">Active</span>
             Plan: <span className="font-semibold">{subscription.plans?.name ?? "Organisation"}</span>
             {seatLimit && (
               <>
@@ -66,7 +84,7 @@ export default async function OrganisationDashboardPage({ searchParams }) {
           </Link>
         </section>
       ) : (
-        <section className="mb-8 flex flex-col items-start justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 sm:flex-row sm:items-center">
+        <section className="mt-6 flex flex-col items-start justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 sm:flex-row sm:items-center">
           <p className="text-sm text-amber-900">
             No active organisation plan. Members won&apos;t get organisation content access until you subscribe.
           </p>
@@ -79,13 +97,18 @@ export default async function OrganisationDashboardPage({ searchParams }) {
         </section>
       )}
 
-      <section className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Active members" value={members.length} />
-        <StatCard label="Pending members" value={pending.length} />
-        <StatCard label="Purchased seats" value={seatLimit ?? "—"} />
+      <section className="mt-7 grid gap-4 sm:grid-cols-3">
+        <StatCard label="Active members" value={members.length} detail="Access ready" tone="green" />
+        <StatCard label="Pending members" value={pending.length} detail="Awaiting setup" tone="amber" />
+        <StatCard label="Purchased seats" value={seatLimit ?? "—"} detail={`${allocatedSeats} allocated`} tone="blue" />
       </section>
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mb-4 mt-10">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#78906f]">Quick actions</p>
+        <h2 className="mt-1 text-xl font-semibold text-[#163d34]">What would you like to do?</h2>
+      </div>
+
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <ActionCard
           href="/organisation-dashboard/members"
           eyebrow="Team access"
@@ -123,11 +146,25 @@ function ActionCard({ href, eyebrow, title, description }) {
   );
 }
 
-function StatCard({ label, value }) {
+function StatCard({ label, value, detail, tone }) {
+  const toneClasses = {
+    green: "bg-[#e9f3e2] text-[#52724a]",
+    amber: "bg-[#fff1dc] text-[#9b642c]",
+    blue: "bg-[#e5efee] text-[#416b66]",
+  };
+
   return (
-    <div className="rounded-xl border border-neutral-200 p-5">
-      <p className="text-sm text-neutral-600">{label}</p>
-      <p className="mt-2 text-3xl font-semibold">{value ?? 0}</p>
+    <div className="rounded-2xl border border-[#dfe5dc] bg-[#fffdfa] p-5 shadow-[0_10px_30px_rgba(18,55,47,0.05)]">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-medium text-[#6b7d76]">{label}</p>
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-[#163d34]">{value ?? 0}</p>
+        </div>
+        <span className={`grid h-10 w-10 place-items-center rounded-xl ${toneClasses[tone]}`}>
+          <span className="h-2.5 w-2.5 rounded-full bg-current opacity-80" />
+        </span>
+      </div>
+      <p className="mt-4 border-t border-[#edf0eb] pt-3 text-xs font-medium text-[#8a9993]">{detail}</p>
     </div>
   );
 }

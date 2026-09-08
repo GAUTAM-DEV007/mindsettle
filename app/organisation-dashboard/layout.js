@@ -31,10 +31,20 @@ export default async function OrganisationDashboardLayout({ children }) {
     redirect("/");
   }
 
+  const organisationName =
+    user.user_metadata?.organisation_name || "Your organisation";
+
   return (
-    <div className="flex min-h-screen">
-      <OrganisationSidebar />
-      <main className="min-w-0 flex-1">{children}</main>
+    <div className="min-h-screen bg-[#f5f6ef] text-[#29383e] lg:flex">
+      <OrganisationSidebar
+        organisationName={organisationName}
+        email={user.email}
+      />
+      <main className="relative min-w-0 flex-1 overflow-hidden">
+        <div className="pointer-events-none absolute -right-36 top-16 h-80 w-80 rounded-full bg-[#dce8ca]/35 blur-3xl" />
+        <div className="pointer-events-none absolute -left-32 top-[38rem] h-72 w-72 rounded-full bg-[#d9e8e1]/35 blur-3xl" />
+        <div className="relative">{children}</div>
+      </main>
     </div>
   );
 }

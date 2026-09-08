@@ -29,7 +29,7 @@ test("provider status exposes only supported public flags", async (t) => {
   const response = await GET();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("cache-control"), /no-store/);
-  assert.deepEqual(await response.json(), { google: true, apple: false });
+  assert.deepEqual(await response.json(), { google: true });
 });
 
 test("provider status fails safely when the auth service is unavailable", async (t) => {

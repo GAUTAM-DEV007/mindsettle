@@ -2,10 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { getSafeRedirectPath } from "@/lib/auth/redirects";
+import { Suspense, useActionState, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+
+import { signIn } from "./actions";
+import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
+
+const initialActionState = { error: null };
 
 export default function LoginPage() {
   return (
@@ -16,18 +19,14 @@ export default function LoginPage() {
 }
 
 function LoginPageContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [supabase] = useState(() => createClient());
   const backgroundVideoRef = useRef(null);
+  const [actionState, formAction, isSubmitting] = useActionState(signIn, initialActionState);
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [error, setError] = useState(null);
-  const [authErrorDismissed, setAuthErrorDismissed] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [backgroundPaused, setBackgroundPaused] = useState(false);
 
@@ -40,7 +39,7 @@ function LoginPageContent() {
       : authError === "role-not-found"
         ? "Your account was created, but access is still being prepared. Please try again shortly."
         : null;
-  const displayedError = error || (authErrorDismissed ? null : callbackError);
+  const displayedError = actionState?.error || callbackError;
 
   async function toggleBackgroundMotion() {
     const video = backgroundVideoRef.current;
@@ -63,38 +62,10 @@ function LoginPageContent() {
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    if (error) setError(null);
-    setAuthErrorDismissed(true);
-
     setFormData((current) => ({
       ...current,
       [name]: value,
     }));
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setError(null);
-    setIsSubmitting(true);
-
-    try {
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email: formData.email.trim(),
-        password: formData.password,
-      });
-      if (authError) {
-        setError(authError.code === "email_not_confirmed"
-          ? "Please confirm your email using the link in your inbox before signing in."
-          : "Sign-in failed. Check your email and password, or try again shortly.");
-        return;
-      }
-      router.replace(getSafeRedirectPath(searchParams.get("redirectTo")));
-      router.refresh();
-    } catch {
-      setError("We could not reach the sign-in service. Please check your connection and try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   return (
@@ -173,7 +144,8 @@ function LoginPageContent() {
             </p>
           </div>
 
-            <form onSubmit={handleSubmit} className="mt-7 space-y-[1.125rem]">
+            <form action={formAction} className="mt-7 space-y-[1.125rem]">
+              <input type="hidden" name="redirectTo" value={searchParams.get("redirectTo") || ""} />
               <div>
                 <label
                   htmlFor="email"
@@ -263,6 +235,17 @@ function LoginPageContent() {
                 )}
               </button>
             </form>
+
+            <div className="my-6 flex items-center gap-3">
+              <span className="h-px flex-1 bg-[#dfe5df]" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#8a9791]">Or continue with</span>
+              <span className="h-px flex-1 bg-[#dfe5df]" />
+            </div>
+
+            <SocialAuthButtons
+              intent="signin"
+              redirectTo={searchParams.get("redirectTo") || "/post-login"}
+            />
 
             <div className="my-6 h-px bg-[#dfe5df]" />
 

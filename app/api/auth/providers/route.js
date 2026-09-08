@@ -11,7 +11,7 @@ export async function GET() {
 
   try {
     // This documented public endpoint contains provider flags, not secrets.
-    // Return only the two providers the website actually offers.
+    // Return only the provider the website actually offers.
     const response = await fetch(`${projectUrl}/auth/v1/settings`, {
       headers: { apikey: anonKey },
       cache: "no-store",
@@ -21,7 +21,6 @@ export async function GET() {
     const settings = await response.json();
     return NextResponse.json({
       google: settings.external?.google === true,
-      apple: settings.external?.apple === true,
     }, { headers });
   } catch {
     return NextResponse.json({ error: "Sign-in is temporarily unavailable." }, { status: 503, headers });

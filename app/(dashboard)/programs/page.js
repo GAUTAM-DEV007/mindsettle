@@ -305,7 +305,7 @@ export default async function DashboardPage() {
         </div>
 
         {videos.length > 0 ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid min-w-0 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {videos.map(
               (video) => (
                 <div
@@ -313,6 +313,7 @@ export default async function DashboardPage() {
                     video.id
                   }
                   className="
+                    min-w-0
                     rounded-[24px]
                     border
                     border-[#dfe5dc]
@@ -328,6 +329,7 @@ export default async function DashboardPage() {
                   "
                 >
                   <VideoCard
+                    fillWidth
                     video={
                       video
                     }

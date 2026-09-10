@@ -75,13 +75,13 @@ export default async function OrganisationReportsPage() {
         {people.length > 0 ? (
           <ul className="mt-5 divide-y divide-neutral-100">
             {people.slice(0, 10).map((member) => (
-              <li key={member.id} className="flex flex-col justify-between gap-2 py-3 sm:flex-row sm:items-center">
-                <div>
-                  <p className="text-sm font-medium text-neutral-800">{member.email}</p>
+              <li key={member.id} className="flex min-w-0 flex-col justify-between gap-2 py-3 sm:flex-row sm:items-center">
+                <div className="min-w-0 sm:flex-1">
+                  <p className="[overflow-wrap:anywhere] text-sm font-medium text-neutral-800">{member.email}</p>
                   <p className="mt-0.5 text-xs text-neutral-500">Added {formatDate(member.invited_at)}</p>
                 </div>
                 <span
-                  className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${
+                  className={`w-fit shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
                     member.status === "active"
                       ? "bg-emerald-50 text-emerald-700"
                       : "bg-amber-50 text-amber-700"

@@ -43,6 +43,8 @@ function formatDuration(durationSeconds, durationMinutes) {
 export default function VideoCard({
   video,
   progressPercent = null,
+  fillWidth = false,
+  fitMobileRow = false,
 }) {
   const {
     id,
@@ -457,10 +459,11 @@ export default function VideoCard({
       onPointerLeave={
         stopPreview
       }
-      className="
+      className={`
         group
         relative
-        w-[270px]
+        min-w-0
+        ${fillWidth ? "w-full" : fitMobileRow ? "w-full snap-start sm:w-[310px] lg:w-[330px]" : "w-[270px] sm:w-[310px] lg:w-[330px]"}
         shrink-0
         rounded-[24px]
         border
@@ -470,13 +473,11 @@ export default function VideoCard({
         shadow-[0_8px_24px_rgba(18,55,47,0.05)]
         transition-all
         duration-300
-        sm:w-[310px]
-        lg:w-[330px]
 
         hover:-translate-y-0.5
         hover:border-[#9bb98a]
         hover:shadow-[0_16px_34px_rgba(18,55,47,0.10)]
-      "
+      `}
     >
       <Link
         href={`/library/${id}`}

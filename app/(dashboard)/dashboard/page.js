@@ -358,14 +358,15 @@ export default async function DashboardPage() {
         </div>
 
         {videos.length > 0 ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid min-w-0 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {videos.map(
               (video) => (
                 <div
                   key={video.id}
-                  className="rounded-[24px] border border-[#dfe5dc] bg-[#fafbf7] p-3 shadow-[0_8px_24px_rgba(18,55,47,0.05)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#9bb98a] hover:shadow-[0_16px_32px_rgba(18,55,47,0.09)]"
+                  className="min-w-0 rounded-[24px] border border-[#dfe5dc] bg-[#fafbf7] p-3 shadow-[0_8px_24px_rgba(18,55,47,0.05)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#9bb98a] hover:shadow-[0_16px_32px_rgba(18,55,47,0.09)]"
                 >
                   <VideoCard
+                    fillWidth
                     video={video}
                   />
                 </div>
@@ -418,7 +419,7 @@ export default async function DashboardPage() {
         </div>
 
         {programs?.length > 0 ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid min-w-0 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {programs.map(
               (program) => {
                 const sessionCount =

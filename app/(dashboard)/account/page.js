@@ -39,13 +39,13 @@ export default async function AccountPage() {
 
       <div className="max-w-md rounded-[24px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
         <dl className="flex flex-col gap-3 text-sm">
-          <div className="flex justify-between">
+          <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:justify-between sm:gap-4">
             <dt className="text-[#5a6d66]">Email</dt>
-            <dd className="font-medium text-[#163d34]">{user?.email}</dd>
+            <dd className="min-w-0 [overflow-wrap:anywhere] sm:text-right font-medium text-[#163d34]">{user?.email}</dd>
           </div>
-          <div className="flex justify-between">
+          <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:justify-between sm:gap-4">
             <dt className="text-[#5a6d66]">Member since</dt>
-            <dd className="font-medium text-[#163d34]">
+            <dd className="min-w-0 [overflow-wrap:anywhere] sm:text-right font-medium text-[#163d34]">
               {profile?.created_at
                 ? new Date(profile.created_at).toLocaleDateString()
                 : "—"}
@@ -57,21 +57,21 @@ export default async function AccountPage() {
       <div className="max-w-md rounded-[24px] border border-[#dfe5dc] bg-[#fffdfa] p-6 shadow-[0_10px_30px_rgba(18,55,47,0.06)]">
         <h2 className="text-lg font-bold text-[#163d34]">Membership</h2>
         <dl className="mt-4 flex flex-col gap-3 text-sm">
-          <div className="flex justify-between">
+          <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:justify-between sm:gap-4">
             <dt className="text-[#5a6d66]">Membership type</dt>
-            <dd className="font-medium text-[#163d34]">{isPaid ? "Premium" : "Free"}</dd>
+            <dd className="min-w-0 [overflow-wrap:anywhere] sm:text-right font-medium text-[#163d34]">{isPaid ? "Premium" : "Free"}</dd>
           </div>
-          <div className="flex justify-between">
+          <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:justify-between sm:gap-4">
             <dt className="text-[#5a6d66]">Current plan</dt>
-            <dd className="font-medium text-[#163d34]">{subscription?.plans?.name ?? "MindSettle Free"}</dd>
+            <dd className="min-w-0 [overflow-wrap:anywhere] sm:text-right font-medium text-[#163d34]">{subscription?.plans?.name ?? "MindSettle Free"}</dd>
           </div>
-          <div className="flex justify-between">
+          <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:justify-between sm:gap-4">
             <dt className="text-[#5a6d66]">Subscription status</dt>
-            <dd className="font-medium capitalize text-[#163d34]">{subscription?.status ?? "None"}</dd>
+            <dd className="min-w-0 [overflow-wrap:anywhere] sm:text-right font-medium capitalize text-[#163d34]">{subscription?.status ?? "None"}</dd>
           </div>
         </dl>
 
-        <div className="mt-5 flex items-center justify-between gap-3 rounded-xl bg-[#dce8ca]/60 px-4 py-3">
+        <div className="mt-5 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center rounded-xl bg-[#dce8ca]/60 px-4 py-3">
           <p className="text-sm text-[#163d34]">
             {isPaid ? "Manage your plan and billing details." : "You're on a free account."}
           </p>
@@ -97,7 +97,7 @@ export default async function AccountPage() {
               maxLength={100}
               defaultValue={profile?.full_name ?? ""}
               placeholder="Your name"
-              className="rounded-lg border border-[#dfe5dc] px-3 py-2 text-sm text-[#29383e] outline-none focus:border-[#163d34]"
+              className="w-full min-w-0 rounded-lg border border-[#dfe5dc] px-3 py-2 text-sm text-[#29383e] outline-none focus:border-[#163d34]"
             />
           </div>
 
@@ -112,7 +112,7 @@ export default async function AccountPage() {
               maxLength={2048}
               defaultValue={profile?.avatar_url ?? ""}
               placeholder="https://..."
-              className="rounded-lg border border-[#dfe5dc] px-3 py-2 text-sm text-[#29383e] outline-none focus:border-[#163d34]"
+              className="w-full min-w-0 rounded-lg border border-[#dfe5dc] px-3 py-2 text-sm text-[#29383e] outline-none focus:border-[#163d34]"
             />
           </div>
 

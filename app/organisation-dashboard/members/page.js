@@ -91,15 +91,15 @@ function MemberList({ title, people, emptyText }) {
           {people.map((person) => (
             <li
               key={person.id}
-              className="flex items-center justify-between gap-4 border-b border-neutral-100 pb-3 last:border-0 last:pb-0"
+              className="flex min-w-0 flex-col items-start justify-between gap-3 sm:flex-row sm:gap-4 border-b border-neutral-100 pb-3 last:border-0 last:pb-0"
             >
-              <div>
-                <p className="font-medium text-neutral-700">{person.email}</p>
+              <div className="min-w-0 w-full sm:flex-1">
+                <p className="[overflow-wrap:anywhere] font-medium text-neutral-700">{person.email}</p>
                 <p className="mt-0.5 text-xs text-neutral-500">
                   {person.status === "active" ? "Access active" : "Seat reserved · setup not finished"}
                 </p>
               </div>
-              <form action={removeMember.bind(null, person.id)}>
+              <form action={removeMember.bind(null, person.id)} className="shrink-0">
                 <button
                   type="submit"
                   className="text-xs font-medium text-red-600 hover:underline"

@@ -362,16 +362,12 @@ export default function MediaUploader({
   const [instructor, setInstructor] =
     useState("MindSettle");
 
-  const [categories, setCategories] = useState([]);
   const [moods, setMoods] = useState([]);
 
-  const [categoryId, setCategoryId] = useState("");
   const [selectedMoodIds, setSelectedMoodIds] =
     useState([]);
 
   const [isFeatured, setIsFeatured] =
-    useState(false);
-  const [showOnHomepage, setShowOnHomepage] =
     useState(false);
   const [isPublished, setIsPublished] =
     useState(true);
@@ -406,31 +402,16 @@ export default function MediaUploader({
 
     async function loadPreferences() {
       try {
-        const [
-          { data: categoryData, error: categoryError },
-          { data: moodData, error: moodError },
-        ] = await Promise.all([
-          supabase
-            .from("categories")
-            .select("id, name, slug")
-            .order("name"),
-
-          supabase
-            .from("moods")
-            .select("id, name, slug, emoji, description")
-            .order("name"),
-        ]);
-
-        if (categoryError) {
-          throw categoryError;
-        }
+        const { data: moodData, error: moodError } = await supabase
+          .from("moods")
+          .select("id, name, slug, emoji, description")
+          .order("name");
 
         if (moodError) {
           throw moodError;
         }
 
         if (!cancelled) {
-          setCategories(categoryData || []);
           setMoods(moodData || []);
         }
       } catch (error) {
@@ -441,7 +422,7 @@ export default function MediaUploader({
 
         if (!cancelled) {
           showMessage(
-            "Media can still be uploaded, but categories or moods could not be loaded.",
+            "Media can still be uploaded, but moods could not be loaded.",
             "error"
           );
         }
@@ -683,10 +664,8 @@ export default function MediaUploader({
     setTitle("");
     setDescription("");
     setInstructor("MindSettle");
-    setCategoryId("");
     setSelectedMoodIds([]);
     setIsFeatured(false);
-    setShowOnHomepage(false);
     setIsPublished(true);
     setIsPremium(true);
   }
@@ -997,14 +976,13 @@ export default function MediaUploader({
           contentType:
             selectedFile.type,
 
-          categoryId:
-            categoryId || null,
+          categoryId: null,
 
           moodIds:
             selectedMoodIds,
 
           isFeatured,
-          showOnHomepage,
+          showOnHomepage: false,
           isPublished,
           isPremium,
 
@@ -1809,38 +1787,6 @@ export default function MediaUploader({
                   />
                 </div>
 
-                <div className="mt-5">
-                  <label
-                    htmlFor="category"
-                    className="mb-2 block text-sm font-semibold text-slate-700"
-                  >
-                    Category
-                  </label>
-
-                  <select
-                    id="category"
-                    value={categoryId}
-                    onChange={(event) =>
-                      setCategoryId(event.target.value)
-                    }
-                    disabled={uploading}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
-                  >
-                    <option value="">
-                      No category
-                    </option>
-
-                    {categories.map((category) => (
-                      <option
-                        key={category.id}
-                        value={category.id}
-                      >
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 <div className="mt-8">
                   <h3 className="text-sm font-bold uppercase tracking-wide text-slate-700">
                     Mood assignment
@@ -1929,28 +1875,6 @@ export default function MediaUploader({
 
                           <span className="mt-0.5 block text-xs leading-5 text-slate-500">
                             Allow this media to appear in a featured hero position.
-                          </span>
-                        </span>
-                      </label>
-
-                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-white p-3">
-                        <input
-                          type="checkbox"
-                          checked={showOnHomepage}
-                          onChange={(event) =>
-                            setShowOnHomepage(event.target.checked)
-                          }
-                          disabled={uploading}
-                          className="mt-1 h-4 w-4 accent-emerald-600"
-                        />
-
-                        <span>
-                          <span className="block text-sm font-semibold text-slate-800">
-                            Homepage
-                          </span>
-
-                          <span className="mt-0.5 block text-xs leading-5 text-slate-500">
-                            Allow this media to appear on the public MindSettle homepage.
                           </span>
                         </span>
                       </label>

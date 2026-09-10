@@ -142,7 +142,7 @@ export default function MediaRow({
 
   return (
     <div
-      className="relative rounded-[26px] border border-[#dfe5dc] bg-[#fffdfa] px-3 py-4 shadow-[0_10px_28px_rgba(18,55,47,0.05)]"
+      className="relative min-w-0 rounded-[26px] border border-[#dfe5dc] bg-[#fffdfa] px-3 py-4 shadow-[0_10px_28px_rgba(18,55,47,0.05)]"
       onPointerLeave={
         stopEdgeScroll
       }
@@ -180,6 +180,7 @@ export default function MediaRow({
           flex
           gap-4
           overflow-x-auto
+          snap-x snap-mandatory scroll-px-1 sm:snap-none
           px-1
           pb-1
           [scrollbar-width:none]
@@ -192,6 +193,7 @@ export default function MediaRow({
             <VideoCard
               key={video.id}
               video={video}
+              fitMobileRow
               progressPercent={
                 progressMap[
                   video.id

@@ -65,9 +65,47 @@ export default function DashboardNavbar() {
     useSearchParams();
 
   const [
-    menuOpen,
-    setMenuOpen,
-  ] = useState(false);
+    menuLocation,
+    setMenuLocation,
+  ] = useState(null);
+
+  const locationKey = `${pathname}?${searchParams.toString()}`;
+  const menuOpen = menuLocation === locationKey;
+  const menuRef = useRef(null);
+  const menuTriggerRef = useRef(null);
+
+  function setMenuOpen(open) {
+    setMenuLocation(open ? locationKey : null);
+  }
+
+  function toggleMenu(event) {
+    menuTriggerRef.current = event.currentTarget;
+    setSearchOpen(false);
+    setMenuOpen(!menuOpen);
+  }
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    function closeOutside(event) {
+      if (!menuRef.current?.contains(event.target)) setMenuLocation(null);
+    }
+
+    function closeOnEscape(event) {
+      if (event.key !== "Escape") return;
+      setMenuLocation(null);
+      menuTriggerRef.current?.focus();
+    }
+
+    document.addEventListener("pointerdown", closeOutside);
+    document.addEventListener("focusin", closeOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOutside);
+      document.removeEventListener("focusin", closeOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [menuOpen]);
 
   const [
     searchOpen,
@@ -212,7 +250,7 @@ export default function DashboardNavbar() {
 
         {/* RIGHT */}
 
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-2 xl:gap-3">
           {/* SEARCH */}
 
           <div className="flex items-center">
@@ -308,31 +346,40 @@ export default function DashboardNavbar() {
 
           {/* MY MINDSETTLE */}
 
-          <div className="relative">
+          <div ref={menuRef} className="relative flex items-center gap-2 xl:block">
             <button
               type="button"
-              onClick={() => {
-                setSearchOpen(false);
-                setMenuOpen((open) => !open);
-              }}
+              onClick={toggleMenu}
+              aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={menuOpen}
+              aria-controls="dashboard-navigation-menu"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200 xl:hidden"
+            >
+              <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d={menuOpen ? "M6 6l12 12M6 18 18 6" : "M4 6h16M4 12h16M4 18h16"} />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={toggleMenu}
+              aria-controls="dashboard-navigation-menu"
               aria-label="My MindSettle navigation menu"
               aria-expanded={
                 menuOpen
               }
-              className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200"
+              className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white xl:h-auto xl:w-auto xl:px-4 xl:py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200"
             >
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-900">
                 M
               </span>
 
-              <span className="text-sm xl:hidden">Menu</span>
               <span className="hidden xl:inline">
                 My MindSettle
               </span>
 
               <svg
                 viewBox="0 0 20 20"
-                className={`h-4 w-4 transition ${
+                className={`hidden h-4 w-4 transition xl:block ${
                   menuOpen
                     ? "rotate-180"
                     : ""
@@ -345,7 +392,7 @@ export default function DashboardNavbar() {
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 mt-3 max-h-[calc(100dvh-6rem)] w-64 xl:w-52 max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+              <div id="dashboard-navigation-menu" className="absolute right-0 top-full mt-3 max-h-[calc(100dvh-6rem)] w-64 xl:w-52 max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
                 <nav aria-label="Dashboard navigation" className="border-b border-slate-100 pb-1 xl:hidden">
                   {MAIN_NAV.map((item) => (
                     <Link

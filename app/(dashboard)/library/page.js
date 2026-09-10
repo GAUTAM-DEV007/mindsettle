@@ -669,7 +669,7 @@ function WellnessHero({
         </div>
 
         {moods.length > 0 && (
-          <div className="mt-4 grid grid-cols-1 gap-2 min-[480px]:grid-cols-2 sm:grid-cols-3">
+          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
             {moods.map(
               (mood) => (
                 <div

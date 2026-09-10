@@ -44,6 +44,7 @@ export default function VideoCard({
   video,
   progressPercent = null,
   fillWidth = false,
+  fitMobileRow = false,
 }) {
   const {
     id,
@@ -462,7 +463,7 @@ export default function VideoCard({
         group
         relative
         min-w-0
-        ${fillWidth ? "w-full" : "w-[270px] sm:w-[310px] lg:w-[330px]"}
+        ${fillWidth ? "w-full" : fitMobileRow ? "w-full snap-start sm:w-[310px] lg:w-[330px]" : "w-[270px] sm:w-[310px] lg:w-[330px]"}
         shrink-0
         rounded-[24px]
         border

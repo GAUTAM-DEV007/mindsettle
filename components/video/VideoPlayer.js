@@ -581,6 +581,8 @@ export default function VideoPlayer({
   ====================================================== */
 
   useEffect(() => {
+    const video = videoRef.current;
+
     function syncFullscreen() {
       const element =
         document.fullscreenElement ||
@@ -588,10 +590,13 @@ export default function VideoPlayer({
 
       setIsFullscreen(
         Boolean(
-          element
+          element || video?.webkitDisplayingFullscreen
         )
       );
     }
+
+    video?.addEventListener("webkitbeginfullscreen", syncFullscreen);
+    video?.addEventListener("webkitendfullscreen", syncFullscreen);
 
     document.addEventListener(
       "fullscreenchange",
@@ -604,6 +609,8 @@ export default function VideoPlayer({
     );
 
     return () => {
+      video?.removeEventListener("webkitbeginfullscreen", syncFullscreen);
+      video?.removeEventListener("webkitendfullscreen", syncFullscreen);
       document.removeEventListener(
         "fullscreenchange",
         syncFullscreen
@@ -614,7 +621,7 @@ export default function VideoPlayer({
         syncFullscreen
       );
     };
-  }, []);
+  }, [currentMedia.id]);
 
   /* ======================================================
      ENTER FULLSCREEN
@@ -770,8 +777,8 @@ export default function VideoPlayer({
   /* ======================================================
      FIRST PLAY
 
-     KEEP THIS:
-     PLAY -> FULLSCREEN -> PLAY
+     Touch devices start inline so Safari keeps our custom controls.
+     Desktop mouse playback retains its initial fullscreen behaviour.
   ====================================================== */
 
   async function handleStart() {
@@ -790,7 +797,9 @@ export default function VideoPlayer({
       true
     );
 
-    await enterFullscreen();
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      await enterFullscreen();
+    }
 
     await safePlay(
       video

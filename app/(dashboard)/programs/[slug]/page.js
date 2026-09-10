@@ -234,13 +234,14 @@ export default async function ProgramPage({
             </p>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid min-w-0 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {videos.map(
               (video) => (
                 <article
                   key={video.id}
                   className="
                     flex
+                    min-w-0
                     flex-col
                     gap-3
                     rounded-[24px]
@@ -271,6 +272,7 @@ export default async function ProgramPage({
                   </div>
 
                   <VideoCard
+                    fillWidth
                     video={video}
                   />
                 </article>

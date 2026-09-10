@@ -2151,7 +2151,7 @@ export default function VideoPlayer({
       " fixed bottom-5 right-5 z-[9999] w-[min(380px,calc(100vw-24px))] rounded-2xl border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.45)]";
   } else {
     wrapperClass +=
-      " mx-auto w-full rounded-[28px] border border-white/10";
+      " mx-auto min-h-60 w-full rounded-[28px] border border-white/10 sm:min-h-0";
   }
 
   /* ======================================================
@@ -2540,7 +2540,7 @@ export default function VideoPlayer({
               className="mb-3 h-1 w-full cursor-pointer accent-white"
             />
 
-            <div className="flex items-center gap-2 text-white sm:gap-3">
+            <div className="flex flex-wrap items-center gap-2 text-white sm:gap-3">
               {/* PLAY */}
 
               <button
@@ -2567,7 +2567,7 @@ export default function VideoPlayer({
                 onClick={() =>
                   skip(-10)
                 }
-                className="hidden text-xs sm:block"
+                className="min-h-8 min-w-8 shrink-0 text-xs sm:min-h-0 sm:min-w-0"
                 aria-label="Back 10 seconds"
               >
                 ↶10
@@ -2580,7 +2580,7 @@ export default function VideoPlayer({
                 onClick={() =>
                   skip(10)
                 }
-                className="hidden text-xs sm:block"
+                className="min-h-8 min-w-8 shrink-0 text-xs sm:min-h-0 sm:min-w-0"
                 aria-label="Forward 10 seconds"
               >
                 10↷
@@ -2621,7 +2621,7 @@ export default function VideoPlayer({
                   handleVolumeChange
                 }
                 aria-label="Volume"
-                className="hidden w-16 accent-white md:block"
+                className="h-8 w-16 shrink-0 accent-white md:h-auto"
               />
 
               {/* TIME */}
@@ -2666,7 +2666,8 @@ export default function VideoPlayer({
                 onClick={
                   cyclePlaybackRate
                 }
-                className="hidden font-mono text-xs sm:block"
+                aria-label={`Playback speed: ${playbackRate}x`}
+                className="min-h-8 min-w-8 shrink-0 font-mono text-xs sm:min-h-0 sm:min-w-0"
               >
                 {
                   playbackRate

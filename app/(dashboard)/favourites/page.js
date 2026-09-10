@@ -239,6 +239,7 @@ export default async function FavouritesPage() {
                 "
               >
                 <VideoCard
+                    fillWidth
                   video={
                     video
                   }

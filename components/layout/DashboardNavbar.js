@@ -159,7 +159,7 @@ export default function DashboardNavbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur-xl">
-      <div className="mx-auto flex h-20 max-w-[1600px] items-center gap-6 px-6 lg:px-10">
+      <div className="mx-auto flex h-20 max-w-[1600px] items-center gap-2 px-3 sm:gap-4 sm:px-6 xl:gap-6 lg:px-10">
         {/* LOGO */}
 
         <Link
@@ -179,7 +179,7 @@ export default function DashboardNavbar() {
 
         {/* MAIN NAV */}
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 xl:flex">
           {MAIN_NAV.map(
             (item) => {
               const active =
@@ -221,7 +221,7 @@ export default function DashboardNavbar() {
                 onSubmit={
                   handleSearchSubmit
                 }
-                className="flex h-11 items-center overflow-hidden rounded-full border border-emerald-300 bg-white shadow-sm ring-2 ring-emerald-50"
+                className="absolute inset-x-3 top-full mt-2 flex h-11 min-w-0 items-center overflow-hidden rounded-full sm:inset-x-6 xl:left-auto xl:right-10 xl:w-96 border border-emerald-300 bg-white shadow-sm ring-2 ring-emerald-50"
               >
                 <button
                   type="submit"
@@ -260,7 +260,7 @@ export default function DashboardNavbar() {
                   }
                   placeholder="Search MindSettle..."
                   aria-label="Search MindSettle"
-                  className="w-48 bg-transparent pr-2 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 sm:w-56 lg:w-64"
+                  className="min-w-0 w-full flex-1 bg-transparent pr-2 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400"
                 />
 
                 <button
@@ -279,11 +279,10 @@ export default function DashboardNavbar() {
             ) : (
               <button
                 type="button"
-                onClick={() =>
-                  setSearchOpen(
-                    true
-                  )
-                }
+                onClick={() => {
+                  setMenuOpen(false);
+                  setSearchOpen(true);
+                }}
                 aria-label="Search library"
                 className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200"
               >
@@ -312,12 +311,11 @@ export default function DashboardNavbar() {
           <div className="relative">
             <button
               type="button"
-              onClick={() =>
-                setMenuOpen(
-                  (open) =>
-                    !open
-                )
-              }
+              onClick={() => {
+                setSearchOpen(false);
+                setMenuOpen((open) => !open);
+              }}
+              aria-label="My MindSettle navigation menu"
               aria-expanded={
                 menuOpen
               }
@@ -327,7 +325,8 @@ export default function DashboardNavbar() {
                 M
               </span>
 
-              <span className="hidden sm:inline">
+              <span className="text-sm xl:hidden">Menu</span>
+              <span className="hidden xl:inline">
                 My MindSettle
               </span>
 
@@ -346,7 +345,20 @@ export default function DashboardNavbar() {
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 mt-3 w-52 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+              <div className="absolute right-0 mt-3 max-h-[calc(100dvh-6rem)] w-64 xl:w-52 max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+                <nav aria-label="Dashboard navigation" className="border-b border-slate-100 pb-1 xl:hidden">
+                  {MAIN_NAV.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      aria-current={isActive(item.href) ? "page" : undefined}
+                      onClick={() => setMenuOpen(false)}
+                      className={`block rounded-xl px-4 py-3 text-sm font-medium ${isActive(item.href) ? "bg-emerald-100 text-emerald-900" : "text-slate-700 hover:bg-emerald-50"}`}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </nav>
                 {ACCOUNT_NAV.map(
                   (item) => (
                     <Link

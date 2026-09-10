@@ -223,7 +223,7 @@ function MoodCard({
 
       {/* NAME */}
 
-      <span className="relative z-10 min-w-0 flex-1 truncate text-sm font-bold text-[#29383e] transition group-hover:text-[#163d34]">
+      <span className="relative z-10 min-w-0 flex-1 [overflow-wrap:anywhere] py-2 xl:truncate text-sm font-bold text-[#29383e] transition group-hover:text-[#163d34]">
         {mood.name}
       </span>
 
@@ -433,7 +433,7 @@ function WellnessHero({
           "
         >
           Choose the Mood to get started for{" "}
-          <span className="whitespace-nowrap">
+          <span className="sm:whitespace-nowrap">
             your wellbeing.
           </span>
         </h1>
@@ -447,7 +447,7 @@ function WellnessHero({
           DESKTOP
       ================================================= */}
 
-      <div className="relative z-10 mx-auto mt-4 hidden w-full max-w-[1420px] lg:block">
+      <div className="relative z-10 mx-auto mt-4 hidden w-full max-w-[1420px] xl:block">
         {/* =================================================
             TOP 5
         ================================================= */}
@@ -659,7 +659,7 @@ function WellnessHero({
           TABLET / MOBILE
       ================================================= */}
 
-      <div className="relative z-10 mt-5 lg:hidden">
+      <div className="relative z-10 mt-5 xl:hidden">
         <div className="mx-auto w-full max-w-3xl">
           <FeaturedHero
             featured={
@@ -669,14 +669,14 @@ function WellnessHero({
         </div>
 
         {moods.length > 0 && (
-          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <div className="mt-4 grid grid-cols-1 gap-2 min-[480px]:grid-cols-2 sm:grid-cols-3">
             {moods.map(
               (mood) => (
                 <div
                   key={
                     mood.id
                   }
-                  className="h-[76px]"
+                  className="min-h-[76px]"
                 >
                   <MoodCard
                     mood={mood}

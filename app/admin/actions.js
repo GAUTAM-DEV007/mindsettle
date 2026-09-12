@@ -281,11 +281,6 @@ export async function updateMedia(
       ?.toString()
       .trim() || "MindSettle";
 
-  const categoryId =
-    formData
-      .get("categoryId")
-      ?.toString() || "";
-
   const isPremium =
     checkboxValue(
       formData.get("isPremium")
@@ -294,13 +289,6 @@ export async function updateMedia(
   const isFeatured =
     checkboxValue(
       formData.get("isFeatured")
-    );
-
-  const showOnHomepage =
-    checkboxValue(
-      formData.get(
-        "showOnHomepage"
-      )
     );
 
   const isPublished =
@@ -339,9 +327,6 @@ export async function updateMedia(
       description,
       instructor,
 
-      category_id:
-        categoryId || null,
-
       is_premium:
         isPremium,
 
@@ -350,9 +335,6 @@ export async function updateMedia(
 
       is_featured:
         isFeatured,
-
-      show_on_homepage:
-        showOnHomepage,
 
       is_published:
         isPublished,

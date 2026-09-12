@@ -2271,46 +2271,6 @@ function MediaManagementCard({
                 />
               </FormField>
 
-              {/* CATEGORY */}
-
-              <FormField
-                label="Category"
-                htmlFor={`category-${item.id}`}
-              >
-                <select
-                  id={`category-${item.id}`}
-                  name="categoryId"
-                  defaultValue={
-                    item.category_id ||
-                    ""
-                  }
-                  className="w-full rounded-lg border border-[#dfe5dc] bg-white px-4 py-3 text-sm text-[#163d34] outline-none transition focus:border-[#78906f] focus:ring-2 focus:ring-[#dce8ca]"
-                >
-                  <option value="">
-                    No category
-                  </option>
-
-                  {categories.map(
-                    (
-                      categoryItem
-                    ) => (
-                      <option
-                        key={
-                          categoryItem.id
-                        }
-                        value={
-                          categoryItem.id
-                        }
-                      >
-                        {
-                          categoryItem.name
-                        }
-                      </option>
-                    )
-                  )}
-                </select>
-              </FormField>
-
               {/* DURATION */}
 
               <FormField
@@ -2425,17 +2385,6 @@ function MediaManagementCard({
                     }
                     label="Featured / Hero"
                     description="Allow this media to appear in a featured hero position."
-                  />
-
-                  <ToggleField
-                    name="showOnHomepage"
-                    defaultChecked={
-                      Boolean(
-                        item.show_on_homepage
-                      )
-                    }
-                    label="Homepage"
-                    description="Allow this media to appear on the public MindSettle homepage."
                   />
                 </div>
               </div>

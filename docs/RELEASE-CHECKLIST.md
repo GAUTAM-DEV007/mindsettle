@@ -86,5 +86,3 @@ The contact form currently opens the visitor's mail application; it is not a ser
 - Local browser automation was denied by browser URL policy, so this is not a visual/mobile interaction certification. No alternate browser was used to bypass that restriction.
 - The current dependency audit could not complete. The first npm request failed and an elevated retry was blocked because it sends dependency metadata to npm. It is not a clean current vulnerability report; explicit approval is needed for that disclosure before retrying.
 - Live Google/Apple authorization, email delivery, payment lifecycles, tenant isolation and the new SQL migrations still need the controlled tests above. No external secrets were added to the repository.
-
-Preserve the unrelated existing changes in `.codex_tmp/`; they were not part of this audit.

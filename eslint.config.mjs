@@ -7,7 +7,6 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
-    ".codex_tmp/**",
     "out/**",
     "build/**",
     "coverage/**",

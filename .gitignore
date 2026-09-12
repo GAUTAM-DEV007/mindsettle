@@ -47,3 +47,7 @@ next-env.d.ts
 # Local Claude tooling
 /.claude/
 /CLAUDE.local.md
+
+# Local agent workspace
+/.codex/
+/.codex_tmp/
